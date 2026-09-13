@@ -1,52 +1,21 @@
 /**
- * CHANAKYA ACADEMIC HUB - MASTER FRONTEND LOGIC
- * Notion + Duolingo + Linear Design & Tactile Micro-Interactions
+ * CAMPUS CONNECT - MASTER APPLICATION CORE
+ * Linear + Notion + Arc Browser Design & Delightful Motion
  */
 
 // ============================================================================
-// 1. TACTILE AUDIO SYNTHESIZER (Woodblock / Soft Chime)
+// 1. SOUND FX SYNTHESIZER (Tactile Clicks & Chimes)
 // ============================================================================
-class AudioSynthesizer {
+class SoundFX {
   constructor() {
     this.ctx = null;
   }
-
   init() {
     if (!this.ctx) {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       this.ctx = new AudioContext();
     }
   }
-
-  playCelebrationChime() {
-    try {
-      this.init();
-      if (this.ctx.state === 'suspended') this.ctx.resume();
-      
-      const now = this.ctx.currentTime;
-      // Musical triad: C5 (523Hz), E5 (659Hz), G5 (784Hz)
-      const notes = [523.25, 659.25, 783.99];
-      notes.forEach((freq, idx) => {
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        
-        const noteTime = now + (idx * 0.06);
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, noteTime);
-        
-        gain.gain.setValueAtTime(0.08, noteTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.35);
-        
-        osc.start(noteTime);
-        osc.stop(noteTime + 0.35);
-      });
-    } catch (e) {
-      console.warn("Audio unavailable:", e);
-    }
-  }
-
   playClick() {
     try {
       this.init();
@@ -56,490 +25,415 @@ class AudioSynthesizer {
       const gain = this.ctx.createGain();
       osc.connect(gain);
       gain.connect(this.ctx.destination);
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(600, now);
-      osc.frequency.exponentialRampToValueAtTime(300, now + 0.04);
-      gain.gain.setValueAtTime(0.04, now);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(700, now);
+      osc.frequency.exponentialRampToValueAtTime(350, now + 0.04);
+      gain.gain.setValueAtTime(0.05, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
       osc.start(now);
       osc.stop(now + 0.04);
     } catch (e) {}
   }
-}
-
-const audio = new AudioSynthesizer();
-
-// ============================================================================
-// 2. CELEBRATORY CONFETTI-LITE (TAILORED FOR TASK COMPLETION)
-// ============================================================================
-function triggerConfettiLite(originX, originY) {
-  if (typeof confetti === 'function') {
-    // Normalizing origin coordinates
-    const x = originX ? (originX / window.innerWidth) : 0.7;
-    const y = originY ? (originY / window.innerHeight) : 0.5;
-
-    // Small pastel celebratory burst
-    confetti({
-      particleCount: 36,
-      spread: 60,
-      origin: { x, y },
-      colors: ['#4F46E5', '#7FB069', '#FF6B6B', '#F59E0B', '#60A5FA'],
-      startVelocity: 22,
-      ticks: 120,
-      gravity: 0.9,
-      scalar: 0.75,
-      disableForReducedMotion: true
-    });
+  playWhoosh() {
+    try {
+      this.init();
+      if (this.ctx.state === 'suspended') this.ctx.resume();
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(300, now);
+      osc.frequency.exponentialRampToValueAtTime(600, now + 0.08);
+      gain.gain.setValueAtTime(0.04, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      osc.start(now);
+      osc.stop(now + 0.08);
+    } catch (e) {}
+  }
+  playSuccess() {
+    try {
+      this.init();
+      if (this.ctx.state === 'suspended') this.ctx.resume();
+      const now = this.ctx.currentTime;
+      [523.25, 659.25, 783.99].forEach((f, i) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        const t = now + (i * 0.05);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f, t);
+        gain.gain.setValueAtTime(0.06, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+        osc.start(t);
+        osc.stop(t + 0.25);
+      });
+    } catch (e) {}
   }
 }
 
+const sfx = new SoundFX();
+
 // ============================================================================
-// 3. TOAST SYSTEM
+// 2. TOAST NOTIFICATIONS (Linear Style)
 // ============================================================================
 function showToast(message, icon = '✨') {
   const container = document.getElementById('toast-container');
   if (!container) return;
-  
   const toast = document.createElement('div');
   toast.className = 'toast-item';
   toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
   container.appendChild(toast);
-  
   setTimeout(() => {
     toast.style.opacity = '0';
-    toast.style.transform = 'translateY(10px) scale(0.95)';
-    toast.style.transition = 'all 200ms ease';
-    setTimeout(() => toast.remove(), 200);
+    toast.style.transform = 'translateY(8px) scale(0.96)';
+    toast.style.transition = 'all 180ms ease';
+    setTimeout(() => toast.remove(), 180);
   }, 3200);
 }
 
 // ============================================================================
-// 4. TASK CHECKBOX TOGGLE & CELEBRATION
+// 3. INTERACTIVE CAMPUS MAP (LEAFLET + SELF-DRAWING SVG ROUTE LINE)
 // ============================================================================
-const tasksState = {
-  1: { completed: false, title: 'Paxos Distributed Consensus Simulator', course: 'CS301' },
-  2: { completed: false, title: 'Figma Design System Specification', course: 'UX204' },
-  3: { completed: false, title: 'Wireshark Network Packet Analysis', course: 'CS305' },
-  4: { completed: false, title: 'Graph Theory Problem Set 4', course: 'MA202' },
-  5: { completed: true, title: 'Deep Learning Paper Synthesis', course: 'DS201' }
+let campusMap = null;
+let currentRouteLayer = null;
+let mapMarkers = [];
+
+const CAMPUS_COORDS = [13.222871, 77.755633];
+
+const DESTINATIONS = {
+  auditorium: {
+    name: "Grand Auditorium & Convocation Plaza",
+    coords: [13.223800, 77.756300],
+    meta: "Distance: 240m • Approx 3 mins walk • Circular Promenade Path",
+    path: [
+      [13.222871, 77.755633],
+      [13.223100, 77.755800],
+      [13.223450, 77.756050],
+      [13.223800, 77.756300]
+    ]
+  },
+  robotics: {
+    name: "AI & Robotics Research Lab 3",
+    coords: [13.222100, 77.756200],
+    meta: "Distance: 190m • Approx 2.5 mins walk • Tech Wing East",
+    path: [
+      [13.222871, 77.755633],
+      [13.222600, 77.755850],
+      [13.222350, 77.756050],
+      [13.222100, 77.756200]
+    ]
+  },
+  canteen: {
+    name: "Central Dining Canteen & Plaza",
+    coords: [13.222300, 77.754800],
+    meta: "Distance: 160m • Approx 2 mins walk • South West Promenade",
+    path: [
+      [13.222871, 77.755633],
+      [13.222550, 77.755200],
+      [13.222300, 77.754800]
+    ]
+  },
+  library: {
+    name: "Central Knowledge Library & Digital Hub",
+    coords: [13.223400, 77.755200],
+    meta: "Distance: 180m • Approx 2 mins walk • North Quad",
+    path: [
+      [13.222871, 77.755633],
+      [13.223150, 77.755400],
+      [13.223400, 77.755200]
+    ]
+  }
 };
 
-let nextTaskId = 6;
+function initCampusMap() {
+  const container = document.getElementById('interactive-campus-map');
+  if (!container) return;
 
-function toggleTaskCompletion(taskId, event) {
-  const checkbox = document.getElementById(`task-check-${taskId}`);
-  const card = document.getElementById(`task-card-${taskId}`);
-  if (!checkbox || !card) return;
-
-  const isCurrentlyChecked = checkbox.classList.contains('checked');
-  
-  if (!isCurrentlyChecked) {
-    // Check it!
-    checkbox.classList.add('checked');
-    card.classList.add('task-completed');
-    if (tasksState[taskId]) tasksState[taskId].completed = true;
-
-    // Trigger celebration
-    audio.playCelebrationChime();
-    const rect = checkbox.getBoundingClientRect();
-    triggerConfettiLite(rect.left + rect.width / 2, rect.top + rect.height / 2);
-    
-    showToast('Assignment completed! Great job! 🎉', '✓');
-    updateStreakCounter(1);
-  } else {
-    // Uncheck it
-    checkbox.classList.remove('checked');
-    card.classList.remove('task-completed');
-    if (tasksState[taskId]) tasksState[taskId].completed = false;
-    audio.playClick();
-  }
-}
-
-function filterTasks(category) {
-  audio.playClick();
-  ['all', 'urgent', 'completed'].forEach(cat => {
-    const btn = document.getElementById(`task-filter-${cat}`);
-    if (btn) {
-      if (cat === category) {
-        btn.className = "px-2.5 py-1 rounded-lg bg-[#4F46E5] text-white font-bold transition btn-spring";
-      } else {
-        btn.className = "px-2.5 py-1 rounded-lg hover:text-[#1A1915] transition btn-spring";
-      }
-    }
+  campusMap = L.map('interactive-campus-map', {
+    center: CAMPUS_COORDS,
+    zoom: 17,
+    zoomControl: true
   });
 
-  const cards = document.querySelectorAll('.task-item');
-  cards.forEach(card => {
-    const cardCat = card.getAttribute('data-category');
-    const isCompleted = card.classList.contains('task-completed');
-    
-    if (category === 'all') {
-      card.style.display = 'flex';
-    } else if (category === 'urgent') {
-      card.style.display = (cardCat === 'urgent' && !isCompleted) ? 'flex' : 'none';
-    } else if (category === 'completed') {
-      card.style.display = isCompleted ? 'flex' : 'none';
-    }
+  // Clean Light Vector Tiles
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap contributors • Chanakya University'
+  }).addTo(campusMap);
+
+  // Smooth pin drops on load
+  const landmarks = [
+    { title: "Academic Circle Quad", coords: [13.222871, 77.755633], icon: "🎓" },
+    { title: "Grand Auditorium", coords: [13.223800, 77.756300], icon: "🏛️" },
+    { title: "Robotics Research Center", coords: [13.222100, 77.756200], icon: "💻" },
+    { title: "Central Canteen", coords: [13.222300, 77.754800], icon: "☕" },
+    { title: "Central Library", coords: [13.223400, 77.755200], icon: "📚" }
+  ];
+
+  landmarks.forEach((l, index) => {
+    setTimeout(() => {
+      const customIcon = L.divIcon({
+        className: 'pin-drop',
+        html: `<div style="background:#4338CA;color:white;width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 4px 10px rgba(67,56,202,0.3);border:2px solid white;">${l.icon}</div>`,
+        iconSize: [32, 32],
+        iconAnchor: [16, 32]
+      });
+      const marker = L.marker(l.coords, { icon: customIcon }).addTo(campusMap);
+      marker.bindPopup(`<b>${l.title}</b>`);
+      mapMarkers.push(marker);
+    }, index * 80);
   });
 }
 
-function openAddAssignmentModal() {
-  audio.playClick();
-  const modal = document.getElementById('add-task-modal');
-  if (modal) {
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-    const input = document.getElementById('new-task-title');
-    if (input) input.focus();
+function navigateRouteTo(destKey) {
+  sfx.playWhoosh();
+  const dest = DESTINATIONS[destKey];
+  if (!dest || !campusMap) return;
+
+  clearMapRoute();
+
+  // Draw self-drawing route line
+  currentRouteLayer = L.polyline(dest.path, {
+    color: '#4338CA',
+    weight: 5,
+    opacity: 0.9,
+    lineJoin: 'round',
+    className: 'route-draw-animated'
+  }).addTo(campusMap);
+
+  // Zoom map to fit route
+  campusMap.fitBounds(currentRouteLayer.getBounds(), { padding: [40, 40] });
+
+  // Update HUD
+  const hud = document.getElementById('map-route-hud');
+  const nameEl = document.getElementById('route-dest-name');
+  const metaEl = document.getElementById('route-dest-meta');
+  if (hud && nameEl && metaEl) {
+    nameEl.textContent = `Routing to ${dest.name}`;
+    metaEl.textContent = dest.meta;
+    hud.classList.remove('hidden');
   }
+
+  showToast(`Route calculated to ${dest.name}`, '🧭');
 }
 
-function closeAddAssignmentModal() {
-  audio.playClick();
-  const modal = document.getElementById('add-task-modal');
-  if (modal) {
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
+function clearMapRoute() {
+  if (currentRouteLayer && campusMap) {
+    campusMap.removeLayer(currentRouteLayer);
+    currentRouteLayer = null;
   }
-}
-
-function submitNewAssignment() {
-  const titleInput = document.getElementById('new-task-title');
-  const courseSelect = document.getElementById('new-task-course');
-  const dueInput = document.getElementById('new-task-due');
-  
-  if (!titleInput || !titleInput.value.trim()) {
-    showToast('Please enter an assignment title', '⚠️');
-    return;
-  }
-
-  const id = nextTaskId++;
-  const title = titleInput.value.trim();
-  const course = courseSelect ? courseSelect.value : 'CS301';
-  const due = dueInput ? dueInput.value : 'Tomorrow';
-
-  const list = document.getElementById('assignments-list');
-  if (list) {
-    const card = document.createElement('div');
-    card.id = `task-card-${id}`;
-    card.className = 'task-item p-3.5 rounded-xl border border-[#E5E5E0] hover:border-[#4F46E5] bg-white transition flex items-start gap-3 edu-card stagger-in';
-    card.setAttribute('data-category', 'upcoming');
-    card.innerHTML = `
-      <div onclick="toggleTaskCompletion(${id}, event)" class="task-checkbox mt-0.5" id="task-check-${id}">
-        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      </div>
-      <div class="flex-1 min-w-0">
-        <div class="flex items-center justify-between gap-2">
-          <span class="task-title text-xs font-bold text-[#1A1915]">${title}</span>
-          <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-[#EEF2FF] text-[#4F46E5] flex-shrink-0">
-            ${due}
-          </span>
-        </div>
-        <div class="flex items-center gap-2 mt-1 text-[11px] text-[#78766E]">
-          <span>${course}</span>
-          <span>•</span>
-          <span>Student Task</span>
-        </div>
-      </div>
-    `;
-    list.prepend(card);
-  }
-
-  titleInput.value = '';
-  closeAddAssignmentModal();
-  showToast('Assignment added to schedule!', '📝');
-  audio.playClick();
+  const hud = document.getElementById('map-route-hud');
+  if (hud) hud.classList.add('hidden');
 }
 
 // ============================================================================
-// 5. COURSE PROGRESS BAR INCREMENT ENGINE
+// 4. NLP EXPANDING SEARCH & ANIMATED CYCLING PLACEHOLDER
 // ============================================================================
-const courseProgress = {
-  cs301: { pct: 82, completed: 18, total: 22 },
-  cs305: { pct: 68, completed: 15, total: 22 },
-  ux204: { pct: 91, completed: 20, total: 22 },
-  ma202: { pct: 75, completed: 15, total: 20 }
-};
+const SEARCH_SUGGESTIONS = [
+  "Where is Hall 3B in Academic Block?",
+  "Which cafeteria is least crowded right now?",
+  "Is the Robotics Lab open for students?",
+  "Upcoming events this afternoon",
+  "How to report a Wi-Fi issue in Hostel 2?",
+  "Find Dr. Radhakrishnan's office hours"
+];
 
-function incrementCourseModule(courseCode) {
-  const c = courseProgress[courseCode];
-  if (!c) return;
+let searchSuggestionIdx = 0;
+let placeholderInterval = null;
 
-  if (c.completed < c.total) {
-    c.completed += 1;
-    c.pct = Math.min(100, Math.round((c.completed / c.total) * 100));
+function initSearchPlaceholderCycle() {
+  const input = document.getElementById('nlp-search-input');
+  if (!input) return;
 
-    const pctEl = document.getElementById(`course-pct-${courseCode}`);
-    const barEl = document.getElementById(`course-bar-${courseCode}`);
-
-    if (pctEl) pctEl.textContent = `${c.pct}%`;
-    if (barEl) barEl.style.width = `${c.pct}%`;
-
-    audio.playCelebrationChime();
-    showToast(`Progress updated: ${c.completed}/${c.total} modules complete!`, '📈');
-
-    if (c.pct === 100) {
-      triggerConfettiLite();
-      showToast(`🎉 Course 100% Completed! Congratulations!`, '🏆');
+  placeholderInterval = setInterval(() => {
+    if (document.activeElement !== input) {
+      searchSuggestionIdx = (searchSuggestionIdx + 1) % SEARCH_SUGGESTIONS.length;
+      input.placeholder = SEARCH_SUGGESTIONS[searchSuggestionIdx];
     }
-  } else {
-    showToast('All modules for this course already completed!', '✓');
+  }, 3200);
+}
+
+function handleSearchFocus() {
+  sfx.playClick();
+  const dropdown = document.getElementById('search-dropdown-results');
+  const input = document.getElementById('nlp-search-input');
+  if (dropdown && (!input || !input.value)) {
+    handleSearchQuery('');
+    dropdown.classList.remove('hidden');
   }
 }
 
-// ============================================================================
-// 6. DUOLINGO STREAK COUNTER
-// ============================================================================
-let streakDays = 14;
+function handleSearchQuery(q) {
+  const query = (q || '').toLowerCase().trim();
+  const dropdown = document.getElementById('search-dropdown-results');
+  const list = document.getElementById('search-results-list');
+  if (!dropdown || !list) return;
 
-function updateStreakCounter(increment = 0) {
-  streakDays += increment;
-  const navStreak = document.getElementById('nav-streak-counter');
-  if (navStreak) {
-    navStreak.textContent = `${streakDays} Days`;
-  }
-}
+  const results = [
+    { title: "Academic Block 1 • Hall 3B", type: "Lecture Hall", action: "navigateRouteTo('auditorium')" },
+    { title: "Central Library • Reading Hall 2", type: "Study Facility", action: "navigateRouteTo('library')" },
+    { title: "AI & Robotics Lab 3", type: "Research Center", action: "navigateRouteTo('robotics')" },
+    { title: "Central Canteen • Lunch Specials", type: "Dining", action: "navigateRouteTo('canteen')" },
+    { title: "Chanakya AI Symposium 2026", type: "Campus Event", action: "openDigitalPassModal('AI Symposium 2026', 'AUD-101')" }
+  ].filter(r => !query || r.title.toLowerCase().includes(query) || r.type.toLowerCase().includes(query));
 
-function openStreakModal() {
-  audio.playClick();
-  showToast(`🔥 You are on a ${streakDays}-day streak! Keep studying daily to maintain it!`, '🔥');
-}
-
-// ============================================================================
-// 7. SCHEDULE DAY SWITCHER
-// ============================================================================
-const scheduleData = {
-  Mon: [
-    { code: 'CS301', title: 'Advanced Algorithms & Graph Analysis', time: '09:00 AM – 10:30 AM', room: 'Hall 3B', prof: 'Dr. S. Radhakrishnan', inSession: true },
-    { code: 'CS305', title: 'Computer Networks: Protocols & Routing', time: '11:00 AM – 12:30 PM', room: 'Networking Lab 2', prof: 'Prof. Ananya Iyer', inSession: false },
-    { code: 'UX204', title: 'Human-Computer Interaction: Design Systems', time: '02:00 PM – 03:30 PM', room: 'Design Studio 1', prof: 'Prof. Vikram Patil', inSession: false }
-  ],
-  Tue: [
-    { code: 'MA202', title: 'Discrete Mathematics: Graph Theory', time: '09:30 AM – 11:00 AM', room: 'Hall 2A', prof: 'Dr. K. Raman', inSession: false },
-    { code: 'CS301', title: 'Algorithm Lab Session 3', time: '01:30 PM – 03:30 PM', room: 'Computing Lab 4', prof: 'Teaching Assistants', inSession: false }
-  ],
-  Wed: [
-    { code: 'CS305', title: 'Network Security & Packet Firewalls', time: '10:00 AM – 11:30 AM', room: 'Networking Lab 2', prof: 'Prof. Ananya Iyer', inSession: false },
-    { code: 'UX204', title: 'Figma Usability Heuristics Workshop', time: '02:00 PM – 04:00 PM', room: 'Design Studio 1', prof: 'Prof. Vikram Patil', inSession: false }
-  ],
-  Thu: [
-    { code: 'CS301', title: 'Dynamic Programming & NP-Completeness', time: '09:00 AM – 10:30 AM', room: 'Hall 3B', prof: 'Dr. S. Radhakrishnan', inSession: false },
-    { code: 'MA202', title: 'Combinatorics & Recurrence Relations', time: '11:00 AM – 12:30 PM', room: 'Hall 2A', prof: 'Dr. K. Raman', inSession: false }
-  ],
-  Fri: [
-    { code: 'DS201', title: 'Research Colloquium: Generative Systems', time: '10:00 AM – 11:30 AM', room: 'Grand Auditorium', prof: 'Guest Speaker', inSession: false },
-    { code: 'CS305', title: 'Socket Programming Lab Practical', time: '02:00 PM – 04:30 PM', room: 'Networking Lab 2', prof: 'Prof. Ananya Iyer', inSession: false }
-  ]
-};
-
-function switchScheduleDay(day) {
-  audio.playClick();
-  ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].forEach(d => {
-    const btn = document.getElementById(`day-btn-${d}`);
-    if (btn) {
-      if (d === day) {
-        btn.className = "px-2.5 py-1 rounded-lg bg-white text-[#1A1915] shadow-2xs font-bold transition btn-spring";
-      } else {
-        btn.className = "px-2.5 py-1 rounded-lg hover:text-[#1A1915] transition btn-spring";
-      }
-    }
-  });
-
-  const container = document.getElementById('schedule-timeline-container');
-  if (!container || !scheduleData[day]) return;
-
-  container.innerHTML = scheduleData[day].map(item => `
-    <div class="p-4 rounded-xl border ${item.inSession ? 'border-[#C7D2FE] bg-[#EEF2FF]/60' : 'border-[#E5E5E0] bg-white'} transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 edu-card stagger-in">
-      <div class="flex items-start gap-3.5">
-        <div class="w-11 h-11 rounded-xl ${item.inSession ? 'bg-[#4F46E5] text-white' : 'bg-[#F4F4F1] text-[#4A4843] border border-[#E5E5E0]'} flex flex-col items-center justify-center flex-shrink-0 font-bold text-xs">
-          <span>${item.time.split(' ')[0]}</span>
-          <span class="text-[9px] font-normal opacity-80">${item.time.split(' ')[1]}</span>
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${item.inSession ? 'bg-[#4F46E5] text-white' : 'bg-[#F4F4F1] text-[#4A4843] border border-[#E5E5E0]'}">${item.code}</span>
-            ${item.inSession ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#7FB069]/20 text-[#2D5A1E] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#7FB069] animate-pulse"></span> In Progress</span>' : ''}
-          </div>
-          <h4 class="text-sm font-bold text-[#1A1915] mt-1">${item.title}</h4>
-          <p class="text-xs text-[#78766E] mt-0.5">${item.room} • ${item.prof} • ${item.time}</p>
-        </div>
+  list.innerHTML = results.map(r => `
+    <div onclick="${r.action}; closeSearchDropdown();" class="p-2 rounded-lg hover:bg-[#EEF2FF] hover:text-[#4338CA] cursor-pointer flex items-center justify-between text-xs text-[#09090B] font-semibold transition btn-spring">
+      <div class="flex items-center gap-2">
+        <span>📍</span>
+        <span>${r.title}</span>
       </div>
-      <div>
-        <button onclick="openMapModal('${item.room}')" class="px-3 py-1.5 rounded-lg bg-white border border-[#E5E5E0] hover:border-[#4F46E5] text-xs font-semibold text-[#4F46E5] transition btn-spring">
-          Locate ${item.room}
-        </button>
-      </div>
+      <span class="text-[10px] text-[#71717A] bg-[#F4F4F5] px-1.5 py-0.5 rounded">${r.type}</span>
     </div>
   `).join('');
+
+  dropdown.classList.remove('hidden');
 }
 
-// ============================================================================
-// 8. LINEAR-STYLE COMMAND PALETTE (CMD+K)
-// ============================================================================
-function openCommandPalette() {
-  audio.playClick();
-  const modal = document.getElementById('command-palette-modal');
-  if (modal) {
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-    const input = document.getElementById('command-search-input');
-    if (input) input.focus();
-  }
+function closeSearchDropdown() {
+  const dropdown = document.getElementById('search-dropdown-results');
+  if (dropdown) dropdown.classList.add('hidden');
 }
 
-function closeCommandPalette() {
-  const modal = document.getElementById('command-palette-modal');
-  if (modal) {
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-  }
-}
-
-function executeCommand(cmd) {
-  closeCommandPalette();
-  if (cmd === 'map') openMapModal();
-  else if (cmd === 'ai') toggleAIChat();
-  else if (cmd === 'task') openAddAssignmentModal();
-  else if (cmd === 'gpa') openGPASimulatorModal();
-  else if (cmd === 'schedule') {
-    window.scrollTo({ top: 150, behavior: 'smooth' });
-  }
-}
-
-function filterCommandPalette(query) {
-  const q = query.toLowerCase().trim();
-  const items = document.querySelectorAll('#command-results-list > div');
-  items.forEach(item => {
-    const text = item.textContent.toLowerCase();
-    item.style.display = text.includes(q) ? 'flex' : 'none';
-  });
-}
-
-// Keyboard shortcuts (Cmd+K / Ctrl+K & Escape)
-window.addEventListener('keydown', (e) => {
-  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-    e.preventDefault();
-    const modal = document.getElementById('command-palette-modal');
-    if (modal && !modal.classList.contains('hidden')) {
-      closeCommandPalette();
-    } else {
-      openCommandPalette();
-    }
-  } else if (e.key === 'Escape') {
-    closeCommandPalette();
-    closeAddAssignmentModal();
-    closeGPASimulatorModal();
-    closeMapModal();
+// Global click outside to close search dropdown
+document.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('search-dropdown-results');
+  const input = document.getElementById('nlp-search-input');
+  if (dropdown && !dropdown.contains(e.target) && e.target !== input) {
+    closeSearchDropdown();
   }
 });
 
 // ============================================================================
-// 9. GPA SIMULATOR
+// 5. NOTIFICATIONS (SLIDE-IN BOUNCE & BADGE PULSE)
 // ============================================================================
-function openGPASimulatorModal() {
-  audio.playClick();
-  const modal = document.getElementById('gpa-modal');
+let notificationCount = 3;
+
+function pushNotification(title, body, category = 'Alert') {
+  notificationCount++;
+  const badge = document.getElementById('notif-badge-count');
+  if (badge) {
+    badge.textContent = notificationCount;
+    badge.classList.remove('badge-pulse');
+    void badge.offsetWidth; // trigger reflow
+    badge.classList.add('badge-pulse');
+  }
+
+  const stream = document.getElementById('notifications-stream');
+  if (stream) {
+    const card = document.createElement('div');
+    card.className = 'p-3 rounded-xl bg-[#FAFAFA] border border-[#E4E4E7] space-y-1 hover:border-[#D4D4D8] transition notif-slide-in';
+    card.innerHTML = `
+      <div class="flex items-center justify-between">
+        <span class="px-2 py-0.5 rounded text-[9px] font-bold bg-[#FF6B6B]/15 text-[#E11D48]">${category}</span>
+        <span class="text-[10px] text-[#A1A1AA]">Just now</span>
+      </div>
+      <h4 class="text-xs font-bold text-[#09090B]">${title}</h4>
+      <p class="text-[11px] text-[#71717A]">${body}</p>
+    `;
+    stream.prepend(card);
+  }
+
+  sfx.playSuccess();
+  showToast(`New notification: ${title}`, '🔔');
+}
+
+function simulateBroadcastAlert() {
+  sfx.playClick();
+  pushNotification(
+    "Campus Wi-Fi Maintenance Completed",
+    "High-speed fiber connectivity restored in Central Library & Study Pods.",
+    "Campus Operations"
+  );
+}
+
+// ============================================================================
+// 6. ISSUE REPORTING WITH ANIMATED STEPPER
+// ============================================================================
+let currentStepperStage = 2; // 1: Reported, 2: Assigned, 3: Resolved
+
+function advanceIssueStepper() {
+  sfx.playClick();
+  currentStepperStage = (currentStepperStage % 3) + 1;
+  const fill = document.getElementById('issue-stepper-fill');
+  const node1 = document.getElementById('step-node-1');
+  const node2 = document.getElementById('step-node-2');
+  const node3 = document.getElementById('step-node-3');
+
+  if (currentStepperStage === 1) {
+    if (fill) fill.style.width = '0%';
+    if (node1) node1.className = "w-6 h-6 rounded-full bg-[#4338CA] text-white flex items-center justify-center text-[10px] font-bold animate-pulse";
+    if (node2) node2.className = "w-6 h-6 rounded-full bg-white border-2 border-[#E4E4E7] text-[#71717A] flex items-center justify-center text-[10px] font-bold";
+    if (node3) node3.className = "w-6 h-6 rounded-full bg-white border-2 border-[#E4E4E7] text-[#71717A] flex items-center justify-center text-[10px] font-bold";
+    showToast("Status: Issue #1042 marked as Reported.", "🛡️");
+  } else if (currentStepperStage === 2) {
+    if (fill) fill.style.width = '50%';
+    if (node1) node1.className = "w-6 h-6 rounded-full bg-[#4338CA] text-white flex items-center justify-center text-[10px] font-bold";
+    if (node2) node2.className = "w-6 h-6 rounded-full bg-[#4338CA] text-white flex items-center justify-center text-[10px] font-bold animate-pulse";
+    if (node3) node3.className = "w-6 h-6 rounded-full bg-white border-2 border-[#E4E4E7] text-[#71717A] flex items-center justify-center text-[10px] font-bold";
+    showToast("Status: Issue #1042 Assigned to Engineering Team.", "🛠️");
+  } else if (currentStepperStage === 3) {
+    if (fill) fill.style.width = '100%';
+    if (node1) node1.className = "w-6 h-6 rounded-full bg-[#14B8A6] text-white flex items-center justify-center text-[10px] font-bold";
+    if (node2) node2.className = "w-6 h-6 rounded-full bg-[#14B8A6] text-white flex items-center justify-center text-[10px] font-bold";
+    if (node3) node3.className = "w-6 h-6 rounded-full bg-[#14B8A6] text-white flex items-center justify-center text-[10px] font-bold";
+    sfx.playSuccess();
+    showToast("Status: Issue #1042 Resolved & Verified! 🎉", "✓");
+  }
+}
+
+function openReportIssueModal() {
+  sfx.playClick();
+  const modal = document.getElementById('report-issue-modal');
   if (modal) {
     modal.classList.remove('hidden');
     modal.classList.add('flex');
   }
 }
 
-function closeGPASimulatorModal() {
-  const modal = document.getElementById('gpa-modal');
+function closeReportIssueModal() {
+  const modal = document.getElementById('report-issue-modal');
   if (modal) {
     modal.classList.add('hidden');
     modal.classList.remove('flex');
   }
 }
 
-function updateGPASimulation(val) {
-  const display = document.getElementById('target-gpa-display');
-  const projected = document.getElementById('projected-cumulative');
-  const target = parseFloat(val);
-  if (display) display.textContent = target.toFixed(2);
-  
-  // Existing 84 credits at 3.88 + 16 new credits at target
-  const newCumulative = ((84 * 3.88) + (16 * target)) / 100;
-  if (projected) projected.textContent = newCumulative.toFixed(2);
+function submitNewIssue() {
+  const cat = document.getElementById('issue-category-select').value;
+  const loc = document.getElementById('issue-location-input').value || 'Main Campus';
+  const desc = document.getElementById('issue-desc-input').value || 'Maintenance request';
+
+  closeReportIssueModal();
+  sfx.playSuccess();
+  showToast(`Issue filed for ${loc}: ${cat}`, '🛡️');
+
+  // Push notification for visibility
+  pushNotification(
+    `New Issue Logged: ${cat}`,
+    `Reported at ${loc}. Assigned to Campus Dispatch.`,
+    "Operations"
+  );
 }
 
 // ============================================================================
-// 10. CAMPUS MAP MODAL (LEAFLET EMBEDDED)
+// 7. AI CAMPUS ASSISTANT (INLINE & DRAWER)
 // ============================================================================
-let campusMapInstance = null;
-
-function openMapModal(destination) {
-  audio.playClick();
-  const modal = document.getElementById('map-modal');
-  if (!modal) return;
-  modal.classList.remove('hidden');
-  modal.classList.add('flex');
-
-  setTimeout(() => {
-    if (!campusMapInstance) {
-      // Chanakya University Coordinates
-      const center = [13.222871, 77.755633];
-      campusMapInstance = L.map('campus-modal-map', {
-        center: center,
-        zoom: 17,
-        zoomControl: true
-      });
-
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap contributors'
-      }).addTo(campusMapInstance);
-
-      // Key Landmarks
-      const landmarks = [
-        { name: "Academic Block & Hall 3B", coords: [13.222871, 77.755633], desc: "CS301 Lecture Hall" },
-        { name: "Networking Lab 2", coords: [13.223400, 77.755900], desc: "CS305 Lab Center" },
-        { name: "Design Studio 1", coords: [13.222300, 77.755300], desc: "UX204 Interaction Studio" },
-        { name: "Central Library & Study Pods", coords: [13.223800, 77.755100], desc: "Quiet Study Hub" }
-      ];
-
-      landmarks.forEach(l => {
-        L.marker(l.coords).addTo(campusMapInstance)
-          .bindPopup(`<b>${l.name}</b><br><span style="font-size:11px;color:#666;">${l.desc}</span>`);
-      });
-    } else {
-      campusMapInstance.invalidateSize();
-    }
-
-    if (destination) {
-      showToast(`Routing to ${destination} on map...`, '📍');
-    }
-  }, 200);
-}
-
-function closeMapModal() {
-  const modal = document.getElementById('map-modal');
-  if (modal) {
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-  }
-}
-
-// ============================================================================
-// 11. AI STUDY GUIDE CHAT (NOTION AI STYLE)
-// ============================================================================
-function toggleAIChat() {
-  audio.playClick();
-  const win = document.getElementById('ai-chat-window');
-  if (!win) return;
-  if (win.classList.contains('hidden')) {
-    win.classList.remove('hidden');
-    const input = document.getElementById('ai-chat-input');
+function toggleAIAssistant() {
+  sfx.playClick();
+  const el = document.getElementById('bento-ai');
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth' });
+    const input = document.getElementById('ai-inline-input');
     if (input) input.focus();
-  } else {
-    win.classList.add('hidden');
   }
 }
 
-function openAIChatWithPrompt(promptText) {
-  toggleAIChat();
-  const input = document.getElementById('ai-chat-input');
+function sendAIPrompt(promptText) {
+  const input = document.getElementById('ai-inline-input');
   if (input) {
     input.value = promptText;
     const form = input.closest('form');
@@ -547,83 +441,144 @@ function openAIChatWithPrompt(promptText) {
   }
 }
 
-function handleAIChatSubmit(e) {
+function handleInlineAISubmit(e) {
   e.preventDefault();
-  const input = document.getElementById('ai-chat-input');
-  const messages = document.getElementById('ai-chat-messages');
+  const input = document.getElementById('ai-inline-input');
+  const messages = document.getElementById('ai-inline-messages');
+  const typing = document.getElementById('ai-typing-indicator');
   if (!input || !messages || !input.value.trim()) return;
 
-  const userText = input.value.trim();
+  const query = input.value.trim();
   input.value = '';
 
   // Append user bubble
-  const userMsg = document.createElement('div');
-  userMsg.className = 'p-3 rounded-xl bg-[#EEF2FF] text-[#1A1915] text-right font-medium';
-  userMsg.textContent = userText;
-  messages.appendChild(userMsg);
+  const userEl = document.createElement('div');
+  userEl.className = 'p-2 rounded-lg bg-[#EEF2FF] text-[#4338CA] text-right font-medium text-xs';
+  userEl.textContent = query;
+  messages.appendChild(userEl);
   messages.scrollTop = messages.scrollHeight;
 
-  // Simulate or query backend AI service
+  // Show typing dots
+  if (typing) typing.classList.remove('hidden');
+
   setTimeout(() => {
     fetch('/api/ai/query', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: userText })
+      body: JSON.stringify({ query })
     })
     .then(res => res.json())
     .then(data => {
-      const aiMsg = document.createElement('div');
-      aiMsg.className = 'p-3 rounded-xl bg-[#FAFAF8] border border-[#E5E5E0] text-[#4A4843]';
-      aiMsg.innerHTML = data.reply || "I've logged your query and checked your course syllabus!";
-      messages.appendChild(aiMsg);
+      if (typing) typing.classList.add('hidden');
+      const aiEl = document.createElement('div');
+      aiEl.className = 'p-2.5 rounded-lg bg-white border border-[#E4E4E7] text-[#3F3F46] text-xs leading-relaxed';
+      aiEl.innerHTML = data.reply || "I've checked the campus knowledge base. Hall 3B is located on Floor 2 of Academic Block 1!";
+      messages.appendChild(aiEl);
       messages.scrollTop = messages.scrollHeight;
-      audio.playCelebrationChime();
+      sfx.playSuccess();
     })
     .catch(() => {
-      const aiMsg = document.createElement('div');
-      aiMsg.className = 'p-3 rounded-xl bg-[#FAFAF8] border border-[#E5E5E0] text-[#4A4843]';
-      aiMsg.textContent = "For CS301, remember Dijkstra's algorithm runs in O((V + E) log V) with a binary min-heap! Your next assignment is due tonight at 11:59 PM.";
-      messages.appendChild(aiMsg);
+      if (typing) typing.classList.add('hidden');
+      const aiEl = document.createElement('div');
+      aiEl.className = 'p-2.5 rounded-lg bg-white border border-[#E4E4E7] text-[#3F3F46] text-xs leading-relaxed';
+      aiEl.textContent = "For Hall 3B, take the south-west walkway from the Academic Circle Quad. It is right inside Academic Block 1 portico.";
+      messages.appendChild(aiEl);
       messages.scrollTop = messages.scrollHeight;
     });
-  }, 400);
+  }, 450);
 }
 
 // ============================================================================
-// 12. POMODORO FOCUS TIMER
+// 8. DIGITAL EVENT QR PASS MODAL
 // ============================================================================
-let timerInterval = null;
-let timerSeconds = 25 * 60;
+function openDigitalPassModal(eventName, passId) {
+  sfx.playClick();
+  const modal = document.getElementById('qr-pass-modal');
+  const evTitle = document.getElementById('modal-pass-event');
+  const passCode = document.getElementById('modal-pass-code');
+  if (evTitle) evTitle.textContent = eventName;
+  if (passCode) passCode.textContent = `PASS-${passId}-${Math.floor(Math.random()*900 + 100)}`;
 
-function triggerPomodoroTimer() {
-  audio.playClick();
-  const btnText = document.getElementById('timer-btn-text');
-  if (!timerInterval) {
-    showToast('Focus session started: 25 minutes! Stay focused! ⏱️', '🎯');
-    timerInterval = setInterval(() => {
-      timerSeconds--;
-      const m = Math.floor(timerSeconds / 60);
-      const s = timerSeconds % 60;
-      if (btnText) btnText.textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
-      if (timerSeconds <= 0) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-        triggerConfettiLite();
-        showToast('Pomodoro session completed! Take a 5-min break! ☕', '🎉');
-        if (btnText) btnText.textContent = 'Start Focus Timer';
-        timerSeconds = 25 * 60;
-      }
-    }, 1000);
-  } else {
-    clearInterval(timerInterval);
-    timerInterval = null;
-    if (btnText) btnText.textContent = 'Start Focus Timer';
-    timerSeconds = 25 * 60;
-    showToast('Timer reset.', '⏸️');
+  if (modal) {
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
   }
 }
 
-// Initialization on DOM Ready
+function closeDigitalPassModal() {
+  const modal = document.getElementById('qr-pass-modal');
+  if (modal) {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+}
+
+// ============================================================================
+// 9. FACILITIES & LAB BOOKING
+// ============================================================================
+function bookFacilitySlot(facilityName) {
+  sfx.playSuccess();
+  showToast(`${facilityName} reserved for 1 hour!`, '🏛️');
+}
+
+// ============================================================================
+// 10. ROLE SWITCHER & SCROLL HELPER
+// ============================================================================
+function switchPlatformRole(role) {
+  sfx.playClick();
+  showToast(`Platform view switched to: ${role.toUpperCase()}`, '👤');
+}
+
+function scrollToCard(cardId) {
+  sfx.playClick();
+  const el = document.getElementById(cardId);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+// ============================================================================
+// 11. WEBSOCKET REAL-TIME STREAM
+// ============================================================================
+function initSocketStream() {
+  try {
+    const socket = io();
+    socket.on('connect', () => {
+      console.log('[Socket.io] Connected to Campus Connect stream');
+    });
+
+    socket.on('telemetry_pulse', (data) => {
+      const popEl = document.getElementById('live-population-count');
+      const pill = document.getElementById('live-crowd-pill');
+      if (popEl && data.activePopulation) {
+        popEl.textContent = data.activePopulation.toLocaleString();
+      }
+      if (pill) {
+        pill.classList.remove('badge-pulse');
+        void pill.offsetWidth;
+        pill.classList.add('badge-pulse');
+      }
+    });
+
+    socket.on('notification_broadcast', (notif) => {
+      pushNotification(notif.title || 'Broadcast Alert', notif.body || notif.message, notif.category || 'Broadcast');
+    });
+
+    socket.on('issue_updated', (issue) => {
+      showToast(`Issue status updated: ${issue.title || 'Task'}`, '🛡️');
+      advanceIssueStepper();
+    });
+  } catch (err) {
+    console.warn('Socket unavailable, running in local fallback mode:', err);
+  }
+}
+
+// ============================================================================
+// INITIALIZATION
+// ============================================================================
 document.addEventListener('DOMContentLoaded', () => {
-  console.log("🎓 Chanakya Academic Hub - Notion + Duolingo + Linear UI Initialized");
+  initCampusMap();
+  initSearchPlaceholderCycle();
+  initSocketStream();
+  console.log("⚡ Campus Connect Linear+Notion+Arc Multi-Service Platform Ready");
 });

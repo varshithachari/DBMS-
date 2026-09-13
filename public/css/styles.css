@@ -1,45 +1,42 @@
 /* ==========================================================================
-   CHANAKYA ACADEMIC HUB - NOTION + DUOLINGO + LINEAR DESIGN SYSTEM
-   Palette: Warm Off-White (#FAFAF8), Deep Indigo (#4F46E5), Soft Coral (#FF6B6B), Muted Sage (#7FB069)
-   Spring-based tactile motion, clean card-based grid, generous whitespace
+   CAMPUS CONNECT - LINEAR + NOTION + ARC BROWSER DESIGN SYSTEM
+   Palette: Off-White (#FAFAFA), Deep Indigo (#4338CA), Teal (#14B8A6), Coral (#FF6B6B)
+   Asymmetric Bento-Grid Layout, Spring-based tactile motion, 1px borders
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 
 :root {
-  --bg-page: #FAFAF8;
+  --bg-page: #FAFAFA;
   --bg-card: #FFFFFF;
-  --border-card: #E5E5E0;
-  --border-hover: #D6D6CF;
+  --border-subtle: #E4E4E7;
+  --border-hover: #D4D4D8;
   
-  --primary-indigo: #4F46E5;
-  --primary-indigo-hover: #4338CA;
+  --primary-indigo: #4338CA;
+  --primary-indigo-hover: #3730A3;
   --primary-indigo-light: #EEF2FF;
   
+  --accent-teal: #14B8A6;
+  --accent-teal-light: #F0FDFA;
+  
   --accent-coral: #FF6B6B;
-  --accent-coral-light: #FFF0F0;
+  --accent-coral-light: #FFF1F2;
   
-  --success-sage: #7FB069;
-  --success-sage-light: #F1F8ED;
-  
-  --warm-amber: #F59E0B;
-  --warm-amber-light: #FEF3C7;
-  
-  --text-main: #1A1915;
-  --text-body: #4A4843;
-  --text-muted: #78766E;
-  --text-subtle: #A3A199;
+  --text-title: #09090B;
+  --text-body: #3F3F46;
+  --text-muted: #71717A;
+  --text-subtle: #A1A1AA;
   
   --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
   --spring-smooth: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Page Level Resets */
+/* Base resets */
 html {
-  scroll-behavior: smooth;
   background-color: var(--bg-page);
-  color: var(--text-main);
-  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--text-title);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -51,50 +48,48 @@ body {
   overflow-x: hidden;
 }
 
-/* Custom Notion-style Scrollbars */
+/* Arc/Linear Style Scrollbars */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #FAFAF8;
+  background: #FAFAFA;
 }
 ::-webkit-scrollbar-thumb {
-  background: #DEDDD7;
+  background: #D4D4D8;
   border-radius: 9999px;
-  border: 2px solid #FAFAF8;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #BDBBB4;
+  background: #A1A1AA;
 }
 
 /* ==========================================================================
-   CARDS & CONTAINERS (NOTION STYLE 16px ROUNDED, 1px SOFT BORDER)
+   BENTO CARDS (18-20px CORNERS, 1px BORDER, TACTILE MOTION)
    ========================================================================== */
-.edu-card {
+.bento-card {
   background-color: var(--bg-card);
-  border: 1px solid var(--border-card);
-  border-radius: 16px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
   transition: transform 180ms var(--spring-smooth), 
               box-shadow 180ms var(--spring-smooth), 
               border-color 180ms ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.edu-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px -6px rgba(0, 0, 0, 0.04), 0 4px 8px -4px rgba(0, 0, 0, 0.02);
+.bento-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.05), 0 4px 10px -2px rgba(0, 0, 0, 0.02);
   border-color: var(--border-hover);
 }
 
-.edu-card-flat {
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-card);
-  border-radius: 16px;
+.bento-card:active {
+  transform: scale(0.985);
+  transition: transform 90ms var(--spring-bounce);
 }
 
-/* ==========================================================================
-   BUTTONS (LINEAR-STYLE SPRING MICRO-INTERACTIONS)
-   ========================================================================== */
+/* Clickable button/tile scale-down (0.97) */
 .btn-spring {
   transition: transform 140ms var(--spring-bounce), 
               background-color 140ms ease, 
@@ -111,149 +106,165 @@ body {
   transform: scale(0.97) translateY(0);
 }
 
-/* Primary Indigo Button */
-.btn-primary {
-  background-color: var(--primary-indigo);
-  color: #FFFFFF;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2);
-}
-.btn-primary:hover {
-  background-color: var(--primary-indigo-hover);
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
-}
-
-/* Secondary Button */
-.btn-secondary {
-  background-color: #FFFFFF;
-  color: var(--text-main);
-  border: 1px solid var(--border-card);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
-}
-.btn-secondary:hover {
-  background-color: #F7F7F4;
-  border-color: var(--border-hover);
-}
-
 /* ==========================================================================
-   PROGRESS BARS (SMOOTH SPRING ANIMATION)
+   MAP MODULE: PIN-DROP & SELF-DRAWING ROUTE LINE
    ========================================================================== */
-.progress-track {
-  background-color: #EFEFEA;
-  border-radius: 9999px;
-  overflow: hidden;
-  position: relative;
-}
-
-.progress-fill-spring {
-  transition: width 650ms var(--spring-bounce);
-  border-radius: 9999px;
-}
-
-/* ==========================================================================
-   DUOLINGO STREAK & ACHIEVEMENTS (TACTILE PULSE & CELEBRATION)
-   ========================================================================== */
-@keyframes flameBreathe {
-  0%, 100% {
-    transform: scale(1);
+@keyframes pinDrop {
+  0% {
+    opacity: 0;
+    transform: translateY(-28px) scale(0.6);
   }
-  50% {
-    transform: scale(1.15) rotate(2deg);
+  65% {
+    opacity: 1;
+    transform: translateY(3px) scale(1.06);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
-.streak-flame {
-  animation: flameBreathe 2.4s ease-in-out infinite;
+.pin-drop {
+  animation: pinDrop 380ms var(--spring-bounce) both;
+}
+
+/* SVG Self-Drawing Route Polyline */
+@keyframes drawRouteLine {
+  from {
+    stroke-dashoffset: 1200;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.route-draw-animated {
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+  animation: drawRouteLine 1.3s var(--spring-smooth) forwards;
+}
+
+/* ==========================================================================
+   SEARCH BAR: EXPANDING & ANIMATED CYCLING PLACEHOLDER
+   ========================================================================== */
+.search-expand {
+  transition: width 240ms var(--spring-smooth), 
+              border-color 180ms ease, 
+              box-shadow 180ms ease;
+}
+
+@keyframes placeholderFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  85% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+.placeholder-cycle {
+  animation: placeholderFadeUp 3.2s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   NOTIFICATIONS: SLIDE-IN FROM TOP WITH SOFT BOUNCE
+   ========================================================================== */
+@keyframes slideInBounce {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.97);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(2px) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.notif-slide-in {
+  animation: slideInBounce 320ms var(--spring-bounce) forwards;
+}
+
+@keyframes badgePulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+.badge-pulse {
+  animation: badgePulse 400ms var(--spring-bounce);
+}
+
+/* ==========================================================================
+   ISSUE REPORTING: ANIMATED PROGRESS STEPPER
+   ========================================================================== */
+.stepper-bar-fill {
+  transition: width 500ms var(--spring-bounce);
+}
+
+.stepper-node {
+  transition: all 250ms var(--spring-bounce);
+}
+
+/* ==========================================================================
+   AI ASSISTANT: SPRING-SCALE MODAL & 3-DOT TYPING INDICATOR
+   ========================================================================== */
+@keyframes modalSpringScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-spring {
+  animation: modalSpringScale 250ms var(--spring-bounce) forwards;
+}
+
+@keyframes dotBounce {
+  0%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-5px);
+  }
+}
+
+.typing-dot {
   display: inline-block;
-  transform-origin: center bottom;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--primary-indigo);
+  animation: dotBounce 1.2s infinite ease-in-out both;
 }
-
-@keyframes subtleGlow {
-  0%, 100% {
-    box-shadow: 0 0 0 rgba(245, 158, 11, 0);
-  }
-  50% {
-    box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
-  }
-}
-
-.streak-badge {
-  animation: subtleGlow 3s ease-in-out infinite;
-}
-
-/* 7-Day Tracker Circles */
-.streak-day-circle {
-  transition: all 200ms var(--spring-bounce);
-}
-.streak-day-circle:hover {
-  transform: scale(1.1);
-}
+.typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.typing-dot:nth-child(2) { animation-delay: -0.16s; }
+.typing-dot:nth-child(3) { animation-delay: 0s; }
 
 /* ==========================================================================
-   INTERACTIVE CHECKBOX (MORPH & SCALE)
+   STAGGERED ENTRANCE TRANSITIONS (40ms PER CARD)
    ========================================================================== */
-.task-checkbox {
-  width: 20px;
-  height: 20px;
-  border: 1.5px solid #C7C6BF;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  background-color: #FFFFFF;
-  transition: all 180ms var(--spring-bounce);
-}
-
-.task-checkbox:hover {
-  border-color: var(--primary-indigo);
-  background-color: var(--primary-indigo-light);
-  transform: scale(1.05);
-}
-
-.task-checkbox.checked {
-  background-color: var(--success-sage);
-  border-color: var(--success-sage);
-  transform: scale(1);
-}
-
-.task-checkbox.checked svg {
-  stroke-dashoffset: 0;
-  opacity: 1;
-}
-
-.task-checkbox svg {
-  width: 12px;
-  height: 12px;
-  stroke: white;
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  fill: none;
-  stroke-dasharray: 16;
-  stroke-dashoffset: 16;
-  transition: stroke-dashoffset 220ms var(--spring-smooth), opacity 150ms ease;
-  opacity: 0;
-}
-
-/* Completed task text strike */
-.task-title {
-  transition: color 200ms ease, text-decoration 200ms ease, opacity 200ms ease;
-}
-
-.task-completed .task-title {
-  text-decoration: line-through;
-  color: var(--text-muted);
-  opacity: 0.7;
-}
-
-/* ==========================================================================
-   STAGGERED ENTRANCE ANIMATIONS
-   ========================================================================== */
-@keyframes staggerFadeUp {
+@keyframes cardFadeSlide {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
@@ -262,20 +273,35 @@ body {
 }
 
 .stagger-in {
-  animation: staggerFadeUp 300ms var(--spring-smooth) both;
+  animation: cardFadeSlide 320ms var(--spring-smooth) both;
 }
 
-.stagger-1 { animation-delay: 30ms; }
-.stagger-2 { animation-delay: 60ms; }
-.stagger-3 { animation-delay: 90ms; }
-.stagger-4 { animation-delay: 120ms; }
-.stagger-5 { animation-delay: 150ms; }
-.stagger-6 { animation-delay: 180ms; }
-.stagger-7 { animation-delay: 210ms; }
+.stagger-1 { animation-delay: 40ms; }
+.stagger-2 { animation-delay: 80ms; }
+.stagger-3 { animation-delay: 120ms; }
+.stagger-4 { animation-delay: 160ms; }
+.stagger-5 { animation-delay: 200ms; }
+.stagger-6 { animation-delay: 240ms; }
+.stagger-7 { animation-delay: 280ms; }
+.stagger-8 { animation-delay: 320ms; }
 
-/* ==========================================================================
-   TOAST NOTIFICATIONS (CLEAN LINEAR STYLE)
-   ========================================================================== */
+/* Real-time telemetry pulse effect */
+@keyframes liveDotPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 0.7;
+  }
+}
+
+.live-dot-pulse {
+  animation: liveDotPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Toast Container */
 #toast-container {
   position: fixed;
   bottom: 24px;
@@ -290,26 +316,15 @@ body {
 .toast-item {
   pointer-events: auto;
   background: #FFFFFF;
-  border: 1px solid var(--border-card);
+  border: 1px solid var(--border-subtle);
   border-radius: 12px;
   padding: 10px 16px;
   font-size: 13px;
   font-weight: 600;
-  color: var(--text-main);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.06), 0 4px 10px -3px rgba(0, 0, 0, 0.03);
-  animation: toastPop 220ms var(--spring-bounce) forwards;
+  color: var(--text-title);
+  box-shadow: 0 10px 24px -5px rgba(0, 0, 0, 0.08), 0 4px 8px -2px rgba(0, 0, 0, 0.03);
+  animation: slideInBounce 220ms var(--spring-bounce) forwards;
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-@keyframes toastPop {
-  from {
-    opacity: 0;
-    transform: translateY(12px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
 }
