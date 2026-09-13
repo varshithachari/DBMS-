@@ -1,404 +1,715 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Academic Portal - Chanakya University</title>
+  <title>Chanakya Academic Hub - Next-Gen Student & Course Dashboard</title>
+  
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Inter & Outfit -->
+  
+  <!-- Canvas Confetti CDN (Lightweight Celebration Burst) -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <!-- Leaflet CSS & JS for Campus Map Modal -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <!-- Lucide Icons CDN -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Leaflet Map CSS & JS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- Socket.io -->
-  <script src="/socket.io/socket.io.js"></script>
-  <!-- Custom CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Custom Styles -->
   <link rel="stylesheet" href="/css/styles.css">
+
   <script>
     tailwind.config = {
-      darkMode: 'class',
       theme: {
         extend: {
           colors: {
-            chanakya: {
-              gold: '#F59E0B',
-              goldLight: '#FBBF24',
-              navy: '#0B1320',
-              card: '#131F33',
-              border: '#1E293B',
-              accent: '#3B82F6'
+            brand: {
+              bg: '#FAFAF8',
+              card: '#FFFFFF',
+              border: '#E5E5E0',
+              indigo: '#4F46E5',
+              'indigo-hover': '#4338CA',
+              'indigo-light': '#EEF2FF',
+              coral: '#FF6B6B',
+              'coral-light': '#FFF0F0',
+              sage: '#7FB069',
+              'sage-light': '#F1F8ED',
+              amber: '#F59E0B',
+              'amber-light': '#FEF3C7',
+              text: '#1A1915',
+              muted: '#78766E',
+              subtle: '#A3A199'
             }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+            mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace']
           }
         }
       }
     }
   </script>
 </head>
-<body class="bg-[#0B1320] text-slate-100 min-h-screen flex flex-col font-['Inter'] antialiased selection:bg-amber-500 selection:text-black">
+<body class="bg-[#FAFAF8] text-[#1A1915] font-sans antialiased min-h-screen flex flex-col selection:bg-[#4F46E5]/15 selection:text-[#4F46E5]">
 
-  <!-- Top Universal Navigation Bar -->
-  <header class="sticky top-0 z-50 bg-[#0B1320]/90 backdrop-blur-md border-b border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <!-- Brand Logo -->
-      <a href="/" class="flex items-center gap-3 group">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-amber-500/20 group-hover:scale-105 transition">
-          🎓
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            
-            <span class="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded font-mono border border-amber-500/30">STUDENT PORTAL</span>
-          </div>
-          <h1 class="text-base font-extrabold text-white tracking-wide font-['Outfit'] leading-none">
-            CHANAKYA UNIVERSITY
-          </h1>
-        </div>
-      </a>
-
-      <!-- 3 Dashboard Fast Navigation Tabs -->
-      <nav class="hidden md:flex items-center gap-1.5 bg-slate-900/80 p-1 rounded-xl border border-slate-800">
-        <a href="/" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition">
-          🏛️ Master Hub
-        </a>
-        <a href="/student" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 shadow-sm transition flex items-center gap-1.5">
-          <span>🎓</span> 1. Student Portal
-        </a>
-        <a href="/faculty" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5">
-          <span>👨‍🏫</span> 2. Faculty Portal
-        </a>
-        <a href="/admin" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5">
-          <span>⚙️</span> 3. Operations & Admin
-        </a>
-      </nav>
-
-      <!-- Student Profile Quick Info -->
+  <!-- ======================================================================== -->
+  <!-- 1. NOTION-STYLE CLEAN TOP NAVIGATION BAR -->
+  <!-- ======================================================================== -->
+  <header class="sticky top-0 z-40 bg-[#FAFAF8]/95 backdrop-blur-md border-b border-[#E5E5E0]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      
+      <!-- Brand & Workspace Breadcrumb -->
       <div class="flex items-center gap-3">
-        <div class="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800">
-          <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold text-sm">
-            AV
+        <a href="/" class="flex items-center gap-2.5 group cursor-pointer">
+          <div class="w-9 h-9 rounded-xl bg-[#4F46E5] text-white flex items-center justify-center font-black text-base shadow-sm group-hover:scale-105 transition-transform">
+            🎓
           </div>
-          <div class="hidden sm:block text-left">
-            <div class="text-xs font-bold text-white leading-tight">Aryan Verma</div>
-            <div class="text-[10px] text-amber-400 font-mono">B.Tech AI • CU-2023-CS042</div>
+          <div>
+            <div class="flex items-center gap-1.5 text-xs text-[#78766E]">
+              <span class="font-medium text-[#1A1915]">Chanakya University</span>
+              <span>/</span>
+              <span>Academic Hub</span>
+            </div>
+            <h1 class="text-sm font-bold text-[#1A1915] leading-none tracking-tight">
+              Student Workspace
+            </h1>
           </div>
-        </div>
+        </a>
       </div>
+
+      <!-- Linear-Style Command Search Bar (Cmd+K) -->
+      <div class="hidden md:flex flex-1 max-w-md mx-4">
+        <button onclick="openCommandPalette()" class="w-full flex items-center justify-between px-3.5 py-2 rounded-xl bg-white border border-[#E5E5E0] hover:border-[#D6D6CF] text-xs text-[#78766E] shadow-sm transition group btn-spring">
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-[#A3A199] group-hover:text-[#4F46E5] transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <span>Search courses, assignments, lecture halls...</span>
+          </div>
+          <kbd class="px-2 py-0.5 rounded-md bg-[#F4F4F1] border border-[#E5E5E0] text-[10px] font-mono text-[#78766E] shadow-2xs">⌘K</kbd>
+        </button>
+      </div>
+
+      <!-- Right Action Widgets & User Profile -->
+      <div class="flex items-center gap-2.5">
+        
+        <!-- Duolingo Streak Pill -->
+        <button onclick="openStreakModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FFFBEB] border border-[#FDE68A] hover:bg-[#FEF3C7] text-xs font-bold text-[#92400E] shadow-2xs transition btn-spring streak-badge" title="View 14-Day Study Streak">
+          <span class="streak-flame text-sm">🔥</span>
+          <span id="nav-streak-counter">14 Days</span>
+        </button>
+
+        <!-- AI Study Assistant Toggle -->
+        <button onclick="toggleAIChat()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#EEF2FF] border border-[#C7D2FE] hover:bg-[#E0E7FF] text-xs font-bold text-[#4338CA] transition btn-spring" title="Ask AI Study Assistant">
+          <span>✨</span>
+          <span class="hidden sm:inline">AI Study Guide</span>
+        </button>
+
+        <!-- Campus Map Modal Toggle -->
+        <button onclick="openMapModal()" class="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#E5E5E0] hover:bg-[#F7F7F4] text-xs font-semibold text-[#4A4843] transition btn-spring" title="Campus Navigation Map">
+          <span>🗺️</span>
+          <span>Campus Map</span>
+        </button>
+
+        <!-- User Profile Dropdown Pill -->
+        <div class="flex items-center gap-2 pl-2 border-l border-[#E5E5E0]">
+          <div class="w-8 h-8 rounded-full bg-[#4F46E5]/10 border border-[#4F46E5]/20 text-[#4F46E5] font-bold text-xs flex items-center justify-center">
+            RS
+          </div>
+          <div class="hidden xl:block text-left">
+            <div class="text-xs font-bold text-[#1A1915] leading-tight">Rahul Sharma</div>
+            <div class="text-[10px] text-[#78766E]">B.Tech CS '26</div>
+          </div>
+          <a href="/logout" class="p-1.5 text-[#78766E] hover:text-[#FF6B6B] transition rounded-lg hover:bg-[#FFF0F0] btn-spring" title="Log Out">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+          </a>
+        </div>
+
+      </div>
+
     </div>
   </header>
 
-  <!-- Main Container -->
-  <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+  <!-- ======================================================================== -->
+  <!-- 2. MAIN DASHBOARD CONTENT -->
+  <!-- ======================================================================== -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
 
-    <!-- Hero Campus Banner with Profile Welcome -->
-    <div class="relative rounded-3xl overflow-hidden border border-slate-700 shadow-2xl bg-slate-900 group">
-      <div class="w-full h-48 sm:h-56 relative overflow-hidden bg-slate-950">
-        <img 
-          src="/assets/images/chanakya_campus.png" 
-          alt="Chanakya University Campus" 
-          class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
-        >
-        <div class="absolute inset-0 bg-gradient-to-t from-[#0B1320] via-[#0B1320]/70 to-transparent"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-[#0B1320]/95 via-[#0B1320]/50 to-transparent"></div>
-      </div>
-
-      <div class="absolute bottom-0 inset-x-0 p-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-        <div class="space-y-1.5">
+    <!-- WELCOME GREETING & QUICK ACADEMIC STATS BANNER -->
+    <section class="stagger-in stagger-1">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-[#E5E5E0]">
+        <div>
           <div class="flex items-center gap-2">
-            <span class="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 text-[10px] font-black uppercase tracking-wider">
-              Semester 6 Active
-            </span>
-            <span class="text-xs text-slate-300 font-mono">Roll: CU-2023-CS042</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-[#1A1915] tracking-tight">
+              Good morning, Rahul <span class="inline-block animate-bounce">☀️</span>
+            </h2>
           </div>
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-white font-['Outfit']">
-            Namaste, Aryan Verma! 👋
-          </h2>
-          <p class="text-xs sm:text-sm text-slate-300">
-            Next Lecture: <span class="text-amber-400 font-semibold">Neural Networks & Deep Learning</span> @ 10:30 AM in Kalam Tech Park Room 204
+          <p class="text-sm text-[#78766E] mt-1">
+            You have <strong class="text-[#1A1915] font-semibold">3 lectures</strong> today and <strong class="text-[#FF6B6B] font-semibold">1 assignment</strong> due before midnight.
           </p>
         </div>
 
-        <div class="flex gap-2">
-          <button onclick="studentApp.openDigitalIdModal()" class="px-3.5 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs font-bold flex items-center gap-2 transition shadow">
-            <i data-lucide="qr-code" class="w-4 h-4 text-amber-400"></i> View Digital ID
+        <!-- Quick Summary Chips -->
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="px-3 py-1.5 rounded-xl bg-white border border-[#E5E5E0] flex items-center gap-2 text-xs font-medium text-[#4A4843]">
+            <span class="w-2 h-2 rounded-full bg-[#7FB069]"></span>
+            <span>Cumulative GPA: <strong class="text-[#1A1915]">3.88</strong></span>
+          </div>
+          <div class="px-3 py-1.5 rounded-xl bg-white border border-[#E5E5E0] flex items-center gap-2 text-xs font-medium text-[#4A4843]">
+            <span class="text-[#F59E0B]">📚</span>
+            <span>Credits: <strong class="text-[#1A1915]">84 / 120</strong></span>
+          </div>
+          <button onclick="triggerPomodoroTimer()" class="px-3.5 py-1.5 rounded-xl bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-bold transition shadow-sm btn-spring flex items-center gap-1.5">
+            <span>⏱️</span>
+            <span id="timer-btn-text">Start Focus Timer</span>
           </button>
-          <button onclick="studentApp.openAiModal()" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold flex items-center gap-2 transition shadow-lg shadow-amber-500/20">
-            <i data-lucide="bot" class="w-4 h-4"></i> AI Campus Guide
-          </button>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Student Key Metrics Grid -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <div class="glass-card rounded-2xl p-4 border border-slate-800 space-y-1">
-        <div class="flex items-center justify-between">
-          <span class="text-[11px] font-semibold text-slate-400 uppercase">Overall Attendance</span>
-          <span class="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 text-xs">📈</span>
-        </div>
-        <div class="text-2xl font-black text-emerald-400 font-mono">91.4%</div>
-        <div class="text-[10px] text-slate-400">Eligible for all End-Sem Exams</div>
-      </div>
-
-      <div class="glass-card rounded-2xl p-4 border border-slate-800 space-y-1">
-        <div class="flex items-center justify-between">
-          <span class="text-[11px] font-semibold text-slate-400 uppercase">Cumulative CGPA</span>
-          <span class="p-1.5 rounded-lg bg-amber-500/20 text-amber-400 text-xs">⭐</span>
-        </div>
-        <div class="text-2xl font-black text-amber-400 font-mono">9.24 / 10</div>
-        <div class="text-[10px] text-slate-400">Top 5% in Computing Batch</div>
-      </div>
-
-      <div class="glass-card rounded-2xl p-4 border border-slate-800 space-y-1">
-        <div class="flex items-center justify-between">
-          <span class="text-[11px] font-semibold text-slate-400 uppercase">Credits Earned</span>
-          <span class="p-1.5 rounded-lg bg-blue-500/20 text-blue-400 text-xs">📚</span>
-        </div>
-        <div class="text-2xl font-black text-blue-400 font-mono">84 / 160</div>
-        <div class="text-[10px] text-slate-400">22 Credits Registered this Sem</div>
-      </div>
-
-      <div class="glass-card rounded-2xl p-4 border border-slate-800 space-y-1">
-        <div class="flex items-center justify-between">
-          <span class="text-[11px] font-semibold text-slate-400 uppercase">Registered Events</span>
-          <span class="p-1.5 rounded-lg bg-purple-500/20 text-purple-400 text-xs">🎟️</span>
-        </div>
-        <div class="text-2xl font-black text-purple-400 font-mono" id="myPassesCount">2 Active</div>
-        <div class="text-[10px] text-slate-400">TechSangam & AI Conclave</div>
-      </div>
-    </div>
-
-    <!-- Main Content Tabs -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-      <!-- Left 2 Cols: Courses & Events -->
-      <div class="lg:col-span-2 space-y-6">
-
-        <!-- Today's Schedule & Enrolled Courses -->
-        <div class="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-            <div>
-              <h3 class="text-base font-bold text-white flex items-center gap-2 font-['Outfit']">
-                <i data-lucide="book-open" class="w-4 h-4 text-amber-400"></i> Today's Schedule & Enrolled Courses
-              </h3>
-              <p class="text-xs text-slate-400">Current Semester 6 Timetable</p>
+    <!-- 2-COLUMN MAIN CARD GRID -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- ==================================================================== -->
+      <!-- LEFT COLUMN: SCHEDULE & ACTIVE COURSES (Span 7) -->
+      <!-- ==================================================================== -->
+      <div class="lg:col-span-7 space-y-8">
+        
+        <!-- SECTION 1: TODAY'S SCHEDULE -->
+        <section class="edu-card p-6 stagger-in stagger-2 space-y-5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <span class="text-xl">📅</span>
+              <div>
+                <h3 class="text-lg font-bold text-[#1A1915] tracking-tight">Today's Schedule</h3>
+                <p class="text-xs text-[#78766E]">Monday, September 14 • Week 4</p>
+              </div>
             </div>
-            <span class="text-xs text-slate-400 font-mono" id="scheduleDay">Tuesday, Block A</span>
+
+            <!-- Day Selector Pills -->
+            <div class="flex items-center gap-1 bg-[#F4F4F1] p-1 rounded-xl text-xs font-semibold text-[#78766E]">
+              <button onclick="switchScheduleDay('Mon')" id="day-btn-Mon" class="px-2.5 py-1 rounded-lg bg-white text-[#1A1915] shadow-2xs font-bold transition btn-spring">Mon</button>
+              <button onclick="switchScheduleDay('Tue')" id="day-btn-Tue" class="px-2.5 py-1 rounded-lg hover:text-[#1A1915] transition btn-spring">Tue</button>
+              <button onclick="switchScheduleDay('Wed')" id="day-btn-Wed" class="px-2.5 py-1 rounded-lg hover:text-[#1A1915] transition btn-spring">Wed</button>
+              <button onclick="switchScheduleDay('Thu')" id="day-btn-Thu" class="px-2.5 py-1 rounded-lg hover:text-[#1A1915] transition btn-spring">Thu</button>
+              <button onclick="switchScheduleDay('Fri')" id="day-btn-Fri" class="px-2.5 py-1 rounded-lg hover:text-[#1A1915] transition btn-spring">Fri</button>
+            </div>
           </div>
 
-          <div class="space-y-3" id="courseListContainer">
-            <!-- Course 1 -->
-            <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div class="space-y-1">
-                <div class="flex items-center gap-2">
-                  <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px] font-mono font-bold">CS-601</span>
-                  <h4 class="text-xs sm:text-sm font-bold text-white">Neural Networks & Deep Learning</h4>
+          <!-- Schedule Timeline Items -->
+          <div id="schedule-timeline-container" class="space-y-3">
+            
+            <!-- Class 1: Active Now -->
+            <div class="p-4 rounded-xl border border-[#C7D2FE] bg-[#EEF2FF]/60 hover:bg-[#EEF2FF] transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 edu-card">
+              <div class="flex items-start gap-3.5">
+                <div class="w-11 h-11 rounded-xl bg-[#4F46E5] text-white flex flex-col items-center justify-center flex-shrink-0 font-bold text-xs shadow-sm">
+                  <span>09:00</span>
+                  <span class="text-[9px] font-normal opacity-80">AM</span>
                 </div>
-                <div class="text-xs text-slate-400 flex items-center gap-3">
-                  <span>👨‍🏫 Prof. Rajesh Sharma</span>
-                  <span>📍 Kalam Tech Park Rm 204</span>
-                  <span class="text-emerald-400 font-semibold">10:30 AM - 12:00 PM</span>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#4F46E5] text-white tracking-wide">CS301</span>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#7FB069]/20 text-[#2D5A1E] flex items-center gap-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#7FB069] animate-pulse"></span>
+                      In Progress
+                    </span>
+                  </div>
+                  <h4 class="text-sm font-bold text-[#1A1915] mt-1">Advanced Algorithms & Graph Analysis</h4>
+                  <p class="text-xs text-[#78766E] mt-0.5">Hall 3B • Dr. S. Radhakrishnan • 09:00 AM – 10:30 AM</p>
                 </div>
               </div>
-              <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
-                <span class="text-xs font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-1 rounded">94% Attd</span>
-                <button onclick="studentApp.showCourseModal('CS-601')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">
-                  Materials
+              <div class="flex sm:flex-col items-center sm:items-end justify-between gap-2">
+                <button onclick="openMapModal('Hall 3B')" class="px-3 py-1.5 rounded-lg bg-white border border-[#E5E5E0] hover:border-[#4F46E5] text-xs font-semibold text-[#4F46E5] transition btn-spring">
+                  Locate Hall 3B
                 </button>
+              </div>
+            </div>
+
+            <!-- Class 2: Upcoming -->
+            <div class="p-4 rounded-xl border border-[#E5E5E0] bg-white hover:border-[#D6D6CF] transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 edu-card">
+              <div class="flex items-start gap-3.5">
+                <div class="w-11 h-11 rounded-xl bg-[#F4F4F1] text-[#4A4843] flex flex-col items-center justify-center flex-shrink-0 font-bold text-xs border border-[#E5E5E0]">
+                  <span>11:00</span>
+                  <span class="text-[9px] font-normal opacity-80">AM</span>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#F4F4F1] text-[#4A4843] border border-[#E5E5E0]">CS305</span>
+                    <span class="text-[11px] text-[#78766E]">In 45 mins</span>
+                  </div>
+                  <h4 class="text-sm font-bold text-[#1A1915] mt-1">Computer Networks: Protocols & Routing</h4>
+                  <p class="text-xs text-[#78766E] mt-0.5">Networking Lab 2 • Prof. Ananya Iyer • 11:00 AM – 12:30 PM</p>
+                </div>
+              </div>
+              <div class="flex sm:flex-col items-center sm:items-end justify-between gap-2">
+                <button onclick="openMapModal('Networking Lab 2')" class="px-3 py-1.5 rounded-lg bg-[#FAFAF8] border border-[#E5E5E0] hover:bg-white text-xs font-medium text-[#78766E] transition btn-spring">
+                  Lab 2 Guide
+                </button>
+              </div>
+            </div>
+
+            <!-- Class 3: Afternoon -->
+            <div class="p-4 rounded-xl border border-[#E5E5E0] bg-white hover:border-[#D6D6CF] transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 edu-card">
+              <div class="flex items-start gap-3.5">
+                <div class="w-11 h-11 rounded-xl bg-[#F4F4F1] text-[#4A4843] flex flex-col items-center justify-center flex-shrink-0 font-bold text-xs border border-[#E5E5E0]">
+                  <span>02:00</span>
+                  <span class="text-[9px] font-normal opacity-80">PM</span>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#F4F4F1] text-[#4A4843] border border-[#E5E5E0]">UX204</span>
+                  </div>
+                  <h4 class="text-sm font-bold text-[#1A1915] mt-1">Human-Computer Interaction: Design Systems</h4>
+                  <p class="text-xs text-[#78766E] mt-0.5">Design Studio 1 • Prof. Vikram Patil • 02:00 PM – 03:30 PM</p>
+                </div>
+              </div>
+              <div class="flex sm:flex-col items-center sm:items-end justify-between gap-2">
+                <button onclick="openAIChatWithPrompt('Help me summarize the UX204 lecture notes on Design Systems')" class="px-3 py-1.5 rounded-lg bg-[#FAFAF8] border border-[#E5E5E0] hover:bg-white text-xs font-medium text-[#78766E] transition btn-spring">
+                  View Notes
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- SECTION 2: ACTIVE COURSES & PROGRESS BARS -->
+        <section class="edu-card p-6 stagger-in stagger-3 space-y-5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <span class="text-xl">📚</span>
+              <div>
+                <h3 class="text-lg font-bold text-[#1A1915] tracking-tight">Active Courses</h3>
+                <p class="text-xs text-[#78766E]">Semester 5 • 4 Registered Courses</p>
+              </div>
+            </div>
+            <button onclick="showToast('Syllabus documents synced with university cloud!')" class="text-xs font-semibold text-[#4F46E5] hover:text-[#4338CA] transition btn-spring">
+              Export Syllabus ↗
+            </button>
+          </div>
+
+          <!-- Courses Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <!-- Course 1 -->
+            <div class="p-4 rounded-xl border border-[#E5E5E0] bg-[#FFFFFF] hover:border-[#D6D6CF] transition space-y-3 edu-card">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#EEF2FF] text-[#4F46E5]">CS301 • 4 Credits</span>
+                  <h4 class="text-sm font-bold text-[#1A1915] mt-1.5 leading-snug">Advanced Algorithms</h4>
+                  <p class="text-xs text-[#78766E]">Dr. S. Radhakrishnan</p>
+                </div>
+                <div class="text-right">
+                  <span id="course-pct-cs301" class="text-sm font-black text-[#4F46E5] font-mono">82%</span>
+                  <div class="text-[10px] text-[#A3A199]">18/22 modules</div>
+                </div>
+              </div>
+
+              <!-- Animated Progress Bar -->
+              <div class="space-y-1">
+                <div class="progress-track h-2 w-full">
+                  <div id="course-bar-cs301" class="progress-fill-spring h-full bg-[#4F46E5]" style="width: 82%;"></div>
+                </div>
+                <div class="flex items-center justify-between text-[11px] text-[#78766E] pt-1">
+                  <span>Next: Dijkstra Optimization</span>
+                  <button onclick="incrementCourseModule('cs301')" class="font-bold text-[#4F46E5] hover:underline btn-spring">+ Mark Module</button>
+                </div>
               </div>
             </div>
 
             <!-- Course 2 -->
-            <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div class="space-y-1">
-                <div class="flex items-center gap-2">
-                  <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 text-[10px] font-mono font-bold">CS-603</span>
-                  <h4 class="text-xs sm:text-sm font-bold text-white">Distributed Cloud Systems</h4>
+            <div class="p-4 rounded-xl border border-[#E5E5E0] bg-[#FFFFFF] hover:border-[#D6D6CF] transition space-y-3 edu-card">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#FEF3C7] text-[#92400E]">CS305 • 4 Credits</span>
+                  <h4 class="text-sm font-bold text-[#1A1915] mt-1.5 leading-snug">Computer Networks</h4>
+                  <p class="text-xs text-[#78766E]">Prof. Ananya Iyer</p>
                 </div>
-                <div class="text-xs text-slate-400 flex items-center gap-3">
-                  <span>👨‍🏫 Dr. C. N. Ramanathan</span>
-                  <span>📍 Arya Convention Hall 102</span>
-                  <span class="text-slate-300">01:30 PM - 03:00 PM</span>
+                <div class="text-right">
+                  <span id="course-pct-cs305" class="text-sm font-black text-[#F59E0B] font-mono">68%</span>
+                  <div class="text-[10px] text-[#A3A199]">15/22 modules</div>
                 </div>
               </div>
-              <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
-                <span class="text-xs font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-1 rounded">89% Attd</span>
-                <button onclick="studentApp.showCourseModal('CS-603')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">
-                  Materials
-                </button>
+
+              <div class="space-y-1">
+                <div class="progress-track h-2 w-full">
+                  <div id="course-bar-cs305" class="progress-fill-spring h-full bg-[#F59E0B]" style="width: 68%;"></div>
+                </div>
+                <div class="flex items-center justify-between text-[11px] text-[#78766E] pt-1">
+                  <span>Next: TCP Flow Control</span>
+                  <button onclick="incrementCourseModule('cs305')" class="font-bold text-[#F59E0B] hover:underline btn-spring">+ Mark Module</button>
+                </div>
               </div>
             </div>
 
             <!-- Course 3 -->
-            <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div class="p-4 rounded-xl border border-[#E5E5E0] bg-[#FFFFFF] hover:border-[#D6D6CF] transition space-y-3 edu-card">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#F1F8ED] text-[#2D5A1E]">UX204 • 3 Credits</span>
+                  <h4 class="text-sm font-bold text-[#1A1915] mt-1.5 leading-snug">Interface Design (HCI)</h4>
+                  <p class="text-xs text-[#78766E]">Prof. Vikram Patil</p>
+                </div>
+                <div class="text-right">
+                  <span id="course-pct-ux204" class="text-sm font-black text-[#7FB069] font-mono">91%</span>
+                  <div class="text-[10px] text-[#A3A199]">20/22 modules</div>
+                </div>
+              </div>
+
               <div class="space-y-1">
-                <div class="flex items-center gap-2">
-                  <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 text-[10px] font-mono font-bold">HS-605</span>
-                  <h4 class="text-xs sm:text-sm font-bold text-white">Indic Philosophy & AI Ethics</h4>
+                <div class="progress-track h-2 w-full">
+                  <div id="course-bar-ux204" class="progress-fill-spring h-full bg-[#7FB069]" style="width: 91%;"></div>
                 </div>
-                <div class="text-xs text-slate-400 flex items-center gap-3">
-                  <span>👨‍🏫 Dr. K. Shastri</span>
-                  <span>📍 Chanakya Central Library Suite</span>
-                  <span class="text-slate-300">03:30 PM - 05:00 PM</span>
+                <div class="flex items-center justify-between text-[11px] text-[#78766E] pt-1">
+                  <span>Next: Usability Heuristics</span>
+                  <button onclick="incrementCourseModule('ux204')" class="font-bold text-[#7FB069] hover:underline btn-spring">+ Mark Module</button>
                 </div>
               </div>
-              <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
-                <span class="text-xs font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-1 rounded">92% Attd</span>
-                <button onclick="studentApp.showCourseModal('HS-605')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">
-                  Materials
-                </button>
+            </div>
+
+            <!-- Course 4 -->
+            <div class="p-4 rounded-xl border border-[#E5E5E0] bg-[#FFFFFF] hover:border-[#D6D6CF] transition space-y-3 edu-card">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#FFF0F0] text-[#991B1B]">MA202 • 4 Credits</span>
+                  <h4 class="text-sm font-bold text-[#1A1915] mt-1.5 leading-snug">Discrete Mathematics</h4>
+                  <p class="text-xs text-[#78766E]">Dr. K. Raman</p>
+                </div>
+                <div class="text-right">
+                  <span id="course-pct-ma202" class="text-sm font-black text-[#FF6B6B] font-mono">75%</span>
+                  <div class="text-[10px] text-[#A3A199]">15/20 modules</div>
+                </div>
+              </div>
+
+              <div class="space-y-1">
+                <div class="progress-track h-2 w-full">
+                  <div id="course-bar-ma202" class="progress-fill-spring h-full bg-[#FF6B6B]" style="width: 75%;"></div>
+                </div>
+                <div class="flex items-center justify-between text-[11px] text-[#78766E] pt-1">
+                  <span>Next: Planar Graphs</span>
+                  <button onclick="incrementCourseModule('ma202')" class="font-bold text-[#FF6B6B] hover:underline btn-spring">+ Mark Module</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- SECTION 3: GRADES OVERVIEW & ACADEMIC STANDING -->
+        <section class="edu-card p-6 stagger-in stagger-4 space-y-5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <span class="text-xl">📊</span>
+              <div>
+                <h3 class="text-lg font-bold text-[#1A1915] tracking-tight">Grades & Academic Standing</h3>
+                <p class="text-xs text-[#78766E]">Official Transcripts • Dean's Honor Roll</p>
+              </div>
+            </div>
+            <button onclick="openGPASimulatorModal()" class="px-3 py-1.5 rounded-xl bg-[#EEF2FF] hover:bg-[#E0E7FF] text-xs font-bold text-[#4F46E5] transition btn-spring">
+              ⚡ GPA Simulator
+            </button>
+          </div>
+
+          <!-- Academic Metrics Overview Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            
+            <div class="p-4 rounded-xl bg-[#FAFAF8] border border-[#E5E5E0] space-y-1">
+              <div class="text-xs text-[#78766E] font-medium">Cumulative GPA</div>
+              <div class="flex items-baseline gap-2">
+                <span id="summary-gpa" class="text-2xl font-black text-[#1A1915]">3.88</span>
+                <span class="text-xs text-[#78766E]">/ 4.00</span>
+              </div>
+              <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-[#2D5A1E] bg-[#F1F8ED] px-2 py-0.5 rounded-md">
+                <span>🏆 Top 5% of Class</span>
+              </span>
+            </div>
+
+            <div class="p-4 rounded-xl bg-[#FAFAF8] border border-[#E5E5E0] space-y-1">
+              <div class="text-xs text-[#78766E] font-medium">Degree Credits</div>
+              <div class="flex items-baseline gap-2">
+                <span class="text-2xl font-black text-[#1A1915]">84</span>
+                <span class="text-xs text-[#78766E]">/ 120 Total</span>
+              </div>
+              <div class="progress-track h-1.5 w-full mt-1">
+                <div class="progress-fill-spring h-full bg-[#4F46E5]" style="width: 70%;"></div>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-[#FAFAF8] border border-[#E5E5E0] space-y-1">
+              <div class="text-xs text-[#78766E] font-medium">Current Standing</div>
+              <div class="text-base font-bold text-[#1A1915]">Dean's List 2026</div>
+              <p class="text-[11px] text-[#78766E]">Eligibility: Maintained &gt; 3.80 for 3 consecutive terms</p>
+            </div>
+
+          </div>
+
+          <!-- Grade Chips by Course -->
+          <div class="pt-2 border-t border-[#E5E5E0]">
+            <div class="text-xs font-semibold text-[#78766E] mb-3">Recent Course Grades:</div>
+            <div class="flex flex-wrap gap-2.5">
+              <div class="px-3 py-1.5 rounded-lg bg-white border border-[#E5E5E0] flex items-center gap-2 text-xs">
+                <span class="font-bold text-[#1A1915]">CS301</span>
+                <span class="px-1.5 py-0.5 rounded bg-[#F1F8ED] text-[#2D5A1E] font-black text-[11px]">A (4.0)</span>
+              </div>
+              <div class="px-3 py-1.5 rounded-lg bg-white border border-[#E5E5E0] flex items-center gap-2 text-xs">
+                <span class="font-bold text-[#1A1915]">CS305</span>
+                <span class="px-1.5 py-0.5 rounded bg-[#EEF2FF] text-[#4338CA] font-black text-[11px]">A- (3.7)</span>
+              </div>
+              <div class="px-3 py-1.5 rounded-lg bg-white border border-[#E5E5E0] flex items-center gap-2 text-xs">
+                <span class="font-bold text-[#1A1915]">UX204</span>
+                <span class="px-1.5 py-0.5 rounded bg-[#F1F8ED] text-[#2D5A1E] font-black text-[11px]">A+ (4.0)</span>
+              </div>
+              <div class="px-3 py-1.5 rounded-lg bg-white border border-[#E5E5E0] flex items-center gap-2 text-xs">
+                <span class="font-bold text-[#1A1915]">MA202</span>
+                <span class="px-1.5 py-0.5 rounded bg-[#F1F8ED] text-[#2D5A1E] font-black text-[11px]">A (4.0)</span>
+              </div>
+              <div class="px-3 py-1.5 rounded-lg bg-white border border-[#E5E5E0] flex items-center gap-2 text-xs">
+                <span class="font-bold text-[#1A1915]">SE200</span>
+                <span class="px-1.5 py-0.5 rounded bg-[#F1F8ED] text-[#2D5A1E] font-black text-[11px]">A (4.0)</span>
               </div>
             </div>
           </div>
-        </div>
-
-        <!-- Campus Events & Instant Registration -->
-        <div class="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-            <div>
-              <h3 class="text-base font-bold text-white flex items-center gap-2 font-['Outfit']">
-                <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i> Upcoming Campus Events & Competitions
-              </h3>
-              <p class="text-xs text-slate-400">Claim instant digital QR passes for university events</p>
-            </div>
-            <a href="#events" class="text-xs text-amber-400 hover:underline">View All &rarr;</a>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="studentEventsContainer">
-            <!-- Loading placeholder will be replaced by JS -->
-          </div>
-        </div>
-
-        <!-- Campus Interactive Map -->
-        <div class="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-            <div>
-              <h3 class="text-base font-bold text-white flex items-center gap-2 font-['Outfit']">
-                <i data-lucide="map-pin" class="w-4 h-4 text-emerald-400"></i> Campus Navigation Map
-              </h3>
-              <p class="text-xs text-slate-400">Interactive landmarks, lecture halls, and facilities</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <button onclick="studentApp.focusMap('tech_park')" class="px-2.5 py-1 rounded-lg bg-slate-800 text-[11px] text-slate-300 hover:bg-slate-700">
-                Tech Park
-              </button>
-              <button onclick="studentApp.focusMap('auditorium')" class="px-2.5 py-1 rounded-lg bg-slate-800 text-[11px] text-slate-300 hover:bg-slate-700">
-                Auditorium
-              </button>
-              <button onclick="studentApp.focusMap('library')" class="px-2.5 py-1 rounded-lg bg-slate-800 text-[11px] text-slate-300 hover:bg-slate-700">
-                Library
-              </button>
-            </div>
-          </div>
-          <div id="studentMap" class="w-full h-80 rounded-xl border border-slate-800 overflow-hidden"></div>
-        </div>
+        </section>
 
       </div>
 
-      <!-- Right 1 Col: Quick Tools, Food, Sports, AI Assistant -->
-      <div class="space-y-6">
-
-        <!-- Digital ID Card Preview -->
-        <div class="glass-card rounded-2xl p-5 border border-amber-500/30 bg-gradient-to-br from-amber-500/10 via-slate-900 to-slate-900 space-y-4 relative overflow-hidden">
+      <!-- ==================================================================== -->
+      <!-- RIGHT COLUMN: STREAK & UPCOMING ASSIGNMENTS (Span 5) -->
+      <!-- ==================================================================== -->
+      <div class="lg:col-span-5 space-y-8">
+        
+        <!-- SECTION 4: STUDY STREAK & ACHIEVEMENTS (DUOLINGO STYLE) -->
+        <section class="edu-card p-6 stagger-in stagger-5 space-y-5 bg-gradient-to-b from-[#FFFDF5] to-white border-[#FDE68A]">
           <div class="flex items-center justify-between">
-            <span class="text-[10px] font-mono uppercase tracking-widest text-amber-400 font-bold">Chanakya Digital ID</span>
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          </div>
-
-          <div class="flex items-center gap-3">
-            <div class="w-14 h-14 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-2xl font-black text-amber-300">
-              AV
-            </div>
-            <div>
-              <div class="text-sm font-bold text-white">Aryan Verma</div>
-              <div class="text-xs text-slate-300">B.Tech Computer Science & AI</div>
-              <div class="text-[11px] text-amber-400 font-mono">ID: CU-2023-CS042</div>
-            </div>
-          </div>
-
-          <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
-            <span class="text-slate-400">Library Pass: <strong class="text-emerald-400">Active</strong></span>
-            <span class="text-slate-400">Hostel: <strong class="text-white">Aryabhata Block 3</strong></span>
-          </div>
-
-          <button onclick="studentApp.openDigitalIdModal()" class="w-full py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 font-bold text-xs transition">
-            Show QR Access Pass
-          </button>
-        </div>
-
-        <!-- Live Food & Sports Availability -->
-        <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-4">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-            <h4 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-              <i data-lucide="utensils" class="w-4 h-4 text-amber-400"></i> Annapurna Dining Status
-            </h4>
-            <span class="text-[10px] text-emerald-400 font-mono">Live</span>
-          </div>
-
-          <div class="space-y-2.5 text-xs">
-            <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900 border border-slate-800">
+            <div class="flex items-center gap-3">
+              <span class="streak-flame text-3xl">🔥</span>
               <div>
-                <div class="font-semibold text-slate-200">South Indian Tiffin & Meals</div>
-                <div class="text-[11px] text-slate-400">Dosai, Idli, Thali</div>
+                <h3 class="text-lg font-black text-[#1A1915] tracking-tight">Study Streak</h3>
+                <p class="text-xs text-[#92400E]">14 Days on Fire! Keep the flame burning.</p>
               </div>
-              <span class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-400 font-mono font-bold text-[11px]">~5 mins wait</span>
             </div>
+            <span class="px-2.5 py-1 rounded-full text-xs font-black bg-[#F59E0B] text-white shadow-2xs">
+              Level 4
+            </span>
+          </div>
 
-            <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900 border border-slate-800">
-              <div>
-                <div class="font-semibold text-slate-200">Kaveri Cafe & Juice Bar</div>
-                <div class="text-[11px] text-slate-400">Filter Coffee, Fresh Juices</div>
+          <!-- 7-Day Week Row Tracker (Duolingo Style) -->
+          <div class="p-3.5 rounded-xl bg-white border border-[#FDE68A] space-y-2">
+            <div class="flex items-center justify-between text-[11px] font-semibold text-[#78766E]">
+              <span>Current Week</span>
+              <span class="text-[#92400E] font-bold">5 / 7 Days Done</span>
+            </div>
+            <div class="flex items-center justify-between gap-1.5 pt-1">
+              <!-- Mon -->
+              <div class="streak-day-circle flex flex-col items-center gap-1">
+                <div class="w-8 h-8 rounded-full bg-[#FEF3C7] text-[#F59E0B] border border-[#FCD34D] flex items-center justify-center text-xs font-bold shadow-2xs">✓</div>
+                <span class="text-[10px] font-medium text-[#78766E]">M</span>
               </div>
-              <span class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-400 font-mono font-bold text-[11px]">~2 mins wait</span>
+              <!-- Tue -->
+              <div class="streak-day-circle flex flex-col items-center gap-1">
+                <div class="w-8 h-8 rounded-full bg-[#FEF3C7] text-[#F59E0B] border border-[#FCD34D] flex items-center justify-center text-xs font-bold shadow-2xs">✓</div>
+                <span class="text-[10px] font-medium text-[#78766E]">T</span>
+              </div>
+              <!-- Wed -->
+              <div class="streak-day-circle flex flex-col items-center gap-1">
+                <div class="w-8 h-8 rounded-full bg-[#FEF3C7] text-[#F59E0B] border border-[#FCD34D] flex items-center justify-center text-xs font-bold shadow-2xs">✓</div>
+                <span class="text-[10px] font-medium text-[#78766E]">W</span>
+              </div>
+              <!-- Thu -->
+              <div class="streak-day-circle flex flex-col items-center gap-1">
+                <div class="w-8 h-8 rounded-full bg-[#FEF3C7] text-[#F59E0B] border border-[#FCD34D] flex items-center justify-center text-xs font-bold shadow-2xs">✓</div>
+                <span class="text-[10px] font-medium text-[#78766E]">T</span>
+              </div>
+              <!-- Fri (Today - Active flame) -->
+              <div class="streak-day-circle flex flex-col items-center gap-1">
+                <div class="w-8 h-8 rounded-full bg-[#F59E0B] text-white flex items-center justify-center text-sm shadow-md animate-pulse">🔥</div>
+                <span class="text-[10px] font-bold text-[#F59E0B]">F</span>
+              </div>
+              <!-- Sat -->
+              <div class="streak-day-circle flex flex-col items-center gap-1">
+                <div class="w-8 h-8 rounded-full bg-[#FAFAF8] text-[#A3A199] border border-[#E5E5E0] flex items-center justify-center text-xs">○</div>
+                <span class="text-[10px] font-medium text-[#A3A199]">S</span>
+              </div>
+              <!-- Sun -->
+              <div class="streak-day-circle flex flex-col items-center gap-1">
+                <div class="w-8 h-8 rounded-full bg-[#FAFAF8] text-[#A3A199] border border-[#E5E5E0] flex items-center justify-center text-xs">○</div>
+                <span class="text-[10px] font-medium text-[#A3A199]">S</span>
+              </div>
             </div>
           </div>
 
-          <div class="pt-2 border-t border-slate-800">
-            <div class="flex items-center justify-between mb-2">
-              <h4 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                <i data-lucide="trophy" class="w-4 h-4 text-emerald-400"></i> Sports Arena Slots
-              </h4>
-            </div>
-            <div class="grid grid-cols-2 gap-2 text-xs">
-              <button onclick="studentApp.bookSports('Badminton Court 1')" class="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-left">
-                <div class="font-semibold text-slate-300">Badminton 1</div>
-                <div class="text-[10px] text-emerald-400">Slots Open @ 5 PM</div>
-              </button>
-              <button onclick="studentApp.bookSports('Basketball Arena')" class="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-left">
-                <div class="font-semibold text-slate-300">Basketball</div>
-                <div class="text-[10px] text-emerald-400">Slots Open @ 6 PM</div>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- AI Study & Campus Guide Assistant Card -->
-        <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
-          <div class="flex items-center gap-2 text-amber-400">
-            <i data-lucide="sparkles" class="w-4 h-4"></i>
-            <h4 class="text-xs font-bold uppercase tracking-wider text-white">Chanakya AI Assistant</h4>
-          </div>
-          <p class="text-xs text-slate-300">
-            Ask about exam schedules, library books, campus routes, or club activities.
-          </p>
+          <!-- Achievements Badges Showcase -->
           <div class="space-y-2">
-            <input 
-              type="text" 
-              id="aiQuickInput" 
-              placeholder="Ask anything (e.g. library timings)..." 
-              onkeydown="if(event.key==='Enter') studentApp.askAiGuide()"
-              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
-            >
-            <button onclick="studentApp.askAiGuide()" class="w-full py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition">
-              Ask AI Guide
+            <div class="flex items-center justify-between text-xs font-semibold text-[#78766E]">
+              <span>Unlocked Achievements</span>
+              <button onclick="showToast('🏆 You have unlocked 4 of 6 semester badges!')" class="text-[11px] font-bold text-[#F59E0B] hover:underline btn-spring">View All ↗</button>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="p-2.5 rounded-xl bg-white border border-[#E5E5E0] hover:border-[#F59E0B] transition flex items-center gap-2.5 edu-card">
+                <span class="text-xl flex-shrink-0">⚡</span>
+                <div class="overflow-hidden">
+                  <div class="text-xs font-bold text-[#1A1915] truncate">Speed Learner</div>
+                  <div class="text-[10px] text-[#78766E] truncate">5 quizzes in 1 day</div>
+                </div>
+              </div>
+              <div class="p-2.5 rounded-xl bg-white border border-[#E5E5E0] hover:border-[#F59E0B] transition flex items-center gap-2.5 edu-card">
+                <span class="text-xl flex-shrink-0">📚</span>
+                <div class="overflow-hidden">
+                  <div class="text-xs font-bold text-[#1A1915] truncate">Deep Focus</div>
+                  <div class="text-[10px] text-[#78766E] truncate">25h study logged</div>
+                </div>
+              </div>
+              <div class="p-2.5 rounded-xl bg-white border border-[#E5E5E0] hover:border-[#F59E0B] transition flex items-center gap-2.5 edu-card">
+                <span class="text-xl flex-shrink-0">🎯</span>
+                <div class="overflow-hidden">
+                  <div class="text-xs font-bold text-[#1A1915] truncate">Assignment Ace</div>
+                  <div class="text-[10px] text-[#78766E] truncate">Zero late tasks</div>
+                </div>
+              </div>
+              <div class="p-2.5 rounded-xl bg-white border border-[#E5E5E0] hover:border-[#F59E0B] transition flex items-center gap-2.5 edu-card">
+                <span class="text-xl flex-shrink-0">🌟</span>
+                <div class="overflow-hidden">
+                  <div class="text-xs font-bold text-[#1A1915] truncate">Dean's Scholar</div>
+                  <div class="text-[10px] text-[#78766E] truncate">GPA &gt; 3.8</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 5: UPCOMING ASSIGNMENTS & DEADLINES -->
+        <section class="edu-card p-6 stagger-in stagger-6 space-y-5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <span class="text-xl">📝</span>
+              <div>
+                <h3 class="text-lg font-bold text-[#1A1915] tracking-tight">Upcoming Deadlines</h3>
+                <p class="text-xs text-[#78766E]">Click a task to celebrate completion ✨</p>
+              </div>
+            </div>
+            <button onclick="openAddAssignmentModal()" class="px-3 py-1.5 rounded-xl bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-bold transition shadow-sm btn-spring flex items-center gap-1">
+              <span>＋</span>
+              <span>New Task</span>
             </button>
           </div>
-          <div id="aiQuickResponse" class="hidden p-3 rounded-xl bg-slate-900/90 border border-slate-700 text-xs text-slate-200 leading-relaxed"></div>
-        </div>
+
+          <!-- Filter Pills -->
+          <div class="flex items-center gap-1.5 pb-1 border-b border-[#E5E5E0] text-xs font-semibold text-[#78766E]">
+            <button onclick="filterTasks('all')" id="task-filter-all" class="px-2.5 py-1 rounded-lg bg-[#4F46E5] text-white font-bold transition btn-spring">All (4)</button>
+            <button onclick="filterTasks('urgent')" id="task-filter-urgent" class="px-2.5 py-1 rounded-lg hover:text-[#1A1915] transition btn-spring">Due Soon (1)</button>
+            <button onclick="filterTasks('completed')" id="task-filter-completed" class="px-2.5 py-1 rounded-lg hover:text-[#1A1915] transition btn-spring">Completed (1)</button>
+          </div>
+
+          <!-- Interactive Assignment Checklist Items -->
+          <div id="assignments-list" class="space-y-3">
+            
+            <!-- Task 1: Urgent (Today) -->
+            <div id="task-card-1" class="task-item p-3.5 rounded-xl border border-[#E5E5E0] hover:border-[#FF6B6B] bg-white transition flex items-start gap-3 edu-card" data-category="urgent">
+              <div onclick="toggleTaskCompletion(1, event)" class="task-checkbox mt-0.5" id="task-check-1">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="task-title text-xs font-bold text-[#1A1915]">Paxos Distributed Consensus Simulator</span>
+                  <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#FFF0F0] text-[#FF6B6B] flex-shrink-0">
+                    Due Today, 11:59 PM
+                  </span>
+                </div>
+                <div class="flex items-center gap-2 mt-1 text-[11px] text-[#78766E]">
+                  <span>CS301</span>
+                  <span>•</span>
+                  <span>Lab Assignment 4</span>
+                  <span>•</span>
+                  <span class="text-[#FF6B6B] font-semibold">Priority High</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Task 2: Tomorrow -->
+            <div id="task-card-2" class="task-item p-3.5 rounded-xl border border-[#E5E5E0] hover:border-[#4F46E5] bg-white transition flex items-start gap-3 edu-card" data-category="upcoming">
+              <div onclick="toggleTaskCompletion(2, event)" class="task-checkbox mt-0.5" id="task-check-2">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="task-title text-xs font-bold text-[#1A1915]">Figma Design System Specification</span>
+                  <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-[#EEF2FF] text-[#4F46E5] flex-shrink-0">
+                    Tomorrow, 5:00 PM
+                  </span>
+                </div>
+                <div class="flex items-center gap-2 mt-1 text-[11px] text-[#78766E]">
+                  <span>UX204</span>
+                  <span>•</span>
+                  <span>Design Milestone 2</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Task 3: Thursday -->
+            <div id="task-card-3" class="task-item p-3.5 rounded-xl border border-[#E5E5E0] hover:border-[#F59E0B] bg-white transition flex items-start gap-3 edu-card" data-category="upcoming">
+              <div onclick="toggleTaskCompletion(3, event)" class="task-checkbox mt-0.5" id="task-check-3">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="task-title text-xs font-bold text-[#1A1915]">Wireshark Network Packet Analysis</span>
+                  <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-[#FEF3C7] text-[#92400E] flex-shrink-0">
+                    Thu, 11:59 PM
+                  </span>
+                </div>
+                <div class="flex items-center gap-2 mt-1 text-[11px] text-[#78766E]">
+                  <span>CS305</span>
+                  <span>•</span>
+                  <span>Lab Report 3</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Task 4: Friday -->
+            <div id="task-card-4" class="task-item p-3.5 rounded-xl border border-[#E5E5E0] hover:border-[#D6D6CF] bg-white transition flex items-start gap-3 edu-card" data-category="upcoming">
+              <div onclick="toggleTaskCompletion(4, event)" class="task-checkbox mt-0.5" id="task-check-4">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="task-title text-xs font-bold text-[#1A1915]">Graph Theory Problem Set 4</span>
+                  <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-[#FAFAF8] border border-[#E5E5E0] text-[#78766E] flex-shrink-0">
+                    Fri, 6:00 PM
+                  </span>
+                </div>
+                <div class="flex items-center gap-2 mt-1 text-[11px] text-[#78766E]">
+                  <span>MA202</span>
+                  <span>•</span>
+                  <span>Homework 4</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Task 5: Already Completed -->
+            <div id="task-card-5" class="task-item p-3.5 rounded-xl border border-[#E5E5E0] bg-[#FAFAF8]/70 transition flex items-start gap-3 edu-card task-completed" data-category="completed">
+              <div onclick="toggleTaskCompletion(5, event)" class="task-checkbox checked mt-0.5" id="task-check-5">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="task-title text-xs font-bold text-[#78766E] line-through">Deep Learning Paper Synthesis</span>
+                  <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#F1F8ED] text-[#2D5A1E] flex-shrink-0">
+                    ✓ Completed
+                  </span>
+                </div>
+                <div class="flex items-center gap-2 mt-1 text-[11px] text-[#A3A199]">
+                  <span>DS201</span>
+                  <span>•</span>
+                  <span>Submitted Yesterday</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
 
       </div>
 
@@ -406,102 +717,207 @@
 
   </main>
 
-  <!-- Digital ID Modal -->
-  <div id="digitalIdModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="glass-panel w-full max-w-sm rounded-3xl p-6 space-y-6 relative border border-amber-500/40 shadow-2xl text-center">
-      <button onclick="studentApp.closeModal('digitalIdModal')" class="absolute top-4 right-4 p-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white">
-        <i data-lucide="x" class="w-4 h-4"></i>
-      </button>
-
-      <div class="space-y-1">
-        
-        <h3 class="text-lg font-extrabold text-white font-['Outfit']">CHANAKYA UNIVERSITY</h3>
-        <p class="text-[11px] text-slate-400">Official Student Digital Smartcard</p>
+  <!-- ======================================================================== -->
+  <!-- 3. NOTION-STYLE FOOTER -->
+  <!-- ======================================================================== -->
+  <footer class="border-t border-[#E5E5E0] py-8 bg-white mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#78766E]">
+      <div class="flex items-center gap-2.5">
+        <span class="w-2 h-2 rounded-full bg-[#7FB069]"></span>
+        <span class="font-bold text-[#1A1915]">Chanakya University</span>
+        <span>•</span>
+        <span>Academic Hub & Student Portal</span>
+        <span>•</span>
+        <span>All systems nominal</span>
       </div>
-
-      <div class="p-4 bg-white rounded-2xl w-48 h-48 mx-auto flex flex-col items-center justify-center shadow-inner">
-        <!-- SVG QR Code -->
-        <svg viewBox="0 0 100 100" class="w-36 h-36">
-          <rect width="100" height="100" fill="white" />
-          <path d="M10 10 h30 v30 h-30 z M15 15 v20 h20 v-20 z M20 20 h10 v10 h-10 z" fill="#0B1320" />
-          <path d="M60 10 h30 v30 h-30 z M65 15 v20 h20 v-20 z M70 20 h10 v10 h-10 z" fill="#0B1320" />
-          <path d="M10 60 h30 v30 h-30 z M15 65 v20 h20 v-20 z M20 70 h10 v10 h-10 z" fill="#0B1320" />
-          <rect x="45" y="15" width="10" height="10" fill="#0B1320" />
-          <rect x="45" y="35" width="10" height="20" fill="#0B1320" />
-          <rect x="15" y="45" width="20" height="10" fill="#0B1320" />
-          <rect x="60" y="50" width="15" height="15" fill="#0B1320" />
-          <rect x="80" y="65" width="10" height="25" fill="#0B1320" />
-          <rect x="50" y="75" width="20" height="15" fill="#0B1320" />
-        </svg>
-        <span class="text-[10px] font-mono text-slate-800 font-bold mt-1">CU-2023-CS042</span>
-      </div>
-
-      <div class="space-y-1 text-xs">
-        <div class="font-bold text-white text-base">Aryan Verma</div>
-        <div class="text-slate-300">B.Tech Artificial Intelligence & CS (2023-2027)</div>
-        <div class="text-[11px] text-emerald-400 font-mono">Security Status: VERIFIED & ACTIVE</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- QR Event Pass Modal -->
-  <div id="eventPassModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="glass-panel w-full max-w-sm rounded-3xl p-6 space-y-5 relative border border-emerald-500/40 shadow-2xl text-center">
-      <button onclick="studentApp.closeModal('eventPassModal')" class="absolute top-4 right-4 p-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white">
-        <i data-lucide="x" class="w-4 h-4"></i>
-      </button>
-
-      <div class="space-y-1">
-        <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold font-mono">DIGITAL TICKET PASS</span>
-        <h3 id="passEventTitle" class="text-base font-bold text-white font-['Outfit']">Event Title</h3>
-        <p id="passEventVenue" class="text-xs text-slate-300">Venue Location</p>
-      </div>
-
-      <div class="p-3 bg-white rounded-2xl w-44 h-44 mx-auto flex flex-col items-center justify-center shadow-inner">
-        <svg viewBox="0 0 100 100" class="w-32 h-32">
-          <rect width="100" height="100" fill="white" />
-          <path d="M10 10 h30 v30 h-30 z M15 15 v20 h20 v-20 z M20 20 h10 v10 h-10 z" fill="#0B1320" />
-          <path d="M60 10 h30 v30 h-30 z M65 15 v20 h20 v-20 z M70 20 h10 v10 h-10 z" fill="#0B1320" />
-          <path d="M10 60 h30 v30 h-30 z M15 65 v20 h20 v-20 z M20 70 h10 v10 h-10 z" fill="#0B1320" />
-          <rect x="45" y="20" width="10" height="30" fill="#0B1320" />
-          <rect x="65" y="55" width="25" height="15" fill="#0B1320" />
-          <rect x="45" y="70" width="15" height="20" fill="#0B1320" />
-        </svg>
-        <span id="passTicketCode" class="text-[10px] font-mono text-slate-900 font-bold mt-1">TKT-89214</span>
-      </div>
-
-      <div class="text-xs text-slate-300 space-y-1">
-        <div>Holder: <strong>Aryan Verma</strong> (CU-2023-CS042)</div>
-        <div class="text-[11px] text-emerald-400 font-mono">Present this QR code at venue entrance</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Course Syllabus Modal -->
-  <div id="courseModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="glass-panel w-full max-w-lg rounded-3xl p-6 space-y-4 relative border border-slate-700 shadow-2xl">
-      <button onclick="studentApp.closeModal('courseModal')" class="absolute top-4 right-4 p-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white">
-        <i data-lucide="x" class="w-4 h-4"></i>
-      </button>
-      <div id="courseModalContent"></div>
-    </div>
-  </div>
-
-  <!-- Footer -->
-  <footer class="bg-slate-950 border-t border-slate-800 py-6 mt-12 text-xs text-slate-400">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2">
-        <span class="text-amber-400 font-bold">Chanakya University</span>
-        <span>• Student Portal (Website 1)</span>
-      </div>
-      <div class="flex items-center gap-4 text-slate-400">
-        <a href="/" class="hover:text-amber-400 transition">Master Hub</a>
-        <a href="/faculty" class="hover:text-blue-400 transition">Faculty Portal</a>
-        <a href="/admin" class="hover:text-purple-400 transition">Operations Dashboard</a>
+      <div class="flex items-center gap-4 font-medium">
+        <button onclick="openMapModal()" class="hover:text-[#1A1915] transition btn-spring">Campus Map</button>
+        <button onclick="toggleAIChat()" class="hover:text-[#4F46E5] transition btn-spring">AI Assistant</button>
+        <a href="/login" class="hover:text-[#1A1915] transition btn-spring">Switch Account</a>
+        <a href="tel:+918029994500" class="text-[#FF6B6B] hover:underline">Campus SOS: 2999 4500</a>
       </div>
     </div>
   </footer>
 
-  <script src="/js/student.js"></script>
+  <!-- ======================================================================== -->
+  <!-- 4. LINEAR-STYLE COMMAND PALETTE (CMD+K) MODAL -->
+  <!-- ======================================================================== -->
+  <div id="command-palette-modal" class="fixed inset-0 z-50 bg-black/30 backdrop-blur-xs hidden items-start justify-center pt-24 px-4">
+    <div class="w-full max-w-xl bg-white rounded-2xl border border-[#E5E5E0] shadow-2xl overflow-hidden stagger-in">
+      <div class="p-3.5 border-b border-[#E5E5E0] flex items-center gap-3">
+        <svg class="w-5 h-5 text-[#78766E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input type="text" id="command-search-input" oninput="filterCommandPalette(this.value)" placeholder="Type a command, course, or room name..." class="w-full text-sm font-medium text-[#1A1915] focus:outline-none placeholder-[#A3A199]">
+        <kbd onclick="closeCommandPalette()" class="cursor-pointer px-2 py-0.5 rounded bg-[#F4F4F1] border border-[#E5E5E0] text-[10px] font-mono text-[#78766E]">ESC</kbd>
+      </div>
+      <div id="command-results-list" class="max-h-80 overflow-y-auto p-2 space-y-1">
+        <div onclick="executeCommand('schedule')" class="p-2.5 rounded-xl hover:bg-[#F4F4F1] cursor-pointer flex items-center justify-between text-xs text-[#1A1915] font-semibold transition">
+          <div class="flex items-center gap-2.5"><span>📅</span><span>View Today's Full Schedule</span></div>
+          <span class="text-[10px] text-[#A3A199]">Schedule</span>
+        </div>
+        <div onclick="executeCommand('map')" class="p-2.5 rounded-xl hover:bg-[#F4F4F1] cursor-pointer flex items-center justify-between text-xs text-[#1A1915] font-semibold transition">
+          <div class="flex items-center gap-2.5"><span>🗺️</span><span>Open Campus Satellite Map</span></div>
+          <span class="text-[10px] text-[#A3A199]">Map</span>
+        </div>
+        <div onclick="executeCommand('ai')" class="p-2.5 rounded-xl hover:bg-[#F4F4F1] cursor-pointer flex items-center justify-between text-xs text-[#1A1915] font-semibold transition">
+          <div class="flex items-center gap-2.5"><span>✨</span><span>Ask AI Study Assistant</span></div>
+          <span class="text-[10px] text-[#A3A199]">AI Guide</span>
+        </div>
+        <div onclick="executeCommand('task')" class="p-2.5 rounded-xl hover:bg-[#F4F4F1] cursor-pointer flex items-center justify-between text-xs text-[#1A1915] font-semibold transition">
+          <div class="flex items-center gap-2.5"><span>📝</span><span>Add New Assignment / Task</span></div>
+          <span class="text-[10px] text-[#A3A199]">Tasks</span>
+        </div>
+        <div onclick="executeCommand('gpa')" class="p-2.5 rounded-xl hover:bg-[#F4F4F1] cursor-pointer flex items-center justify-between text-xs text-[#1A1915] font-semibold transition">
+          <div class="flex items-center gap-2.5"><span>📊</span><span>Calculate Target GPA</span></div>
+          <span class="text-[10px] text-[#A3A199]">Simulator</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================== -->
+  <!-- 5. NOTION-STYLE ADD TASK MODAL -->
+  <!-- ======================================================================== -->
+  <div id="add-task-modal" class="fixed inset-0 z-50 bg-black/30 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white rounded-2xl border border-[#E5E5E0] shadow-2xl p-6 space-y-4 stagger-in">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-bold text-[#1A1915]">Create New Assignment</h3>
+        <button onclick="closeAddAssignmentModal()" class="text-xs p-1 text-[#78766E] hover:text-[#1A1915]">✕</button>
+      </div>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-[#78766E] mb-1">Assignment Title</label>
+          <input type="text" id="new-task-title" placeholder="e.g. Distributed Consensus Reflection Paper" class="w-full px-3.5 py-2 rounded-xl border border-[#E5E5E0] text-xs focus:outline-none focus:border-[#4F46E5] text-[#1A1915]">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-[#78766E] mb-1">Course Code</label>
+            <select id="new-task-course" class="w-full px-3 py-2 rounded-xl border border-[#E5E5E0] text-xs focus:outline-none focus:border-[#4F46E5] text-[#1A1915]">
+              <option value="CS301">CS301: Algorithms</option>
+              <option value="CS305">CS305: Networks</option>
+              <option value="UX204">UX204: Design</option>
+              <option value="MA202">MA202: Discrete Math</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-[#78766E] mb-1">Due Date</label>
+            <input type="text" id="new-task-due" value="Tomorrow, 11:59 PM" class="w-full px-3.5 py-2 rounded-xl border border-[#E5E5E0] text-xs focus:outline-none focus:border-[#4F46E5] text-[#1A1915]">
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button onclick="closeAddAssignmentModal()" class="px-4 py-2 rounded-xl border border-[#E5E5E0] text-xs font-semibold text-[#78766E] hover:bg-[#F4F4F1] transition btn-spring">
+          Cancel
+        </button>
+        <button onclick="submitNewAssignment()" class="px-4 py-2 rounded-xl bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-bold transition shadow-sm btn-spring">
+          Save Assignment
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================== -->
+  <!-- 6. GPA TARGET SIMULATOR MODAL -->
+  <!-- ======================================================================== -->
+  <div id="gpa-modal" class="fixed inset-0 z-50 bg-black/30 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white rounded-2xl border border-[#E5E5E0] shadow-2xl p-6 space-y-4 stagger-in">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">📊</span>
+          <h3 class="text-base font-bold text-[#1A1915]">Target GPA Simulator</h3>
+        </div>
+        <button onclick="closeGPASimulatorModal()" class="text-xs p-1 text-[#78766E] hover:text-[#1A1915]">✕</button>
+      </div>
+      <p class="text-xs text-[#78766E]">
+        Adjust your anticipated grades for this semester to see the real-time impact on your Cumulative GPA.
+      </p>
+      <div class="space-y-3 pt-2">
+        <div class="flex items-center justify-between p-3 rounded-xl bg-[#FAFAF8] border border-[#E5E5E0]">
+          <span class="text-xs font-semibold text-[#1A1915]">Target Semester Average:</span>
+          <span id="target-gpa-display" class="text-sm font-black text-[#4F46E5]">3.90</span>
+        </div>
+        <input type="range" id="gpa-slider" min="3.00" max="4.00" step="0.05" value="3.90" oninput="updateGPASimulation(this.value)" class="w-full accent-[#4F46E5] cursor-pointer">
+        <div class="p-3.5 rounded-xl bg-[#F1F8ED] border border-[#C6E1BC] text-xs text-[#2D5A1E] space-y-1">
+          <div class="font-bold">Projected Cumulative GPA: <span id="projected-cumulative" class="font-black text-sm">3.89</span></div>
+          <div class="text-[11px]">Maintains Dean's List and Summa Cum Laude trajectory!</div>
+        </div>
+      </div>
+      <div class="flex justify-end pt-2">
+        <button onclick="closeGPASimulatorModal()" class="px-4 py-2 rounded-xl bg-[#4F46E5] text-white text-xs font-bold btn-spring">
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================== -->
+  <!-- 7. CAMPUS MAP MODAL -->
+  <!-- ======================================================================== -->
+  <div id="map-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="w-full max-w-4xl bg-white rounded-2xl border border-[#E5E5E0] shadow-2xl p-6 space-y-4 stagger-in flex flex-col h-[640px]">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🗺️</span>
+          <div>
+            <h3 class="text-base font-bold text-[#1A1915]">Chanakya University Satellite Navigation</h3>
+            <p class="text-xs text-[#78766E]">Bengaluru Campus • Real-Time Landmark Routing</p>
+          </div>
+        </div>
+        <button onclick="closeMapModal()" class="text-xs p-1 text-[#78766E] hover:text-[#1A1915]">✕</button>
+      </div>
+      <div id="campus-modal-map" class="w-full flex-1 rounded-xl border border-[#E5E5E0] overflow-hidden"></div>
+      <div class="flex items-center justify-between text-xs text-[#78766E] pt-2">
+        <div class="flex items-center gap-3">
+          <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-[#4F46E5]"></span> Academic Blocks</span>
+          <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-[#7FB069]"></span> Green Courtyard</span>
+          <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-[#F59E0B]"></span> Library & Labs</span>
+        </div>
+        <button onclick="closeMapModal()" class="px-4 py-1.5 rounded-xl bg-[#F4F4F1] hover:bg-[#E5E5E0] text-xs font-bold text-[#1A1915] btn-spring">
+          Close Map
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================== -->
+  <!-- 8. AI CHAT ASSISTANT MODAL (NOTION AI STYLE) -->
+  <!-- ======================================================================== -->
+  <div id="ai-chat-window" class="fixed bottom-6 right-6 w-96 max-w-[calc(100vw-3rem)] h-[520px] bg-white rounded-2xl border border-[#E5E5E0] shadow-2xl z-50 flex flex-col hidden overflow-hidden stagger-in">
+    <!-- Header -->
+    <div class="p-3.5 bg-[#FAFAF8] border-b border-[#E5E5E0] flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-[#4F46E5] text-white flex items-center justify-center text-sm font-bold">
+          ✨
+        </div>
+        <div>
+          <h4 class="text-xs font-bold text-[#1A1915]">Chanakya AI Study Assistant</h4>
+          <span class="text-[10px] text-[#7FB069] font-medium">● Local zero-API engine ready</span>
+        </div>
+      </div>
+      <button onclick="toggleAIChat()" class="text-xs p-1 text-[#78766E] hover:text-[#1A1915]">✕</button>
+    </div>
+
+    <!-- Messages Container -->
+    <div id="ai-chat-messages" class="flex-1 p-4 overflow-y-auto space-y-3 text-xs">
+      <div class="p-3 rounded-xl bg-[#FAFAF8] border border-[#E5E5E0] text-[#4A4843]">
+        👋 Hi Rahul! I am your Chanakya AI Study Assistant. You can ask me about course schedules, exam prep, lab deadlines, or lecture concepts!
+      </div>
+    </div>
+
+    <!-- Input -->
+    <div class="p-3 bg-white border-t border-[#E5E5E0]">
+      <form onsubmit="handleAIChatSubmit(event)" class="flex items-center gap-2">
+        <input type="text" id="ai-chat-input" placeholder="Ask about algorithms, deadlines, labs..." class="flex-1 px-3 py-2 rounded-xl border border-[#E5E5E0] text-xs focus:outline-none focus:border-[#4F46E5] text-[#1A1915]">
+        <button type="submit" class="px-3.5 py-2 rounded-xl bg-[#4F46E5] text-white text-xs font-bold btn-spring">
+          Send
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notifications Container -->
+  <div id="toast-container"></div>
+
+  <!-- Application Logic -->
+  <script src="/js/app.js"></script>
 </body>
 </html>
