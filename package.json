@@ -1,0 +1,27 @@
+{
+  "name": "chanakya-campus-connect",
+  "version": "2.0.0",
+  "description": "Campus Connect - AI-Powered Intelligent Digital Campus Platform & Event Hub for Chanakya University",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "campus-connect",
+    "chanakya-university",
+    "event-management",
+    "ai-guide",
+    "digital-campus",
+    "smart-campus",
+    "simulation"
+  ],
+  "author": "Google DeepMind & Chanakya University Dev Team",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1",
+    "uuid": "^11.1.0"
+  }
+}
