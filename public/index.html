@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Campus Connect - AI-Powered Digital Campus Platform</title>
+  <title>Chanakya Campus Connect - Next-Gen Autonomous Digital Campus & Command Center</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+  
+    <!-- Google Fonts: Inter & Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   
-  <!-- Leaflet CSS & JS for Interactive Campus Map -->
+  <!-- Leaflet CSS & JS (100% Free & Open Source, Zero API Key Required) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   
-  <!-- Socket.io Client for Real-Time Telemetry & Alerts -->
+  <!-- Socket.io Client -->
   <script src="/socket.io/socket.io.js"></script>
 
   <!-- Custom Styles -->
@@ -25,116 +25,108 @@
 
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
+          
           colors: {
-            brand: {
-              bg: '#FAFAFA',
-              card: '#FFFFFF',
-              border: '#E4E4E7',
-              indigo: '#4338CA',
-              'indigo-hover': '#3730A3',
-              'indigo-light': '#EEF2FF',
-              teal: '#14B8A6',
-              'teal-light': '#F0FDFA',
-              coral: '#FF6B6B',
-              'coral-light': '#FFF1F2',
-              title: '#09090B',
-              body: '#3F3F46',
-              muted: '#71717A',
-              subtle: '#A1A1AA'
+            chanakya: {
+              gold: '#F59E0B',
+              goldLight: '#FBBF24',
+              navy: '#080D1A',
+              card: '#0F172A',
+              border: 'rgba(255, 255, 255, 0.08)',
+              cyan: '#06B6D4',
+              purple: '#8B5CF6'
             }
-          },
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            heading: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif']
           }
         }
       }
     }
   </script>
 </head>
-<body class="bg-[#FAFAFA] text-[#09090B] font-sans antialiased min-h-screen flex flex-col selection:bg-[#4338CA]/15 selection:text-[#4338CA]">
+<body class="bg-[#080D1A] text-slate-100 min-h-screen flex flex-col font-['Inter'] antialiased selection:bg-amber-500 selection:text-black overflow-x-hidden">
 
+  <!-- Background Animated Particle Canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- TOP UNIVERSAL NAVIGATION BAR -->
   <!-- ======================================================================== -->
-  <!-- 1. ARC / LINEAR TOP COMMAND BAR -->
-  <!-- ======================================================================== -->
-  <header class="sticky top-0 z-40 bg-[#FAFAFA]/95 backdrop-blur-md border-b border-[#E4E4E7]">
+  <header class="sticky top-0 z-40 glass-panel border-b border-slate-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
       
-      <!-- Brand & Platform Identity -->
-      <div class="flex items-center gap-3 flex-shrink-0">
-        <a href="/" class="flex items-center gap-2.5 group cursor-pointer">
-          <div class="w-9 h-9 rounded-xl bg-[#4338CA] text-white flex items-center justify-center font-black text-base shadow-sm group-hover:scale-105 transition-transform">
-            ⚡
-          </div>
-          <div>
-            <div class="flex items-center gap-1.5">
-              <span class="text-xs font-bold tracking-tight text-[#09090B]">CAMPUS CONNECT</span>
-              <span class="w-2 h-2 rounded-full bg-[#14B8A6] live-dot-pulse" title="System Live"></span>
-            </div>
-            <div class="text-[10px] text-[#71717A] leading-none">Chanakya Digital Ecosystem</div>
-          </div>
-        </a>
-      </div>
-
-      <!-- Center: NLP Expanding Search Bar with Cycling Suggestions -->
-      <div class="hidden md:flex flex-1 max-w-lg mx-4 relative">
-        <div class="w-full relative">
-          <input 
-            type="text" 
-            id="nlp-search-input"
-            onfocus="handleSearchFocus()"
-            oninput="handleSearchQuery(this.value)"
-            placeholder="Where is Hall 3B in Academic Block?"
-            class="search-expand w-full pl-9 pr-12 py-2 rounded-xl bg-white border border-[#E4E4E7] hover:border-[#D4D4D8] focus:border-[#4338CA] text-xs text-[#09090B] shadow-2xs focus:shadow-sm focus:outline-none placeholder-[#A1A1AA] transition"
-          >
-          <div class="absolute left-3 top-1/2 -translate-y-1/2 text-[#71717A] pointer-events-none">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-          </div>
-          <kbd class="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded bg-[#F4F4F5] border border-[#E4E4E7] text-[10px] font-mono text-[#71717A]">⌘K</kbd>
+      <!-- Brand & University Logo -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('overview')">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 via-amber-400 to-amber-200 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-amber-500/25 animate-pulse-slow">
+          🎓
         </div>
-
-        <!-- Live Instant Search Dropdown Results -->
-        <div id="search-dropdown-results" class="absolute left-0 right-0 top-11 bg-white rounded-xl border border-[#E4E4E7] shadow-xl p-2 hidden z-50 stagger-in">
-          <div class="text-[10px] font-bold text-[#71717A] uppercase tracking-wider px-2.5 py-1">Campus Instant Results</div>
-          <div id="search-results-list" class="space-y-1 mt-1"></div>
+        <div>
+          <div class="flex items-center gap-2">
+            
+            <span class="text-[9px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded font-mono border border-amber-500/30">GLOBAL CAMPUS</span>
+          </div>
+          <h1 class="text-sm sm:text-base font-black text-white tracking-wide font-['Outfit'] leading-none">
+            CHANAKYA CAMPUS CONNECT
+          </h1>
         </div>
       </div>
 
-      <!-- Right: Real-Time Telemetry, Notifications & Role Actions -->
-      <div class="flex items-center gap-2.5 flex-shrink-0">
+      <!-- Zero API Key Reassurance Badge & Live Status -->
+      <div class="hidden md:flex items-center gap-3">
+        <!-- Zero API Key Badge -->
+        <button onclick="openZeroApiKeyModal()" class="px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5 transition shadow-sm" title="Click to view local engine details">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>Zero API Key Required • 100% Free & Local</span>
+        </button>
+
+        <!-- Live Ticker -->
+        <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-xs text-slate-300">
+          <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+          <span>Live: <b id="live-crowd-counter" class="text-amber-400 font-mono">4,892</b> Active</span>
+          <span class="text-slate-600">|</span>
+          <span class="text-[11px] text-slate-400">28°C Devanahalli</span>
+          <span class="text-slate-600">|</span>
+          <span id="live-clock" class="font-mono text-cyan-400">12:00:00</span>
+        </div>
+      </div>
+
+      <!-- User Actions, Role Switcher & Audio Toggle -->
+      <div class="flex items-center gap-2 sm:gap-3">
         
-        <!-- Live Crowd Telemetry Pill (WebSocket-driven) -->
-        <div id="live-crowd-pill" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-[#E4E4E7] text-xs font-semibold text-[#3F3F46] shadow-2xs" title="Live Campus Attendance from Sensors">
-          <span class="w-2 h-2 rounded-full bg-[#14B8A6] live-dot-pulse"></span>
-          <span><strong id="live-population-count" class="text-[#09090B] font-mono">4,892</strong> On Campus</span>
-        </div>
-
-        <!-- Live Notification Bell with Pulse Badge -->
-        <button onclick="scrollToCard('bento-notifications')" class="relative p-2 rounded-xl bg-white border border-[#E4E4E7] hover:bg-[#F4F4F5] text-[#3F3F46] transition btn-spring" title="Notifications">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-          <span id="notif-badge-count" class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#FF6B6B] text-white text-[9px] font-black flex items-center justify-center">3</span>
+        <!-- Feed AI Data Button -->
+        <button onclick="openFeedDataModal()" class="hidden sm:flex items-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500/20 to-cyan-500/10 hover:from-cyan-500/30 hover:to-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition">
+          <span>🧠</span>
+          <span>Feed AI Data</span>
         </button>
 
-        <!-- AI Assistant Quick Launch -->
-        <button onclick="toggleAIAssistant()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#EEF2FF] border border-[#C7D2FE] hover:bg-[#E0E7FF] text-xs font-bold text-[#4338CA] transition btn-spring">
-          <span>✨</span>
-          <span class="hidden sm:inline">Ask AI</span>
-        </button>
-
-        <!-- Role Switcher & Profile -->
-        <div class="flex items-center gap-2 pl-2 border-l border-[#E4E4E7]">
-          <select id="user-role-select" onchange="switchPlatformRole(this.value)" class="bg-[#F4F4F5] border border-[#E4E4E7] text-xs font-bold text-[#09090B] py-1 px-2.5 rounded-lg focus:outline-none cursor-pointer">
-            <option value="student">🎓 Rahul Sharma (Student)</option>
-            <option value="faculty">👨‍🏫 Dr. Radhakrishnan (Faculty)</option>
-            <option value="staff">🛠️ Vikram Patil (Ops)</option>
-            <option value="admin">👑 Dean Office (Admin)</option>
+        <!-- Role Quick Switcher -->
+        <div class="relative">
+          <select id="role-selector" onchange="switchRole(this.value)" class="bg-slate-900 text-amber-300 text-xs font-bold py-1.5 px-3 rounded-xl border border-amber-500/40 focus:outline-none focus:border-amber-400 cursor-pointer">
+            <option value="student">🎓 Student (Rahul Sharma)</option>
+            <option value="new_student">🧭 Fresher (Ananya Iyer)</option>
+            <option value="faculty">👨‍🏫 Faculty (Dr. Radhakrishnan)</option>
+            <option value="staff">🛠️ Staff (Vikram Patil)</option>
+            <option value="visitor">🚶 Visitor (Priya Nair)</option>
+            <option value="admin">👑 Administrator (Dean)</option>
           </select>
-          <a href="/logout" class="p-1.5 text-[#71717A] hover:text-[#FF6B6B] transition rounded-lg hover:bg-[#FFF1F2] btn-spring" title="Log Out">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-          </a>
         </div>
+
+        <!-- Log Out Action Button -->
+        <button onclick="handleLogout()" class="flex items-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 transition shadow-sm cursor-pointer" title="Log Out of Campus Connect">
+          <span>🚪</span>
+          <span class="hidden sm:inline">Log Out</span>
+        </button>
+
+        <!-- Audio SFX Toggle -->
+        <button id="sfx-toggle-btn" onclick="toggleAudioSFX()" class="w-9 h-9 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center text-amber-400 hover:text-white hover:border-amber-400 transition" title="Toggle Sound FX">
+          🔊
+        </button>
+
+        <!-- Emergency SOS Button -->
+        <a href="tel:+918029994500" class="hidden lg:flex items-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 transition">
+          <span>🚨</span>
+          <span>SOS: 2999 4500</span>
+        </a>
 
       </div>
 
@@ -142,588 +134,1102 @@
   </header>
 
   <!-- ======================================================================== -->
-  <!-- 2. BENTO-GRID DASHBOARD PLATFORM -->
+  <!-- MAIN APP CONTAINER -->
   <!-- ======================================================================== -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-6">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1 flex flex-col md:flex-row gap-6 relative z-10">
 
-    <!-- Platform Hero Subtitle & Status Banner -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#E4E4E7] stagger-in stagger-1">
-      <div>
-        <div class="flex items-center gap-2">
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-[#09090B] font-heading tracking-tight">
-            Chanakya Campus Command Center
-          </h2>
-          <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#14B8A6]/10 text-[#0D9488] border border-[#14B8A6]/20">
-            Autonomous Digital Campus
-          </span>
-        </div>
-        <p class="text-xs text-[#71717A] mt-1">
-          Multi-service operational grid • Devanahalli Global Campus • 10 Integrated Real-Time Microservices
-        </p>
-      </div>
-
-      <!-- Fast Action Modules Bar -->
-      <div class="flex items-center gap-2">
-        <button onclick="navigateRouteTo('auditorium')" class="px-3 py-1.5 rounded-xl bg-white border border-[#E4E4E7] hover:border-[#4338CA] text-xs font-semibold text-[#09090B] transition btn-spring flex items-center gap-1.5">
-          <span>📍</span><span>Route to Auditorium</span>
-        </button>
-        <button onclick="openReportIssueModal()" class="px-3.5 py-1.5 rounded-xl bg-[#4338CA] hover:bg-[#3730A3] text-white text-xs font-bold transition shadow-sm btn-spring flex items-center gap-1.5">
-          <span>＋</span><span>Report Issue</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- ASYMMETRIC BENTO GRID (12 COLUMNS) -->
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-stretch">
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="w-full md:w-64 flex-shrink-0 space-y-4">
       
-      <!-- ==================================================================== -->
-      <!-- BENTO CARD 1: MAP & NAVIGATION MODULE (LARGE HERO - SPAN 8) -->
-      <!-- ==================================================================== -->
-      <div id="bento-map" class="md:col-span-8 bento-card p-5 stagger-in stagger-2 flex flex-col justify-between space-y-4">
-        
-        <!-- Header & Quick Destination Chips -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="text-lg">🗺️</span>
-              <h3 class="text-base font-bold text-[#09090B] font-heading">Interactive Campus Map & Routing</h3>
-              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#F4F4F5] text-[#71717A]">
-                13.2228° N, 77.7556° E
-              </span>
-            </div>
-            <p class="text-xs text-[#71717A]">Smooth pin-drop navigation • Route line draws itself live</p>
+      <!-- User Profile Card -->
+      <div class="glass-panel rounded-2xl p-4 border border-slate-800 space-y-3">
+        <div class="flex items-center gap-3">
+          <div id="role-avatar-badge" class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl font-black border border-amber-500/30 shadow-inner">
+            🎓
           </div>
-
-          <!-- Quick Navigation Chips -->
-          <div class="flex flex-wrap items-center gap-1.5">
-            <button onclick="navigateRouteTo('auditorium')" class="px-2.5 py-1 rounded-lg bg-[#F4F4F5] hover:bg-[#EEF2FF] hover:text-[#4338CA] text-xs font-semibold text-[#3F3F46] border border-[#E4E4E7] transition btn-spring">
-              🏛️ Auditorium
-            </button>
-            <button onclick="navigateRouteTo('robotics')" class="px-2.5 py-1 rounded-lg bg-[#F4F4F5] hover:bg-[#EEF2FF] hover:text-[#4338CA] text-xs font-semibold text-[#3F3F46] border border-[#E4E4E7] transition btn-spring">
-              💻 Robotics Lab
-            </button>
-            <button onclick="navigateRouteTo('canteen')" class="px-2.5 py-1 rounded-lg bg-[#F4F4F5] hover:bg-[#EEF2FF] hover:text-[#4338CA] text-xs font-semibold text-[#3F3F46] border border-[#E4E4E7] transition btn-spring">
-              ☕ Canteen
-            </button>
-            <button onclick="navigateRouteTo('library')" class="px-2.5 py-1 rounded-lg bg-[#F4F4F5] hover:bg-[#EEF2FF] hover:text-[#4338CA] text-xs font-semibold text-[#3F3F46] border border-[#E4E4E7] transition btn-spring">
-              📚 Library
-            </button>
+          <div class="overflow-hidden">
+            <h3 class="text-xs font-extrabold text-white truncate role-indicator-name">Rahul Sharma</h3>
+            <span class="text-[10px] font-mono text-amber-400 block role-indicator-label">Student</span>
+            <span class="text-[9px] text-slate-400 block truncate role-indicator-dept">Computer Science & AI</span>
           </div>
         </div>
 
-        <!-- Leaflet Map Canvas Container -->
-        <div class="relative w-full h-[360px] rounded-xl border border-[#E4E4E7] overflow-hidden">
-          <div id="interactive-campus-map" class="w-full h-full"></div>
-
-          <!-- Self-drawing Route HUD Floating Panel -->
-          <div id="map-route-hud" class="absolute bottom-3 left-3 right-3 bg-white/95 backdrop-blur-md rounded-xl border border-[#E4E4E7] p-3 shadow-lg flex items-center justify-between gap-4 hidden z-[1000] stagger-in">
-            <div class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-lg bg-[#4338CA] text-white flex items-center justify-center font-bold text-xs">
-                🧭
-              </div>
-              <div>
-                <div class="text-xs font-bold text-[#09090B]" id="route-dest-name">Routing to Grand Auditorium</div>
-                <div class="text-[11px] text-[#71717A]" id="route-dest-meta">Distance: 240m • Approx 3 mins walk • Circular Promenade Path</div>
-              </div>
-            </div>
-            <button onclick="clearMapRoute()" class="px-2.5 py-1 rounded-lg bg-[#F4F4F5] hover:bg-[#E4E4E7] text-xs font-semibold text-[#3F3F46] transition btn-spring">
-              Clear Route
-            </button>
-          </div>
-        </div>
-
-        <!-- Map Footer Metadata -->
-        <div class="flex items-center justify-between text-xs text-[#71717A] pt-1">
-          <div class="flex items-center gap-3">
-            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-[#4338CA]"></span> Academic Core</span>
-            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-[#14B8A6]"></span> Facilities & Labs</span>
-            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-[#FF6B6B]"></span> Transit Gates</span>
-          </div>
-          <span class="font-mono text-[11px]">Free OSM Tiles • Zero API Key Required</span>
-        </div>
-
-      </div>
-
-      <!-- ==================================================================== -->
-      <!-- BENTO CARD 2: AI CAMPUS ASSISTANT (SPAN 4) -->
-      <!-- ==================================================================== -->
-      <div id="bento-ai" class="md:col-span-4 bento-card p-5 stagger-in stagger-3 flex flex-col justify-between space-y-4">
-        <div>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="text-lg">🤖</span>
-              <h3 class="text-base font-bold text-[#09090B] font-heading">AI Campus Assistant</h3>
-            </div>
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#14B8A6]/15 text-[#0D9488]">
-              ● Local Engine
-            </span>
-          </div>
-          <p class="text-xs text-[#71717A] mt-1">Ask questions about buildings, schedules, or services</p>
-
-          <!-- Prompt Pill Suggestions -->
-          <div class="space-y-1.5 mt-3">
-            <button onclick="sendAIPrompt('Where is the quietest study spot in the library right now?')" class="w-full text-left p-2 rounded-xl bg-[#F4F4F5] hover:bg-[#EEF2FF] hover:text-[#4338CA] text-xs text-[#3F3F46] transition btn-spring flex items-center justify-between">
-              <span>"Where is the quietest study spot?"</span>
-              <span class="text-[#A1A1AA]">→</span>
-            </button>
-            <button onclick="sendAIPrompt('How do I submit an electrical issue for my hostel room?')" class="w-full text-left p-2 rounded-xl bg-[#F4F4F5] hover:bg-[#EEF2FF] hover:text-[#4338CA] text-xs text-[#3F3F46] transition btn-spring flex items-center justify-between">
-              <span>"How to report a maintenance issue?"</span>
-              <span class="text-[#A1A1AA]">→</span>
-            </button>
-            <button onclick="sendAIPrompt('What are the cafeteria lunch hours and crowd status?')" class="w-full text-left p-2 rounded-xl bg-[#F4F4F5] hover:bg-[#EEF2FF] hover:text-[#4338CA] text-xs text-[#3F3F46] transition btn-spring flex items-center justify-between">
-              <span>"Cafeteria specials & lunch hours"</span>
-              <span class="text-[#A1A1AA]">→</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Chat Stream Preview Box -->
-        <div class="p-3 rounded-xl bg-[#FAFAFA] border border-[#E4E4E7] space-y-2 min-h-[140px] flex flex-col justify-end text-xs">
-          <div id="ai-inline-messages" class="space-y-2 overflow-y-auto max-h-[130px]">
-            <div class="p-2.5 rounded-lg bg-white border border-[#E4E4E7] text-[#3F3F46] leading-relaxed">
-              👋 Hi Rahul! I am your AI campus guide. Try asking for directions, lab schedules, or cafeteria menus!
-            </div>
-          </div>
-          <!-- Typing Indicator (Hidden by default) -->
-          <div id="ai-typing-indicator" class="flex items-center gap-1.5 p-2 text-xs text-[#71717A] hidden">
-            <span>AI thinking</span>
-            <div class="flex items-center gap-1 pt-1">
-              <span class="typing-dot"></span>
-              <span class="typing-dot"></span>
-              <span class="typing-dot"></span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Inline Chat Input -->
-        <form onsubmit="handleInlineAISubmit(event)" class="flex items-center gap-2">
-          <input 
-            type="text" 
-            id="ai-inline-input" 
-            placeholder="Ask AI a campus query..." 
-            class="flex-1 px-3 py-2 rounded-xl bg-white border border-[#E4E4E7] text-xs text-[#09090B] focus:outline-none focus:border-[#4338CA] shadow-2xs"
-          >
-          <button type="submit" class="px-3.5 py-2 rounded-xl bg-[#4338CA] hover:bg-[#3730A3] text-white text-xs font-bold btn-spring">
-            Ask
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <button onclick="openLoginModal()" class="py-1.5 rounded-xl text-[10px] font-bold bg-slate-800 hover:bg-slate-750 text-slate-300 hover:text-white border border-slate-700 transition text-center">
+            Switch Persona
           </button>
-        </form>
-
+          <a href="/login" class="py-1.5 rounded-xl text-[10px] font-bold bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 transition text-center block">
+            🔑 Login Page
+          </a>
+        </div>
       </div>
 
-      <!-- ==================================================================== -->
-      <!-- BENTO CARD 3: NOTIFICATIONS & BROADCASTS (SPAN 4) -->
-      <!-- ==================================================================== -->
-      <div id="bento-notifications" class="md:col-span-4 bento-card p-5 stagger-in stagger-4 flex flex-col justify-between space-y-4">
-        <div>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="text-lg">🔔</span>
-              <h3 class="text-base font-bold text-[#09090B] font-heading">Live Notifications</h3>
-            </div>
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FF6B6B]/15 text-[#E11D48] flex items-center gap-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-[#FF6B6B] animate-ping"></span>
-              Real-Time Stream
-            </span>
-          </div>
-          <p class="text-xs text-[#71717A] mt-1">Campus broadcast alerts & updates</p>
-
-          <!-- Notifications Stream List (With Soft Bounce Slide-in) -->
-          <div id="notifications-stream" class="space-y-2.5 mt-3">
-            
-            <div class="p-3 rounded-xl bg-[#FAFAFA] border border-[#E4E4E7] space-y-1 hover:border-[#D4D4D8] transition notif-slide-in">
-              <div class="flex items-center justify-between">
-                <span class="px-2 py-0.5 rounded text-[9px] font-bold bg-[#FF6B6B]/15 text-[#E11D48]">Campus Security</span>
-                <span class="text-[10px] text-[#A1A1AA]">2 mins ago</span>
-              </div>
-              <h4 class="text-xs font-bold text-[#09090B]">Devanahalli Corridor Shuttle Schedule Update</h4>
-              <p class="text-[11px] text-[#71717A]">Shuttle Bus #3 departs at 02:45 PM from Main Gate Arrival Bay.</p>
-            </div>
-
-            <div class="p-3 rounded-xl bg-[#FAFAFA] border border-[#E4E4E7] space-y-1 hover:border-[#D4D4D8] transition notif-slide-in">
-              <div class="flex items-center justify-between">
-                <span class="px-2 py-0.5 rounded text-[9px] font-bold bg-[#14B8A6]/15 text-[#0D9488]">Academic Notice</span>
-                <span class="text-[10px] text-[#A1A1AA]">15 mins ago</span>
-              </div>
-              <h4 class="text-xs font-bold text-[#09090B]">Robotics Lab Open Extended Hours</h4>
-              <p class="text-[11px] text-[#71717A]">Computing and Hardware Lab will remain accessible until 10:00 PM today.</p>
-            </div>
-
-            <div class="p-3 rounded-xl bg-[#FAFAFA] border border-[#E4E4E7] space-y-1 hover:border-[#D4D4D8] transition notif-slide-in">
-              <div class="flex items-center justify-between">
-                <span class="px-2 py-0.5 rounded text-[9px] font-bold bg-[#4338CA]/15 text-[#4338CA]">Sports Council</span>
-                <span class="text-[10px] text-[#A1A1AA]">1 hour ago</span>
-              </div>
-              <h4 class="text-xs font-bold text-[#09090B]">Inter-Department Badminton League</h4>
-              <p class="text-[11px] text-[#71717A]">Court bookings for tournament trials are now open in the Sports module.</p>
-            </div>
-
-          </div>
+      <!-- Navigation Links matching the 10 Services in Architecture -->
+      <nav class="glass-panel rounded-2xl p-2.5 space-y-1">
+        <div class="px-3 py-1.5 text-[9px] font-mono font-bold tracking-widest text-slate-400 uppercase">
+          CAMPUS SERVICES
         </div>
 
-        <button onclick="simulateBroadcastAlert()" class="w-full py-2 rounded-xl bg-[#F4F4F5] hover:bg-[#E4E4E7] text-xs font-semibold text-[#09090B] transition btn-spring">
-          ＋ Simulate Inbound Broadcast
+        <button data-tab="overview" onclick="switchTab('overview')" class="nav-tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-500/20 to-amber-500/10 text-amber-400 border border-amber-500/30 shadow-lg shadow-amber-500/10 transition">
+          <span>🏠</span> Command Center
         </button>
-      </div>
 
-      <!-- ==================================================================== -->
-      <!-- BENTO CARD 4: ISSUE REPORTING & LIVE STEPPER (SPAN 4) -->
-      <!-- ==================================================================== -->
-      <div id="bento-issues" class="md:col-span-4 bento-card p-5 stagger-in stagger-5 flex flex-col justify-between space-y-4">
-        <div>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="text-lg">🛡️</span>
-              <h3 class="text-base font-bold text-[#09090B] font-heading">Issue Reporting</h3>
-            </div>
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#14B8A6]/15 text-[#0D9488]">
-              Active Tracker
-            </span>
-          </div>
-          <p class="text-xs text-[#71717A] mt-1">Campus grievance & infrastructure resolution</p>
-
-          <!-- Featured Issue with Animated Stepper Progress -->
-          <div class="p-4 rounded-xl border border-[#E4E4E7] bg-[#FAFAFA] mt-3 space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#4338CA] text-white">ISSUE #1042</span>
-              <span class="text-[10px] text-[#71717A]">Hostel Block 3</span>
-            </div>
-            <div>
-              <h4 class="text-xs font-bold text-[#09090B]" id="active-issue-title">Wi-Fi Access Point Reconnection (Floor 2)</h4>
-              <p class="text-[11px] text-[#71717A] mt-0.5">Assigned to: Vikram Patil (Network Ops)</p>
-            </div>
-
-            <!-- Animated Stepper: Reported -> Assigned -> Resolved -->
-            <div class="pt-2">
-              <div class="relative flex items-center justify-between">
-                <!-- Track background -->
-                <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-[#E4E4E7] rounded-full z-0"></div>
-                <!-- Track Fill (Animates width smoothly) -->
-                <div id="issue-stepper-fill" class="stepper-bar-fill absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-[#4338CA] rounded-full z-0" style="width: 50%;"></div>
-                
-                <!-- Step 1: Reported -->
-                <div class="stepper-node relative z-10 flex flex-col items-center">
-                  <div id="step-node-1" class="w-6 h-6 rounded-full bg-[#4338CA] text-white flex items-center justify-center text-[10px] font-bold shadow-xs">✓</div>
-                  <span class="text-[10px] font-semibold text-[#09090B] mt-1">Reported</span>
-                </div>
-                <!-- Step 2: Assigned -->
-                <div class="stepper-node relative z-10 flex flex-col items-center">
-                  <div id="step-node-2" class="w-6 h-6 rounded-full bg-[#4338CA] text-white flex items-center justify-center text-[10px] font-bold shadow-xs animate-pulse">2</div>
-                  <span class="text-[10px] font-semibold text-[#4338CA] mt-1">Assigned</span>
-                </div>
-                <!-- Step 3: Resolved -->
-                <div class="stepper-node relative z-10 flex flex-col items-center">
-                  <div id="step-node-3" class="w-6 h-6 rounded-full bg-white border-2 border-[#E4E4E7] text-[#71717A] flex items-center justify-center text-[10px] font-bold">3</div>
-                  <span class="text-[10px] font-medium text-[#71717A] mt-1">Resolved</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="flex items-center justify-between pt-2">
-              <button onclick="advanceIssueStepper()" class="text-xs font-bold text-[#4338CA] hover:underline btn-spring">
-                ⚡ Advance Stepper Stage →
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <button onclick="openReportIssueModal()" class="w-full py-2 rounded-xl bg-[#4338CA] hover:bg-[#3730A3] text-white text-xs font-bold transition shadow-sm btn-spring">
-          ＋ File New Campus Issue
+        <button data-tab="map" onclick="switchTab('map')" class="nav-tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition">
+          <span>🗺️</span> Campus Map & Nav
         </button>
-      </div>
 
-      <!-- ==================================================================== -->
-      <!-- BENTO CARD 5: FACILITIES & LAB CAPACITY (SPAN 4) -->
-      <!-- ==================================================================== -->
-      <div id="bento-facilities" class="md:col-span-4 bento-card p-5 stagger-in stagger-6 flex flex-col justify-between space-y-4">
-        <div>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="text-lg">🏛️</span>
-              <h3 class="text-base font-bold text-[#09090B] font-heading">Facilities & Labs</h3>
-            </div>
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#14B8A6]/15 text-[#0D9488]">
-              Live Capacity
-            </span>
-          </div>
-          <p class="text-xs text-[#71717A] mt-1">Real-time room occupancy and reservations</p>
-
-          <!-- Facility Status Items -->
-          <div class="space-y-2.5 mt-3">
-            
-            <div class="p-3 rounded-xl bg-[#FAFAFA] border border-[#E4E4E7] space-y-1.5">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-[#09090B]">Central Library (Reading Hall)</span>
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#14B8A6]/15 text-[#0D9488]">Open • 72/100 Seats</span>
-              </div>
-              <div class="w-full bg-[#E4E4E7] h-1.5 rounded-full overflow-hidden">
-                <div class="bg-[#14B8A6] h-full rounded-full" style="width: 72%;"></div>
-              </div>
-            </div>
-
-            <div class="p-3 rounded-xl bg-[#FAFAFA] border border-[#E4E4E7] space-y-1.5">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-[#09090B]">AI & Robotics Lab 3</span>
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#4338CA]/15 text-[#4338CA]">8 Seats Available</span>
-              </div>
-              <div class="w-full bg-[#E4E4E7] h-1.5 rounded-full overflow-hidden">
-                <div class="bg-[#4338CA] h-full rounded-full" style="width: 66%;"></div>
-              </div>
-            </div>
-
-            <div class="p-3 rounded-xl bg-[#FAFAFA] border border-[#E4E4E7] space-y-1.5">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-[#09090B]">Discussion Pods (B Block)</span>
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#FF6B6B]/15 text-[#E11D48]">Pod 4 Free Now</span>
-              </div>
-              <div class="flex items-center justify-between pt-1">
-                <span class="text-[11px] text-[#71717A]">Equipped with 4K display & whiteboard</span>
-                <button onclick="bookFacilitySlot('Discussion Pod 4')" class="text-xs font-bold text-[#4338CA] hover:underline btn-spring">
-                  Reserve 1h →
-                </button>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <button onclick="showToast('Facility calendar synced with university timetable!', '🏛️')" class="w-full py-2 rounded-xl bg-[#F4F4F5] hover:bg-[#E4E4E7] text-xs font-semibold text-[#09090B] transition btn-spring">
-          View All 18 Facilities & Labs
+        <button data-tab="events" onclick="switchTab('events')" class="nav-tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition">
+          <span>📅</span> Events & Tech Fests
         </button>
-      </div>
 
-      <!-- ==================================================================== -->
-      <!-- BENTO CARD 6: CAMPUS EVENTS & DIGITAL PASSES (SPAN 6) -->
-      <!-- ==================================================================== -->
-      <div id="bento-events" class="md:col-span-6 bento-card p-5 stagger-in stagger-7 flex flex-col justify-between space-y-4">
+        <button data-tab="facilities" onclick="switchTab('facilities')" class="nav-tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition">
+          <span>🏛️</span> Facilities & Lab Hub
+        </button>
+
+        <button data-tab="foodsports" onclick="switchTab('foodsports')" class="nav-tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition">
+          <span>🍽️</span> Food & Sports Hub
+        </button>
+
+        <button data-tab="issues" onclick="switchTab('issues')" class="nav-tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition">
+          <span>⚠️</span> Maintenance Tickets
+        </button>
+
+        <button data-tab="notifications" onclick="switchTab('notifications')" class="nav-tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition">
+          <span>🔔</span> Live Broadcasts
+        </button>
+
+        <button data-tab="users" onclick="switchTab('users')" class="nav-tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition">
+          <span>👥</span> Role Permissions
+        </button>
+
+        <button data-tab="analytics" onclick="switchTab('analytics')" class="nav-tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition">
+          <span>📊</span> Crowd Analytics
+        </button>
+
+        <button data-tab="simulation" onclick="switchTab('simulation')" class="nav-tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition">
+          <span>🧪</span> What-If Simulation
+        </button>
+      </nav>
+
+      <!-- AI Guide Callout Box -->
+      <div class="glass-card rounded-2xl p-4 border border-cyan-500/30 text-center space-y-2.5">
+        <div class="w-10 h-10 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center mx-auto text-xl border border-cyan-500/30">
+          🤖
+        </div>
         <div>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="text-lg">🎪</span>
-              <h3 class="text-base font-bold text-[#09090B] font-heading">Campus Events & QR Passes</h3>
-            </div>
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#4338CA]/15 text-[#4338CA]">
-              3 Live Today
-            </span>
-          </div>
-          <p class="text-xs text-[#71717A] mt-1">Conferences, hackathons, and guest seminars</p>
-
-          <!-- Events Grid -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
-            
-            <div class="p-3.5 rounded-xl border border-[#E4E4E7] bg-[#FAFAFA] space-y-2">
-              <div class="flex items-center justify-between">
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#4338CA] text-white">Today • 02:00 PM</span>
-                <span class="text-[10px] text-[#71717A]">Auditorium 1</span>
-              </div>
-              <h4 class="text-xs font-bold text-[#09090B]">Chanakya AI & Autonomous Systems Symposium</h4>
-              <p class="text-[11px] text-[#71717A]">Keynote on Edge LLMs by DeepMind researchers.</p>
-              <div class="pt-1">
-                <button onclick="openDigitalPassModal('AI Symposium 2026', 'AUD-101')" class="w-full py-1.5 rounded-lg bg-[#4338CA] hover:bg-[#3730A3] text-white text-xs font-bold transition btn-spring flex items-center justify-center gap-1.5">
-                  <span>🎟️</span><span>Get Digital Pass</span>
-                </button>
-              </div>
-            </div>
-
-            <div class="p-3.5 rounded-xl border border-[#E4E4E7] bg-[#FAFAFA] space-y-2">
-              <div class="flex items-center justify-between">
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#14B8A6] text-white">Fri • 09:00 AM</span>
-                <span class="text-[10px] text-[#71717A]">Robotics Lab</span>
-              </div>
-              <h4 class="text-xs font-bold text-[#09090B]">Smart Campus 48h Hackathon</h4>
-              <p class="text-[11px] text-[#71717A]">Build IoT and AI solutions for campus mobility.</p>
-              <div class="pt-1">
-                <button onclick="openDigitalPassModal('Hackathon 2026', 'HACK-884')" class="w-full py-1.5 rounded-lg bg-white border border-[#E4E4E7] hover:border-[#4338CA] text-[#09090B] text-xs font-bold transition btn-spring flex items-center justify-center gap-1.5">
-                  <span>🎟️</span><span>Register Pass</span>
-                </button>
-              </div>
-            </div>
-
-          </div>
+          <h4 class="text-xs font-extrabold text-white">Chanakya AI Guide</h4>
+          <p class="text-[10px] text-emerald-400 font-mono mt-0.5">● 100% Local • Zero API Key</p>
+          <p class="text-[11px] text-slate-400 mt-1">Instant campus navigation, event info & syllabus queries.</p>
         </div>
-
-        <div class="flex items-center justify-between text-xs text-[#71717A] pt-1">
-          <span>Digital QR entry enabled at all auditorium gates</span>
-          <a href="#events" onclick="showToast('Loading full university calendar...')" class="font-bold text-[#4338CA] hover:underline">Explore Calendar →</a>
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <button onclick="toggleAIChat()" class="py-1.5 rounded-xl text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-slate-950 transition">
+            Chat
+          </button>
+          <button onclick="openFeedDataModal()" class="py-1.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 transition">
+            Feed Data
+          </button>
         </div>
       </div>
 
-      <!-- ==================================================================== -->
-      <!-- BENTO CARD 7: FOOD & SPORTS SERVICES (SPAN 6) -->
-      <!-- ==================================================================== -->
-      <div id="bento-foodsports" class="md:col-span-6 bento-card p-5 stagger-in stagger-8 flex flex-col justify-between space-y-4">
-        <div>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="text-lg">☕</span>
-              <h3 class="text-base font-bold text-[#09090B] font-heading">Food & Sports Services</h3>
-            </div>
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#14B8A6]/15 text-[#0D9488]">
-              Live Wait Times
-            </span>
-          </div>
-          <p class="text-xs text-[#71717A] mt-1">Canteen crowd meters and court bookings</p>
+    </aside>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
-            
-            <!-- Cafeteria Meter -->
-            <div class="p-3.5 rounded-xl border border-[#E4E4E7] bg-[#FAFAFA] space-y-2">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-[#09090B]">Central Canteen</span>
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#14B8A6]/15 text-[#0D9488]">42% Busy</span>
-              </div>
-              <div class="flex items-baseline gap-1">
-                <span class="text-xl font-extrabold text-[#09090B]">8</span>
-                <span class="text-xs text-[#71717A]">mins average line wait</span>
-              </div>
-              <div class="text-[11px] text-[#71717A]">Today's Special: South Indian Thali & Cold Brew Coffee</div>
-              <button onclick="showToast('Menu saved to order queue!', '☕')" class="w-full py-1.5 rounded-lg bg-white border border-[#E4E4E7] text-xs font-semibold text-[#09090B] hover:border-[#14B8A6] transition btn-spring">
-                View Full Menu
-              </button>
-            </div>
+    <!-- MAIN TAB CONTENTS CONTAINER -->
+    <main class="flex-1 space-y-6">
 
-            <!-- Sports Tracker -->
-            <div class="p-3.5 rounded-xl border border-[#E4E4E7] bg-[#FAFAFA] space-y-2">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-[#09090B]">Indoor Sports Center</span>
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#14B8A6]/15 text-[#0D9488]">Courts Open</span>
-              </div>
-              <div class="space-y-1 text-xs text-[#3F3F46]">
-                <div class="flex items-center justify-between">
-                  <span>Badminton Court 1:</span>
-                  <strong class="text-[#0D9488]">Available</strong>
-                </div>
-                <div class="flex items-center justify-between">
-                  <span>Table Tennis 2:</span>
-                  <strong class="text-[#71717A]">Occupied (15m left)</strong>
-                </div>
-              </div>
-              <button onclick="bookFacilitySlot('Badminton Court 1')" class="w-full py-1.5 rounded-lg bg-[#4338CA] hover:bg-[#3730A3] text-white text-xs font-bold transition btn-spring">
-                Book Badminton Slot
-              </button>
-            </div>
-
-          </div>
-        </div>
-
-        <div class="flex items-center justify-between text-xs text-[#71717A] pt-1">
-          <span>Gate ANPR: 142 vehicles logged today</span>
-          <button onclick="showToast('Shuttle transit GPS connected!', '🚌')" class="font-bold text-[#4338CA] hover:underline">Track Campus Shuttle →</button>
-        </div>
+      <!-- Dynamic Role Welcome Banner -->
+      <div id="role-welcome-banner" class="glass-panel rounded-3xl p-6 border border-slate-800">
+        <!-- Injected via JavaScript based on role -->
       </div>
 
-    </div>
-
-  </main>
-
-  <!-- ======================================================================== -->
-  <!-- 3. FOOTER -->
-  <!-- ======================================================================== -->
-  <footer class="border-t border-[#E4E4E7] py-6 bg-white mt-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#71717A]">
-      <div class="flex items-center gap-2.5">
-        <span class="w-2 h-2 rounded-full bg-[#14B8A6]"></span>
-        <span class="font-bold text-[#09090B]">Chanakya Campus Connect</span>
-        <span>•</span>
-        <span>Autonomous Multi-Service Digital Infrastructure</span>
-        <span>•</span>
-        <span>Bengaluru Campus</span>
-      </div>
-      <div class="flex items-center gap-4 font-medium">
-        <button onclick="scrollToCard('bento-map')" class="hover:text-[#09090B] transition">Campus Map</button>
-        <button onclick="toggleAIAssistant()" class="hover:text-[#4338CA] transition">AI Guide</button>
-        <button onclick="openReportIssueModal()" class="hover:text-[#09090B] transition">Report Grievance</button>
-        <a href="tel:+918029994500" class="text-[#FF6B6B] hover:underline">Emergency: 2999 4500</a>
-      </div>
-    </div>
-  </footer>
-
-  <!-- ======================================================================== -->
-  <!-- 4. DIGITAL EVENT QR PASS MODAL -->
-  <!-- ======================================================================== -->
-  <div id="qr-pass-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs hidden items-center justify-center p-4">
-    <div class="w-full max-w-sm bg-white rounded-2xl border border-[#E4E4E7] shadow-2xl p-6 text-center space-y-4 modal-spring">
-      <div class="flex items-center justify-between">
-        <span class="text-xs font-bold text-[#4338CA] uppercase tracking-wider">Official Digital Pass</span>
-        <button onclick="closeDigitalPassModal()" class="text-xs p-1 text-[#71717A] hover:text-[#09090B]">✕</button>
-      </div>
-      
-      <div class="p-4 rounded-xl bg-[#FAFAFA] border border-[#E4E4E7] space-y-2">
-        <h4 class="text-sm font-black text-[#09090B]" id="modal-pass-event">Chanakya AI Symposium 2026</h4>
-        <p class="text-xs text-[#71717A]">Holder: Rahul Sharma (CS Yr 3)</p>
+      <!-- ================================================================== -->
+      <!-- TAB 1: COMMAND CENTER & TELEMETRY -->
+      <!-- ================================================================== -->
+      <section id="tab-overview" class="tab-view-container space-y-6">
         
-        <!-- Synthetic SVG QR Code Generator -->
-        <div class="py-2 flex justify-center">
-          <svg class="w-36 h-36 border-4 border-white shadow-sm rounded-lg" viewBox="0 0 100 100" fill="currentColor">
-            <rect width="100" height="100" fill="#FFFFFF"/>
-            <rect x="10" y="10" width="30" height="30" fill="#09090B"/>
-            <rect x="15" y="15" width="20" height="20" fill="#FFFFFF"/>
-            <rect x="20" y="20" width="10" height="10" fill="#4338CA"/>
-            <rect x="60" y="10" width="30" height="30" fill="#09090B"/>
-            <rect x="65" y="15" width="20" height="20" fill="#FFFFFF"/>
-            <rect x="70" y="20" width="10" height="10" fill="#4338CA"/>
-            <rect x="10" y="60" width="30" height="30" fill="#09090B"/>
-            <rect x="15" y="65" width="20" height="20" fill="#FFFFFF"/>
-            <rect x="20" y="70" width="10" height="10" fill="#4338CA"/>
-            <rect x="45" y="45" width="10" height="10" fill="#09090B"/>
-            <rect x="60" y="60" width="15" height="15" fill="#09090B"/>
-            <rect x="80" y="80" width="10" height="10" fill="#09090B"/>
-          </svg>
+        <!-- Real-Time Metrics Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="glass-card rounded-2xl p-4 border border-slate-700/60">
+            <span class="text-[10px] font-mono uppercase text-slate-400">Active Campus Crowd</span>
+            <p class="text-2xl font-black text-amber-400 mt-1">4,280</p>
+            <span class="text-[10px] text-emerald-400 flex items-center gap-1 mt-1">▲ Normal Density (48%)</span>
+          </div>
+          <div class="glass-card rounded-2xl p-4 border border-slate-700/60">
+            <span class="text-[10px] font-mono uppercase text-slate-400">ANPR Gate Throughput</span>
+            <p class="text-2xl font-black text-cyan-400 mt-1">154/min</p>
+            <span class="text-[10px] text-slate-400 mt-1">Gate 1 & 2 Active</span>
+          </div>
+          <div class="glass-card rounded-2xl p-4 border border-slate-700/60">
+            <span class="text-[10px] font-mono uppercase text-slate-400">Canteen Queue Wait</span>
+            <p class="text-2xl font-black text-purple-400 mt-1">11 mins</p>
+            <span class="text-[10px] text-emerald-400 mt-1">Annapurna Pavilion</span>
+          </div>
+          <div class="glass-card rounded-2xl p-4 border border-slate-700/60">
+            <span class="text-[10px] font-mono uppercase text-slate-400">Substation Solar</span>
+            <p class="text-2xl font-black text-emerald-400 mt-1">892 kW</p>
+            <span class="text-[10px] text-emerald-400 mt-1">Battery at 96%</span>
+          </div>
         </div>
-        <div class="font-mono text-xs font-bold text-[#09090B]" id="modal-pass-code">PASS-CHANAKYA-2026-88</div>
+
+        <!-- LIVE ANPR CAMERA & ENVIRONMENTAL TELEMETRY WIDGET -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          
+          <!-- ANPR Gate 1 Video Stream Simulation -->
+          <div class="glass-card rounded-2xl p-4 border border-slate-700/60 space-y-3 relative overflow-hidden">
+            <div class="camera-scanline"></div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
+                <span class="text-xs font-bold text-white uppercase tracking-wider font-mono">GATE 1 ANPR CAMERA FEED</span>
+              </div>
+              <span class="text-[10px] font-mono bg-slate-900 px-2 py-0.5 rounded text-slate-400 border border-slate-800">1080P • LIVE</span>
+            </div>
+
+            <div class="bg-slate-950 rounded-xl p-3.5 border border-slate-800 space-y-2">
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-slate-400">Detected License Plate:</span>
+                <span id="anpr-plate-display" class="font-mono font-black text-amber-400 text-sm tracking-widest bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">KA-04-MB-2026</span>
+              </div>
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-slate-400">Vehicle Type & Speed:</span>
+                <span id="anpr-type-display" class="font-medium text-slate-200">EV Campus Buggy #02 • 18 km/h</span>
+              </div>
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-slate-400">Ingress Clearance:</span>
+                <span id="anpr-status-display" class="text-emerald-400 font-bold">● Access Approved (Barrier Boom Open)</span>
+              </div>
+            </div>
+            
+            <p class="text-[10px] text-slate-400">Automatic ANPR vehicle logging connected via WebSocket stream.</p>
+          </div>
+
+          <!-- Devanahalli Campus Micro-Grid & Weather -->
+          <div class="glass-card rounded-2xl p-4 border border-slate-700/60 space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-base">⚡</span>
+                <span class="text-xs font-bold text-white uppercase tracking-wider font-mono">CAMPUS ENERGY & ENVIRONMENT</span>
+              </div>
+              <span class="text-[10px] font-mono text-emerald-400">SUBSTATION 100% OK</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                <span class="text-[10px] text-slate-400 block">Solar Generation</span>
+                <span class="text-base font-black text-amber-400">892 kW</span>
+                <span class="text-[10px] text-slate-400 block mt-0.5">High-Voltage Substation</span>
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                <span class="text-[10px] text-slate-400 block">Air Quality Index</span>
+                <span class="text-base font-black text-emerald-400">42 AQI (Clean)</span>
+                <span class="text-[10px] text-slate-400 block mt-0.5"></span>
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                <span class="text-[10px] text-slate-400 block">BLR Airport Distance</span>
+                <span class="text-base font-black text-cyan-400">14.8 km</span>
+                <span class="text-[10px] text-slate-400 block mt-0.5">15 mins via NH 44</span>
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                <span class="text-[10px] text-slate-400 block">Wi-Fi 6 Access Points</span>
+                <span class="text-base font-black text-purple-400">48 / 48 Online</span>
+                <span class="text-[10px] text-slate-400 block mt-0.5">Gbps Backbone</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- CHANAKYA OSM LANDMARKS QUICK-EXPLORER -->
+        <div class="glass-panel rounded-3xl p-6 border border-slate-800 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h3 class="text-base font-extrabold text-white flex items-center gap-2">
+                <span>📍</span> Chanakya Global Campus Landmarks (OpenStreetMap)
+              </h3>
+              <p class="text-xs text-slate-400">Directly pinpointed from verified campus coordinates. Click any card to locate & calculate route.</p>
+            </div>
+            <button onclick="switchTab('map')" class="py-1.5 px-3 rounded-xl text-xs font-bold bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 transition">
+              Open Full Map &rarr;
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            
+            <!-- 1. Academic Circle -->
+            <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-amber-500/40 transition space-y-2 flex flex-col justify-between">
+              <div>
+                <span class="text-[9px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">OSM: clg / path</span>
+                <h4 class="text-xs font-extrabold text-white mt-1.5">Academic Circle</h4>
+                <p class="text-[11px] text-slate-400 mt-1">Central circular quadrangle promenade connecting all wings.</p>
+              </div>
+              <button onclick="focusLandmark('central_circle'); planRouteBetween('entry_gate', 'central_circle');" class="w-full py-1.5 rounded-xl text-[10px] font-bold bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-200 transition text-center">
+                Route Here
+              </button>
+            </div>
+
+            <!-- 2. Entry Gate -->
+            <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/40 transition space-y-2 flex flex-col justify-between">
+              <div>
+                <span class="text-[9px] font-mono px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">OSM: Entry</span>
+                <h4 class="text-xs font-extrabold text-white mt-1.5">South Entry Gate</h4>
+                <p class="text-[11px] text-slate-400 mt-1">Primary campus ingress with ANPR and visitor check-in.</p>
+              </div>
+              <button onclick="focusLandmark('entry_gate');" class="w-full py-1.5 rounded-xl text-[10px] font-bold bg-slate-800 hover:bg-cyan-500 hover:text-slate-950 text-slate-200 transition text-center">
+                Locate Gate
+              </button>
+            </div>
+
+            <!-- 3. Exit Gate -->
+            <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/40 transition space-y-2 flex flex-col justify-between">
+              <div>
+                <span class="text-[9px] font-mono px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">OSM: exit</span>
+                <h4 class="text-xs font-extrabold text-white mt-1.5">South Exit Gate</h4>
+                <p class="text-[11px] text-slate-400 mt-1">Dedicated egress road to main highway avoiding congestion.</p>
+              </div>
+              <button onclick="focusLandmark('exit_gate');" class="w-full py-1.5 rounded-xl text-[10px] font-bold bg-slate-800 hover:bg-cyan-500 hover:text-slate-950 text-slate-200 transition text-center">
+                Locate Gate
+              </button>
+            </div>
+
+            <!-- 4. Electricity Substation -->
+            <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-emerald-500/40 transition space-y-2 flex flex-col justify-between">
+              <div>
+                <span class="text-[9px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">OSM: Electricity</span>
+                <h4 class="text-xs font-extrabold text-white mt-1.5">Power Substation</h4>
+                <p class="text-[11px] text-slate-400 mt-1">1.2 MW high-voltage substation & solar inverter center.</p>
+              </div>
+              <button onclick="focusLandmark('electricity_station');" class="w-full py-1.5 rounded-xl text-[10px] font-bold bg-slate-800 hover:bg-emerald-500 hover:text-slate-950 text-slate-200 transition text-center">
+                Locate Grid
+              </button>
+            </div>
+
+            <!-- 5. Sports Path -->
+            <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-purple-500/40 transition space-y-2 flex flex-col justify-between">
+              <div>
+                <span class="text-[9px] font-mono px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">OSM: sportspath</span>
+                <h4 class="text-xs font-extrabold text-white mt-1.5">Sports Boulevard</h4>
+                <p class="text-[11px] text-slate-400 mt-1">Scenic winding path to Olympic stadium and courts.</p>
+              </div>
+              <button onclick="focusLandmark('sportspath'); planRouteBetween('central_circle', 'sportspath');" class="w-full py-1.5 rounded-xl text-[10px] font-bold bg-slate-800 hover:bg-purple-500 hover:text-slate-950 text-slate-200 transition text-center">
+                Route Path
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Featured Flagship Banner & Digital Pass -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Flagship Fest Banner Card -->
+          <div class="lg:col-span-2 glass-card rounded-3xl overflow-hidden border border-slate-700/60 relative group">
+            <div class="h-64 relative overflow-hidden bg-slate-950">
+              <img src="/assets/images/chanakya_campus.png" alt="Chanakya Campus" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent"></div>
+              <div class="absolute bottom-5 left-5 right-5 space-y-2">
+                <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500 text-slate-950">
+                  FLAGSHIP TECH FEST • SEPT 15-17, 2026
+                </span>
+                <h3 class="text-xl font-black text-white">Chanakya TechSangam 2026</h3>
+                <p class="text-xs text-slate-300 max-w-xl">
+                  ByteCraft 48-Hour AI Hackathon (₹5,00,000 Pool), Robowars, and keynotes by DeepMind & Garuda Aerospace at Grand Auditorium.
+                </p>
+                <div class="flex items-center gap-3 pt-1">
+                  <button onclick="openRegisterModal('EVT-2026-001', 'Chanakya TechSangam 2026')" class="py-2 px-4 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition">
+                    1-Click Register & Get Digital Pass &rarr;
+                  </button>
+                  <button onclick="switchTab('map'); calculateRouteTo('grand_auditorium');" class="py-2 px-4 rounded-xl text-xs font-bold bg-slate-800/80 hover:bg-slate-700 text-white border border-slate-700 transition">
+                    View Venue on Map
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive 3D Student Digital ID Card -->
+          <div class="perspective-1000 h-64">
+            <div id="student-id-card" onclick="toggleStudentCardFlip()" class="card-flip-inner h-full cursor-pointer relative" title="Click to Flip Card">
+              
+              <!-- Front of ID Card -->
+              <div class="card-front glass-card p-5 border border-amber-500/30 flex flex-col justify-between hologram-shimmer shadow-2xl">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xl">🎓</span>
+                    <div>
+                      <h4 class="text-[11px] font-bold text-amber-400 tracking-wider">CHANAKYA UNIVERSITY</h4>
+                      <span class="text-[9px] text-slate-400 block">DIGITAL STUDENT PASS</span>
+                    </div>
+                  </div>
+                  <span class="px-2 py-0.5 rounded text-[9px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">ACTIVE</span>
+                </div>
+
+                <div class="flex items-center gap-3 my-auto">
+                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-300 text-slate-950 font-black flex items-center justify-center text-xl shadow-md">
+                    RS
+                  </div>
+                  <div>
+                    <h3 class="text-sm font-black text-white">Rahul Sharma</h3>
+                    <span class="text-[10px] font-mono text-cyan-400 block">ID: CU-2026-AI-042</span>
+                    <span class="text-[10px] text-slate-300 block">B.Tech Artificial Intelligence</span>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between text-[10px] text-slate-400 pt-2 border-t border-slate-800">
+                  <span>Batch: 2026-2030</span>
+                  <span class="text-amber-400 font-mono font-bold">CLICK TO FLIP 🔄</span>
+                </div>
+              </div>
+
+              <!-- Back of ID Card -->
+              <div class="card-back glass-card p-5 border border-cyan-500/30 flex flex-col justify-between bg-slate-900/95 shadow-2xl">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-mono text-cyan-400">CHANAKYA GLOBAL CAMPUS</span>
+                  <span class="text-[9px] text-slate-400">RFID: 884-29-AI</span>
+                </div>
+
+                <div class="space-y-1.5 text-[11px]">
+                  <p class="text-slate-300">Blood Group: <b class="text-white font-mono">O+ Positive</b></p>
+                  <p class="text-slate-300">Library Token: <b class="text-white font-mono">LIB-2026-8819</b></p>
+                  <p class="text-slate-300">Emergency: <b class="text-rose-400 font-mono">+91 80 2999 4500</b></p>
+                </div>
+
+                <div class="text-center pt-2 border-t border-slate-800">
+                  <span class="font-mono text-xs tracking-widest text-slate-400">||||| | |||| ||| ||||||| |</span>
+                  <span class="text-[9px] text-cyan-400 block mt-1">CLICK TO FLIP FRONT 🔄</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ================================================================== -->
+      <!-- TAB 2: MAP & NAVIGATION SERVICE -->
+      <!-- ================================================================== -->
+      <section id="tab-map" class="tab-view-container hidden space-y-4">
+        
+        <!-- Route Planner & Actions Bar -->
+        <div class="glass-card rounded-2xl p-4 border border-slate-700/60 space-y-3">
+          
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <span class="text-xl">🗺️</span>
+              <div>
+                <h3 class="text-sm font-extrabold text-white">Chanakya Campus Map & Router</h3>
+                <p class="text-[11px] text-slate-400">Multi-Modal Dijkstra Pathfinding • OpenStreetMap Verified (Devanahalli 562129)</p>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <button onclick="plotLandmarksOnMap()" class="py-1.5 px-3 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 transition" title="Fit all landmarks with comfortable framing">
+                🎯 Fit Campus View
+              </button>
+              <button onclick="triggerEmergencyEvacuation()" class="py-1.5 px-3 rounded-xl text-xs font-bold bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 transition">
+                🚨 Evacuation Line
+              </button>
+              <button onclick="togglePathObstacle()" class="py-1.5 px-3 rounded-xl text-xs font-bold bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 transition">
+                🚧 Blockade Detour
+              </button>
+              <button onclick="openCustomMapModal()" class="py-1.5 px-3 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 shadow-md transition">
+                ➕ Feed Custom Pin / GPS
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Route Selector -->
+          <div class="flex flex-wrap items-center gap-3 pt-2 border-t border-slate-800 text-xs">
+            <div class="flex items-center gap-2">
+              <span class="text-slate-400">From:</span>
+              <select id="route-start-select" class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-slate-200">
+                <option value="entry_gate">South Entry Gate (Entry)</option>
+                <option value="admin_block">Admin Heritage Block</option>
+                <option value="central_circle">Academic Circle (clg / path)</option>
+                <option value="hostel_zone">Nalanda Hostels</option>
+                <option value="tech_park">Kalam Tech Park</option>
+              </select>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <span class="text-slate-400">To:</span>
+              <select id="route-end-select" class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-slate-200">
+                <option value="grand_auditorium">Grand Auditorium (TechSangam)</option>
+                <option value="sportspath">Sports Boulevard (sportspath)</option>
+                <option value="sports_complex">Olympic Sports Arena</option>
+                <option value="central_library">Central Digital Library</option>
+                <option value="electricity_station">Power Substation (Electricity)</option>
+                <option value="food_pavilion">Annapurna Food Pavilion</option>
+                <option value="exit_gate">South Exit Gate (exit)</option>
+              </select>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <span class="text-slate-400">Mode:</span>
+              <select id="route-mode-select" class="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-slate-200">
+                <option value="pedestrian">🚶 Walking</option>
+                <option value="bicycle">🚲 Bicycle</option>
+                <option value="shuttle">🛺 EV Shuttle</option>
+                <option value="wheelchair">♿ Accessible</option>
+              </select>
+            </div>
+
+            <button onclick="planRouteBetween(document.getElementById('route-start-select').value, document.getElementById('route-end-select').value, document.getElementById('route-mode-select').value)" class="py-1 px-3 rounded-lg font-bold bg-cyan-500 hover:bg-cyan-400 text-slate-950 transition">
+              Find Route
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Leaflet Map Container -->
+        <div class="w-full h-[540px] rounded-3xl overflow-hidden border border-slate-700/60 shadow-2xl relative">
+          <div id="campus-map" class="w-full h-full"></div>
+        </div>
+
+      </section>
+
+      <!-- ================================================================== -->
+      <!-- TAB 3: EVENTS SERVICE -->
+      <!-- ================================================================== -->
+      <section id="tab-events" class="tab-view-container hidden space-y-6">
+        
+        <div class="glass-card rounded-2xl p-4 border border-slate-700/60 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-1.5 overflow-x-auto">
+            <button onclick="renderEvents('all')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 text-slate-950">All Events</button>
+            <button onclick="renderEvents('Tech')" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Tech & AI</button>
+            <button onclick="renderEvents('Cultural')" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Cultural & Arts</button>
+            <button onclick="renderEvents('Academic')" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Conclaves</button>
+            <button onclick="renderEvents('Sports')" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Sports League</button>
+          </div>
+
+          <div class="text-xs text-slate-400">
+            Automated Holographic Pass Generator with Instant QR Check-in
+          </div>
+        </div>
+
+        <div id="events-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Populated by JavaScript -->
+        </div>
+
+      </section>
+
+      <!-- ================================================================== -->
+      <!-- TAB 4: FACILITIES SERVICE -->
+      <!-- ================================================================== -->
+      <section id="tab-facilities" class="tab-view-container hidden space-y-6">
+        
+        <div class="glass-card rounded-2xl p-4 border border-slate-700/60 flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-extrabold text-white">Smart Facilities & Study Hub</h3>
+            <p class="text-xs text-slate-400">Live seat occupancy, lab availability & instant booking.</p>
+          </div>
+          <span class="text-xs text-emerald-400 font-mono font-bold">12 Facilities Synced</span>
+        </div>
+
+        <div id="facilities-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Populated by JavaScript -->
+        </div>
+
+      </section>
+
+      <!-- ================================================================== -->
+      <!-- TAB 5: FOOD & SPORTS SERVICE -->
+      <!-- ================================================================== -->
+      <section id="tab-foodsports" class="tab-view-container hidden space-y-6">
+        
+        <!-- Dining Outlets -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-base font-extrabold text-white flex items-center gap-2">
+              <span>🍽️</span> Food Outlets & Canteens
+            </h3>
+            <span class="text-xs text-slate-400 font-mono">Real-time Digital Queue</span>
+          </div>
+          <div id="food-outlets-list" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Sports Arenas -->
+        <div class="space-y-3 pt-4 border-t border-slate-800">
+          <div class="flex items-center justify-between">
+            <h3 class="text-base font-extrabold text-white flex items-center gap-2">
+              <span>⚽</span> Olympic Sports Complex & Courts
+            </h3>
+            <span class="text-xs text-slate-400 font-mono">Live Slot Booking</span>
+          </div>
+          <div id="sports-courts-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ================================================================== -->
+      <!-- TAB 6: MAINTENANCE & ISSUE MANAGEMENT -->
+      <!-- ================================================================== -->
+      <section id="tab-issues" class="tab-view-container hidden space-y-6">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Submit Ticket Card -->
+          <div class="glass-card rounded-3xl p-6 border border-slate-700/60 space-y-4">
+            <h3 class="text-base font-extrabold text-white flex items-center gap-2">
+              <span>📝</span> Report Campus Issue
+            </h3>
+            <p class="text-xs text-slate-400">Physical assets, electrical, Wi-Fi or sanitation.</p>
+
+            <form onsubmit="submitIssue(event)" class="space-y-3">
+              <div>
+                <label class="text-[11px] text-slate-300 block mb-1">Issue Title</label>
+                <input id="issue-title" type="text" required placeholder="e.g. Wi-Fi drop in Kalam Tech Park Bay 2" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+              </div>
+
+              <div>
+                <label class="text-[11px] text-slate-300 block mb-1">Category</label>
+                <select id="issue-category" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+                  <option value="Wi-Fi / Network">Wi-Fi / Network</option>
+                  <option value="Electrical / Lighting">Electrical / Power Substation</option>
+                  <option value="Air Conditioning">Air Conditioning / HVAC</option>
+                  <option value="Sanitation">Sanitation / Water</option>
+                  <option value="Furniture / Audio-Visual">Furniture / AV Projector</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="text-[11px] text-slate-300 block mb-1">Building Location</label>
+                <input id="issue-location" type="text" required placeholder="e.g. Admin Block, Level 2" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+              </div>
+
+              <div>
+                <label class="text-[11px] text-slate-300 block mb-1">Description</label>
+                <textarea id="issue-description" rows="3" required placeholder="Provide details for campus operations team..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400"></textarea>
+              </div>
+
+              <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition">
+                Dispatch Maintenance Ticket
+              </button>
+            </form>
+          </div>
+
+          <!-- Issues Stream -->
+          <div class="lg:col-span-2 space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-base font-extrabold text-white">Live Incident Stream</h3>
+              <span class="text-xs text-slate-400 font-mono">AI Triage Active</span>
+            </div>
+            <div id="issues-list" class="space-y-3">
+              <!-- Populated by JavaScript -->
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ================================================================== -->
+      <!-- TAB 7: NOTIFICATIONS STREAM -->
+      <!-- ================================================================== -->
+      <section id="tab-notifications" class="tab-view-container hidden space-y-6">
+        
+        <div class="glass-card rounded-2xl p-4 border border-slate-700/60 flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-extrabold text-white">Campus Broadcast & Alerts Dispatcher</h3>
+            <p class="text-xs text-slate-400">Real-time WebSocket notifications sent to all connected users.</p>
+          </div>
+          <button onclick="broadcastDemoAlert()" class="py-1.5 px-3 rounded-xl text-xs font-bold bg-rose-500 hover:bg-rose-400 text-white transition">
+            📢 Send Campus Alert
+          </button>
+        </div>
+
+        <div id="notifications-list" class="space-y-3">
+          <!-- Populated by JavaScript -->
+        </div>
+
+      </section>
+
+      <!-- ================================================================== -->
+      <!-- TAB 8: USER & ROLE MATRIX -->
+      <!-- ================================================================== -->
+      <section id="tab-users" class="tab-view-container hidden space-y-6">
+        
+        <div class="glass-card rounded-2xl p-4 border border-slate-700/60">
+          <h3 class="text-sm font-extrabold text-white">Role-Based Access Control (RBAC) Matrix</h3>
+          <p class="text-xs text-slate-400">Configured according to Chanakya University architecture specifications.</p>
+        </div>
+
+        <div id="roles-matrix-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Populated by JavaScript -->
+        </div>
+
+      </section>
+
+      <!-- ================================================================== -->
+      <!-- TAB 9: CROWD ANALYTICS -->
+      <!-- ================================================================== -->
+      <section id="tab-analytics" class="tab-view-container hidden space-y-6">
+        
+        <div class="glass-card rounded-3xl p-6 border border-slate-700/60 space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-base font-extrabold text-white">Live Campus Density Profile</h3>
+              <p class="text-xs text-slate-400">Hourly crowd distribution curve computed from sensor telemetry.</p>
+            </div>
+            <span class="text-xs font-mono text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/30">
+              Peak: 12:30 PM (Annapurna Pavilion)
+            </span>
+          </div>
+
+          <div class="w-full h-64 relative bg-slate-950 rounded-2xl overflow-hidden p-4 border border-slate-800">
+            <canvas id="analytics-canvas" class="w-full h-full"></canvas>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ================================================================== -->
+      <!-- TAB 10: WHAT-IF SIMULATION ENGINE -->
+      <!-- ================================================================== -->
+      <section id="tab-simulation" class="tab-view-container hidden space-y-6">
+        
+        <div class="glass-card rounded-3xl p-6 border border-slate-700/60 space-y-4">
+          <div>
+            <h3 class="text-base font-extrabold text-white flex items-center gap-2">
+              <span>🧪</span> Executive "What-If" Simulation Engine
+            </h3>
+            <p class="text-xs text-slate-400">Simulate emergency road closures, festive crowd surges, or weather disruptions.</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+            
+            <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+              <span class="text-xs font-bold text-amber-400 block">Scenario 1: Gate 1 Closure</span>
+              <p class="text-[11px] text-slate-400">Simulates closure of Main Gate 1 for VIP convoy. Traffic reroutes to East Gate 2.</p>
+              <button onclick="runSimulation('gate_closure')" class="w-full py-1.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition">
+                Simulate Reroute
+              </button>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+              <span class="text-xs font-bold text-cyan-400 block">Scenario 2: Tech Fest Surge</span>
+              <p class="text-[11px] text-slate-400">+40% crowd influx at Grand Auditorium for ByteCraft Hackathon.</p>
+              <button onclick="runSimulation('fest_surge')" class="w-full py-1.5 rounded-xl text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-slate-950 transition">
+                Simulate Fest Surge
+              </button>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+              <span class="text-xs font-bold text-rose-400 block">Scenario 3: Monsoon Downpour</span>
+              <p class="text-[11px] text-slate-400">Heavy rainstorm over Devanahalli. Outdoor pathways restricted to covered colonnades.</p>
+              <button onclick="runSimulation('monsoon_rain')" class="w-full py-1.5 rounded-xl text-xs font-bold bg-rose-500 hover:bg-rose-400 text-white transition">
+                Simulate Rain Plan
+              </button>
+            </div>
+
+          </div>
+
+          <div id="simulation-results-box" class="hidden p-4 rounded-2xl bg-slate-950 border border-amber-500/40 space-y-2">
+            <!-- Results injected via JavaScript -->
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+    
+
+
+  <!-- ======================================================================== -->
+  <!-- FLOATING AI CAMPUS GUIDE WIDGET -->
+  <!-- ======================================================================== -->
+  <div id="ai-chat-bubble" onclick="toggleAIChat()" class="fixed bottom-6 right-6 z-40 cursor-pointer group">
+    <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-cyan-500 to-amber-400 text-slate-950 flex items-center justify-center text-2xl shadow-xl shadow-cyan-500/25 group-hover:scale-110 transition duration-300 relative">
+      🤖
+      <span class="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-slate-900 rounded-full animate-ping"></span>
+      <span class="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-slate-900 rounded-full"></span>
+    </div>
+  </div>
+
+  <!-- EXPANDABLE AI CHAT TERMINAL -->
+  <div id="ai-chat-window" class="fixed bottom-24 right-6 w-96 max-w-[calc(100vw-3rem)] h-[520px] glass-panel rounded-3xl border border-cyan-500/30 shadow-2xl z-50 flex flex-col hidden overflow-hidden">
+    
+    <!-- AI Header -->
+    <div class="p-4 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-lg">
+          🤖
+        </div>
+        <div>
+          <h4 class="text-xs font-black text-white">Chanakya AI Campus Guide</h4>
+          <span class="text-[10px] text-emerald-400 font-mono">● Zero API Key Required • Local Engine</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-1">
+        <button onclick="openFeedDataModal()" class="text-xs p-1 text-slate-400 hover:text-cyan-400 transition" title="Feed Knowledge">🧠</button>
+        <button onclick="toggleAIChat()" class="text-xs p-1 text-slate-400 hover:text-white transition">✕</button>
+      </div>
+    </div>
+
+    <!-- AI Messages Stream -->
+    <div id="ai-messages-container" class="flex-1 p-4 overflow-y-auto space-y-3 text-xs">
+      <div class="chat-bubble-ai p-3 rounded-2xl max-w-[85%]">
+        👋 Namaskara! I am your <b>Chanakya University AI Campus Guide</b>.
+        <br><br>
+        Ask me anything about:
+        <ul class="list-disc pl-4 mt-1 space-y-0.5 text-slate-300">
+          <li>TechSangam 2026 registration</li>
+          <li>Turn-by-turn directions to buildings</li>
+          <li>Annapurna Food Court menus</li>
+          <li>Hostel rules & library hours</li>
+        </ul>
+        <span class="text-[9px] text-emerald-400 font-mono block mt-2">🔒 100% Free & Local • No API Key Needed</span>
+      </div>
+    </div>
+
+    <!-- Suggested Query Chips -->
+    <div class="px-3 py-1.5 bg-slate-950/60 border-t border-slate-800 flex items-center gap-1.5 overflow-x-auto text-[10px]">
+      <button onclick="sendAIPredefined('Tell me about TechSangam')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap">TechSangam 2026</button>
+      <button onclick="sendAIPredefined('Where is Central Library?')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap">Central Library</button>
+      <button onclick="sendAIPredefined('What is today menu at Annapurna Food Court?')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap">Canteen Menu</button>
+      <button onclick="sendAIPredefined('How do I reach campus from airport?')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap">Airport Bus</button>
+    </div>
+
+    <!-- AI Input Box -->
+    <div class="p-3 bg-slate-900 border-t border-slate-800">
+      <form onsubmit="handleAISubmit(event)" class="flex items-center gap-2">
+        <input id="ai-input" type="text" placeholder="Ask anything about campus..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400">
+        <button type="submit" class="p-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold transition">
+          ➤
+        </button>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- ======================================================================== -->
+  <!-- MODAL: ZERO API KEY REASSURANCE -->
+  <!-- ======================================================================== -->
+  <div id="zero-api-key-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="glass-card rounded-3xl max-w-md w-full p-6 border border-emerald-500/40 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl border border-emerald-500/30">
+            ✨
+          </div>
+          <div>
+            <h3 class="text-sm font-black text-white">Zero API Key Required</h3>
+            <span class="text-[10px] text-emerald-400 font-mono">100% Autonomous Local System</span>
+          </div>
+        </div>
+        <button onclick="closeZeroApiKeyModal()" class="text-slate-400 hover:text-white text-sm">✕</button>
       </div>
 
-      <p class="text-[11px] text-[#71717A]">Present this QR pass at campus gate scanners for automated NFC/Optical verification.</p>
-      
-      <button onclick="closeDigitalPassModal()" class="w-full py-2 rounded-xl bg-[#4338CA] text-white text-xs font-bold btn-spring">
-        Done
+      <div class="space-y-3 text-xs text-slate-300">
+        <p>
+          <b>Chanakya Campus Connect</b> is built from the ground up to operate with <b class="text-emerald-400">zero external API keys, tokens, or subscriptions</b>:
+        </p>
+
+        <ul class="space-y-2 text-[11px] list-disc pl-4 text-slate-400">
+          <li><b class="text-white">AI Campus Guide</b>: Runs locally on your Node.js backend using smart semantic keyword matching and immediate in-memory knowledge ingestion.</li>
+          <li><b class="text-white">OpenStreetMap & Navigation</b>: Uses free, open tile servers and an internal Dijkstra graph solver running locally on port 3000.</li>
+          <li><b class="text-white">Real-Time Telemetry & ANPR</b>: Generated directly via local Express and Socket.io event emitters.</li>
+        </ul>
+
+        <div class="p-3 rounded-xl bg-slate-950/90 border border-slate-800 text-[11px] text-emerald-300">
+          ✅ You can explore, navigate, feed custom data, register for events, and use the AI without ever entering any key.
+        </div>
+      </div>
+
+      <button onclick="closeZeroApiKeyModal()" class="w-full py-2.5 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition">
+        Understood & Continue
       </button>
     </div>
   </div>
 
   <!-- ======================================================================== -->
-  <!-- 5. REPORT ISSUE MODAL -->
+  <!-- MODAL: FEED AI DATA -->
   <!-- ======================================================================== -->
-  <div id="report-issue-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs hidden items-center justify-center p-4">
-    <div class="w-full max-w-md bg-white rounded-2xl border border-[#E4E4E7] shadow-2xl p-6 space-y-4 modal-spring">
+  <div id="feed-data-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="glass-card rounded-3xl max-w-xl w-full p-6 border border-cyan-500/40 space-y-4 shadow-2xl">
       <div class="flex items-center justify-between">
-        <h3 class="text-base font-bold text-[#09090B]">Report Campus Grievance / Issue</h3>
-        <button onclick="closeReportIssueModal()" class="text-xs p-1 text-[#71717A] hover:text-[#09090B]">✕</button>
-      </div>
-      
-      <div class="space-y-3 text-xs">
-        <div>
-          <label class="block font-semibold text-[#71717A] mb-1">Issue Category</label>
-          <select id="issue-category-select" class="w-full px-3.5 py-2 rounded-xl border border-[#E4E4E7] focus:outline-none focus:border-[#4338CA] text-[#09090B]">
-            <option value="IT & Wi-Fi">Network & Wi-Fi Connectivity</option>
-            <option value="Electrical / AC">Electrical & Air Conditioning</option>
-            <option value="Lab Equipment">Lab Computers & Hardware</option>
-            <option value="Hostel Sanitation">Hostel & Sanitation</option>
-          </select>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xl border border-cyan-500/30">
+            🧠
+          </div>
+          <div>
+            <h3 class="text-sm font-black text-white">Feed Data to AI Campus Guide</h3>
+            <span class="text-[10px] text-cyan-400 font-mono">Live Semantic Ingestion • Zero Restart Needed</span>
+          </div>
         </div>
-
-        <div>
-          <label class="block font-semibold text-[#71717A] mb-1">Location / Room Number</label>
-          <input type="text" id="issue-location-input" placeholder="e.g. Academic Block 1 - Hall 3B" class="w-full px-3.5 py-2 rounded-xl border border-[#E4E4E7] focus:outline-none focus:border-[#4338CA] text-[#09090B]">
-        </div>
-
-        <div>
-          <label class="block font-semibold text-[#71717A] mb-1">Description</label>
-          <textarea id="issue-desc-input" rows="3" placeholder="Describe the issue in detail..." class="w-full px-3.5 py-2 rounded-xl border border-[#E4E4E7] focus:outline-none focus:border-[#4338CA] text-[#09090B]"></textarea>
-        </div>
+        <button onclick="closeFeedDataModal()" class="text-slate-400 hover:text-white text-sm">✕</button>
       </div>
 
-      <div class="flex items-center justify-end gap-2 pt-2">
-        <button onclick="closeReportIssueModal()" class="px-4 py-2 rounded-xl border border-[#E4E4E7] text-xs font-semibold text-[#71717A] hover:bg-[#F4F4F5] transition btn-spring">
+      <p class="text-xs text-slate-300">
+        Paste any custom text, syllabus, FAQ, or rules below. The AI Guide indexes it immediately and will answer student questions based on it!
+      </p>
+
+      <!-- 1-Click Sample Knowledge Templates -->
+      <div class="space-y-1.5">
+        <span class="text-[10px] text-slate-400 block font-mono">INSERT SAMPLE TEMPLATE:</span>
+        <div class="flex flex-wrap gap-2 text-[10px]">
+          <button onclick="insertSampleKnowledge('hostel')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700">🏨 Hostel Curfew Rules</button>
+          <button onclick="insertSampleKnowledge('library')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700">📚 Library Scopus Access</button>
+          <button onclick="insertSampleKnowledge('conclave')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-purple-300 border border-slate-700">💻 Hackathon Bay 3 Rules</button>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-[11px] text-slate-400 block mb-1">Document Title</label>
+            <input id="feed-doc-title" type="text" placeholder="e.g. AI Lab Safety Rules" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400">
+          </div>
+          <div>
+            <label class="text-[11px] text-slate-400 block mb-1">Category</label>
+            <select id="feed-doc-category" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400">
+              <option value="Academics">Academics</option>
+              <option value="Orientation">Orientation</option>
+              <option value="Hostel">Hostel</option>
+              <option value="Library">Library</option>
+              <option value="Events">Events</option>
+              <option value="Transport">Transport</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[11px] text-slate-400 block mb-1">Raw Content / FAQs</label>
+          <textarea id="feed-doc-content" rows="4" placeholder="Paste campus guidelines, bus schedules, or custom rules here..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400"></textarea>
+        </div>
+      </div>
+
+      <!-- Currently Fed Documents List -->
+      <div class="space-y-1">
+        <span class="text-[10px] text-slate-400 font-mono">INGESTED KNOWLEDGE BASE:</span>
+        <div id="fed-documents-list" class="max-h-28 overflow-y-auto space-y-1.5 p-2 rounded-xl bg-slate-950 border border-slate-800">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-2">
+        <button onclick="closeFeedDataModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition">
           Cancel
         </button>
-        <button onclick="submitNewIssue()" class="px-4 py-2 rounded-xl bg-[#4338CA] hover:bg-[#3730A3] text-white text-xs font-bold transition shadow-sm btn-spring">
-          Submit Report
+        <button onclick="submitCustomKnowledgeFeed()" class="px-5 py-2 rounded-xl text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-slate-950 transition">
+          Save & Ingest into AI
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Toast Notifications Container -->
+  <!-- ======================================================================== -->
+  <!-- MODAL: EVENT REGISTRATION & DIGITAL PASS -->
+  <!-- ======================================================================== -->
+  <div id="register-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="glass-card rounded-3xl max-w-md w-full p-6 border border-amber-500/40 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-sm font-black text-white">Event Registration</h3>
+          <p id="reg-modal-event-title" class="text-xs text-amber-400 font-bold mt-0.5">Chanakya TechSangam 2026</p>
+        </div>
+        <button onclick="closeRegisterModal()" class="text-slate-400 hover:text-white text-sm">✕</button>
+      </div>
+
+      <form onsubmit="handleRegistrationSubmit(event)" class="space-y-3">
+        <div>
+          <label class="text-[11px] text-slate-300 block mb-1">Attendee Name</label>
+          <input id="reg-name" type="text" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div>
+          <label class="text-[11px] text-slate-300 block mb-1">Institutional Email</label>
+          <input id="reg-email" type="email" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div>
+          <label class="text-[11px] text-slate-300 block mb-1">Department</label>
+          <input id="reg-dept" type="text" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div>
+          <label class="text-[11px] text-slate-300 block mb-1">Pass Category</label>
+          <select id="reg-ticket" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+            <option value="VIP All-Access Pass">VIP All-Access Pass (Hackathon + Keynote)</option>
+            <option value="Student Delegate">Student Delegate Pass</option>
+            <option value="Faculty Observer">Faculty Observer Pass</option>
+          </select>
+        </div>
+
+        <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition">
+          Generate Digital Pass & QR Code
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================================== -->
+  <!-- MODAL: DIGITAL ALL-ACCESS PASS VIEW -->
+  <!-- ======================================================================== -->
+  <div id="digital-pass-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="glass-card rounded-3xl max-w-sm w-full p-6 border border-amber-500/50 space-y-4 shadow-2xl relative hologram-shimmer">
+      <div class="flex items-center justify-between">
+        <span class="text-[10px] font-mono text-amber-400 uppercase tracking-widest">OFFICIAL DIGITAL PASS</span>
+        <button onclick="closeDigitalPassModal()" class="text-slate-400 hover:text-white text-sm">✕</button>
+      </div>
+
+      <div class="text-center space-y-1">
+        <h3 id="pass-event-title" class="text-base font-black text-white">Chanakya TechSangam 2026</h3>
+        <p id="pass-ticket-type" class="text-xs text-amber-400 font-mono">VIP All-Access Pass</p>
+      </div>
+
+      <!-- Pass QR Code Simulation -->
+      <div class="bg-white p-4 rounded-2xl w-44 h-44 mx-auto flex flex-col items-center justify-center shadow-lg">
+        <div class="w-36 h-36 bg-slate-950 rounded-xl p-2 flex items-center justify-center relative">
+          <!-- SVG QR Code Visual -->
+          <svg viewBox="0 0 100 100" class="w-full h-full text-amber-400" fill="currentColor">
+            <rect x="10" y="10" width="25" height="25" fill="#fff" />
+            <rect x="15" y="15" width="15" height="15" fill="#000" />
+            <rect x="65" y="10" width="25" height="25" fill="#fff" />
+            <rect x="70" y="15" width="15" height="15" fill="#000" />
+            <rect x="10" y="65" width="25" height="25" fill="#fff" />
+            <rect x="15" y="70" width="15" height="15" fill="#000" />
+            <rect x="42" y="15" width="10" height="20" fill="#fff" />
+            <rect x="42" y="65" width="20" height="10" fill="#fff" />
+            <rect x="70" y="45" width="15" height="15" fill="#fff" />
+            <rect x="45" y="45" width="10" height="10" fill="#fff" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="p-3 rounded-2xl bg-slate-950/80 border border-slate-800 text-xs space-y-1">
+        <div class="flex justify-between"><span class="text-slate-400">Attendee:</span><b id="pass-attendee" class="text-white">Rahul Sharma</b></div>
+        <div class="flex justify-between"><span class="text-slate-400">Seat:</span><b id="pass-seat" class="text-amber-400 font-mono">AUD-A14</b></div>
+        <div class="flex justify-between"><span class="text-slate-400">Reg ID:</span><b id="pass-reg-id" class="text-cyan-400 font-mono">REG-2026-001</b></div>
+      </div>
+
+      <button onclick="simulateCheckIn()" class="w-full py-2.5 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition">
+        Simulate Security Scan & Check-in
+      </button>
+    </div>
+  </div>
+
+  <!-- ======================================================================== -->
+  <!-- MODAL: ADD CUSTOM MAP PIN / GPS COORDINATES -->
+  <!-- ======================================================================== -->
+  <div id="custom-map-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="glass-card rounded-3xl max-w-md w-full p-6 border border-amber-500/40 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">📍</span>
+          <h3 class="text-sm font-black text-white">Feed Custom GPS Coordinate</h3>
+        </div>
+        <button onclick="closeCustomMapModal()" class="text-slate-400 hover:text-white text-sm">✕</button>
+      </div>
+
+      <p class="text-xs text-slate-400">
+        Plot any new building, sports track, or landmark directly onto the campus map.
+      </p>
+
+      <form onsubmit="handleCustomMapSubmit(event)" class="space-y-3">
+        <div>
+          <label class="text-[11px] text-slate-300 block mb-1">Landmark / Waypoint Name</label>
+          <input id="pin-name" type="text" required placeholder="e.g. New Robotics Drone Pad" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-[11px] text-slate-300 block mb-1">Latitude</label>
+            <input id="pin-lat" type="number" step="0.0001" required value="13.2205" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400 font-mono">
+          </div>
+          <div>
+            <label class="text-[11px] text-slate-300 block mb-1">Longitude</label>
+            <input id="pin-lng" type="number" step="0.0001" required value="77.7585" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400 font-mono">
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[11px] text-slate-300 block mb-1">Category</label>
+          <select id="pin-category" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+            <option value="Academic">Academic Lab</option>
+            <option value="Sports Ground">Sports Ground</option>
+            <option value="Dining">Dining Hub</option>
+            <option value="Hostel">Residential Block</option>
+            <option value="Gate">Campus Gate</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-[11px] text-slate-300 block mb-1">Description</label>
+          <input id="pin-desc" type="text" placeholder="Details about this waypoint..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition">
+          Plot Landmark on Live Map
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================================== -->
+  <!-- MODAL: PERSONA LOGIN & ROLE PICKER -->
+  <!-- ======================================================================== -->
+  <div id="login-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="glass-card rounded-3xl max-w-lg w-full p-6 border border-slate-700 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <span class="text-xl">🔐</span>
+          <div>
+            <h3 class="text-sm font-black text-white">Select Persona & Authenticate</h3>
+            <span class="text-[10px] text-slate-400">Role-Based Access Control Simulation</span>
+          </div>
+        </div>
+        <button onclick="closeLoginModal()" class="text-slate-400 hover:text-white text-sm">✕</button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 pt-2">
+        <div onclick="switchRole('student'); closeLoginModal();" class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-amber-400 cursor-pointer transition space-y-1">
+          <span class="text-lg">🎓</span>
+          <h4 class="text-xs font-extrabold text-white">Student</h4>
+          <p class="text-[10px] text-slate-400">Rahul Sharma (CS & AI)</p>
+        </div>
+
+        <div onclick="switchRole('new_student'); closeLoginModal();" class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-emerald-400 cursor-pointer transition space-y-1">
+          <span class="text-lg">🧭</span>
+          <h4 class="text-xs font-extrabold text-white">Fresher / New Student</h4>
+          <p class="text-[10px] text-slate-400">Ananya Iyer (Batch '26)</p>
+        </div>
+
+        <div onclick="switchRole('faculty'); closeLoginModal();" class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-purple-400 cursor-pointer transition space-y-1">
+          <span class="text-lg">👨‍🏫</span>
+          <h4 class="text-xs font-extrabold text-white">Faculty</h4>
+          <p class="text-[10px] text-slate-400">Dr. S. Radhakrishnan</p>
+        </div>
+
+        <div onclick="switchRole('staff'); closeLoginModal();" class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-amber-400 cursor-pointer transition space-y-1">
+          <span class="text-lg">🛠️</span>
+          <h4 class="text-xs font-extrabold text-white">Staff / Operations</h4>
+          <p class="text-[10px] text-slate-400">Vikram Patil (Facilities)</p>
+        </div>
+
+        <div onclick="switchRole('visitor'); closeLoginModal();" class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-cyan-400 cursor-pointer transition space-y-1">
+          <span class="text-lg">🚶</span>
+          <h4 class="text-xs font-extrabold text-white">Visitor / Guest</h4>
+          <p class="text-[10px] text-slate-400">Priya Nair (Delegate)</p>
+        </div>
+
+        <div onclick="switchRole('admin'); closeLoginModal();" class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-rose-400 cursor-pointer transition space-y-1">
+          <span class="text-lg">👑</span>
+          <h4 class="text-xs font-extrabold text-white">Administrator</h4>
+          <p class="text-[10px] text-slate-400">Dean Office / Management</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
   <div id="toast-container"></div>
 
   <!-- Application Logic -->

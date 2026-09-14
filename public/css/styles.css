@@ -1,307 +1,278 @@
 /* ==========================================================================
-   CAMPUS CONNECT - LINEAR + NOTION + ARC BROWSER DESIGN SYSTEM
-   Palette: Off-White (#FAFAFA), Deep Indigo (#4338CA), Teal (#14B8A6), Coral (#FF6B6B)
-   Asymmetric Bento-Grid Layout, Spring-based tactile motion, 1px borders
+   CHANAKYA CAMPUS CONNECT - FUTURISTIC ANIMATED STYLESHEET
+   Glassmorphic Cyber-Academic Design System
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+html {
+  scroll-behavior: smooth;
+}
 
 :root {
-  --bg-page: #FAFAFA;
-  --bg-card: #FFFFFF;
-  --border-subtle: #E4E4E7;
-  --border-hover: #D4D4D8;
-  
-  --primary-indigo: #4338CA;
-  --primary-indigo-hover: #3730A3;
-  --primary-indigo-light: #EEF2FF;
-  
-  --accent-teal: #14B8A6;
-  --accent-teal-light: #F0FDFA;
-  
-  --accent-coral: #FF6B6B;
-  --accent-coral-light: #FFF1F2;
-  
-  --text-title: #09090B;
-  --text-body: #3F3F46;
-  --text-muted: #71717A;
-  --text-subtle: #A1A1AA;
-  
-  --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --spring-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  --primary: #F59E0B;
+  --primary-glow: rgba(245, 158, 11, 0.35);
+  --accent-cyan: #06B6D4;
+  --accent-cyan-glow: rgba(6, 182, 212, 0.35);
+  --accent-purple: #8B5CF6;
+  --bg-deep: #080D1A;
+  --card-bg: rgba(15, 23, 42, 0.75);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(245, 158, 11, 0.4);
 }
 
-/* Base resets */
-html {
-  background-color: var(--bg-page);
-  color: var(--text-title);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  scroll-behavior: smooth;
-  -webkit-font-smoothing: antialiased;
-}
-
-body {
-  background-color: var(--bg-page);
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-}
-
-/* Arc/Linear Style Scrollbars */
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #FAFAFA;
+  background: #0B1320;
 }
 ::-webkit-scrollbar-thumb {
-  background: #D4D4D8;
+  background: #1E293B;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #A1A1AA;
+  background: #F59E0B;
 }
 
-/* ==========================================================================
-   BENTO CARDS (18-20px CORNERS, 1px BORDER, TACTILE MOTION)
-   ========================================================================== */
-.bento-card {
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: 18px;
-  transition: transform 180ms var(--spring-smooth), 
-              box-shadow 180ms var(--spring-smooth), 
-              border-color 180ms ease;
-  position: relative;
-  overflow: hidden;
+/* Background Animated Canvas */
+#bg-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.65;
 }
 
-.bento-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.05), 0 4px 10px -2px rgba(0, 0, 0, 0.02);
-  border-color: var(--border-hover);
+/* Glassmorphism Classes */
+.glass-panel {
+  background: rgba(13, 22, 38, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.bento-card:active {
-  transform: scale(0.985);
-  transition: transform 90ms var(--spring-bounce);
+.glass-card {
+  background: rgba(17, 28, 49, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Clickable button/tile scale-down (0.97) */
-.btn-spring {
-  transition: transform 140ms var(--spring-bounce), 
-              background-color 140ms ease, 
-              box-shadow 140ms ease, 
-              border-color 140ms ease;
-  user-select: none;
+.glass-card:hover {
+  border-color: rgba(245, 158, 11, 0.4);
+  box-shadow: 0 10px 30px -10px rgba(245, 158, 11, 0.15);
+  transform: translateY(-2px);
 }
 
-.btn-spring:hover {
-  transform: translateY(-1px);
+.glass-card-interactive {
+  cursor: pointer;
 }
 
-.btn-spring:active {
-  transform: scale(0.97) translateY(0);
+.glass-card-interactive:active {
+  transform: scale(0.98);
 }
 
-/* ==========================================================================
-   MAP MODULE: PIN-DROP & SELF-DRAWING ROUTE LINE
-   ========================================================================== */
-@keyframes pinDrop {
-  0% {
-    opacity: 0;
-    transform: translateY(-28px) scale(0.6);
-  }
-  65% {
-    opacity: 1;
-    transform: translateY(3px) scale(1.06);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+/* Glow Utilities */
+.glow-gold {
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.25);
 }
 
-.pin-drop {
-  animation: pinDrop 380ms var(--spring-bounce) both;
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.25);
 }
 
-/* SVG Self-Drawing Route Polyline */
-@keyframes drawRouteLine {
+.glow-emerald {
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
+}
+
+.glow-rose {
+  box-shadow: 0 0 20px rgba(244, 63, 94, 0.25);
+}
+
+.text-glow {
+  text-shadow: 0 0 12px rgba(245, 158, 11, 0.5);
+}
+
+.text-glow-cyan {
+  text-shadow: 0 0 12px rgba(6, 182, 212, 0.5);
+}
+
+/* Keyframe Animations */
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.05); }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s infinite ease-in-out;
+}
+
+@keyframes float-card {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-float {
+  animation: float-card 5s infinite ease-in-out;
+}
+
+@keyframes radar-sweep {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-radar {
+  animation: radar-sweep 4s linear infinite;
+  transform-origin: center center;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2.5s infinite;
+}
+
+/* Animated Tab Fade & Slide */
+.tab-content {
+  animation: tabAppear 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes tabAppear {
   from {
-    stroke-dashoffset: 1200;
+    opacity: 0;
+    transform: translateY(12px) scale(0.99);
   }
   to {
-    stroke-dashoffset: 0;
-  }
-}
-
-.route-draw-animated {
-  stroke-dasharray: 1200;
-  stroke-dashoffset: 1200;
-  animation: drawRouteLine 1.3s var(--spring-smooth) forwards;
-}
-
-/* ==========================================================================
-   SEARCH BAR: EXPANDING & ANIMATED CYCLING PLACEHOLDER
-   ========================================================================== */
-.search-expand {
-  transition: width 240ms var(--spring-smooth), 
-              border-color 180ms ease, 
-              box-shadow 180ms ease;
-}
-
-@keyframes placeholderFadeUp {
-  0% {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  15% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  85% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
-}
-
-.placeholder-cycle {
-  animation: placeholderFadeUp 3.2s ease-in-out infinite;
-}
-
-/* ==========================================================================
-   NOTIFICATIONS: SLIDE-IN FROM TOP WITH SOFT BOUNCE
-   ========================================================================== */
-@keyframes slideInBounce {
-  0% {
-    opacity: 0;
-    transform: translateY(-20px) scale(0.97);
-  }
-  70% {
-    opacity: 1;
-    transform: translateY(2px) scale(1.01);
-  }
-  100% {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
 }
 
-.notif-slide-in {
-  animation: slideInBounce 320ms var(--spring-bounce) forwards;
-}
-
-@keyframes badgePulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.25); }
-  100% { transform: scale(1); }
-}
-
-.badge-pulse {
-  animation: badgePulse 400ms var(--spring-bounce);
-}
-
-/* ==========================================================================
-   ISSUE REPORTING: ANIMATED PROGRESS STEPPER
-   ========================================================================== */
-.stepper-bar-fill {
-  transition: width 500ms var(--spring-bounce);
-}
-
-.stepper-node {
-  transition: all 250ms var(--spring-bounce);
-}
-
-/* ==========================================================================
-   AI ASSISTANT: SPRING-SCALE MODAL & 3-DOT TYPING INDICATOR
-   ========================================================================== */
-@keyframes modalSpringScale {
-  0% {
-    opacity: 0;
-    transform: scale(0.92) translateY(12px);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-.modal-spring {
-  animation: modalSpringScale 250ms var(--spring-bounce) forwards;
-}
-
-@keyframes dotBounce {
-  0%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-5px);
-  }
-}
-
-.typing-dot {
+/* Sound Wave Bars */
+.sound-wave-bar {
   display: inline-block;
-  width: 5px;
-  height: 5px;
+  width: 3px;
+  background: #F59E0B;
+  border-radius: 99px;
+  animation: wave 1s infinite ease-in-out;
+}
+.sound-wave-bar:nth-child(2) { animation-delay: 0.15s; height: 14px; }
+.sound-wave-bar:nth-child(3) { animation-delay: 0.3s; height: 18px; }
+.sound-wave-bar:nth-child(4) { animation-delay: 0.45s; height: 10px; }
+
+@keyframes wave {
+  0%, 100% { transform: scaleY(0.4); }
+  50% { transform: scaleY(1); }
+}
+
+/* Leaflet Map Overrides */
+.leaflet-container {
+  font-family: inherit;
+  background: #0a0f1d !important;
+}
+
+.custom-map-pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 50%;
-  background-color: var(--primary-indigo);
-  animation: dotBounce 1.2s infinite ease-in-out both;
-}
-.typing-dot:nth-child(1) { animation-delay: -0.32s; }
-.typing-dot:nth-child(2) { animation-delay: -0.16s; }
-.typing-dot:nth-child(3) { animation-delay: 0s; }
-
-/* ==========================================================================
-   STAGGERED ENTRANCE TRANSITIONS (40ms PER CARD)
-   ========================================================================== */
-@keyframes cardFadeSlide {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.75);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.stagger-in {
-  animation: cardFadeSlide 320ms var(--spring-smooth) both;
+.custom-map-pin:hover {
+  transform: scale(1.25) !important;
+  box-shadow: 0 0 12px currentColor;
+  z-index: 1000 !important;
 }
 
-.stagger-1 { animation-delay: 40ms; }
-.stagger-2 { animation-delay: 80ms; }
-.stagger-3 { animation-delay: 120ms; }
-.stagger-4 { animation-delay: 160ms; }
-.stagger-5 { animation-delay: 200ms; }
-.stagger-6 { animation-delay: 240ms; }
-.stagger-7 { animation-delay: 280ms; }
-.stagger-8 { animation-delay: 320ms; }
-
-/* Real-time telemetry pulse effect */
-@keyframes liveDotPulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.4);
-    opacity: 0.7;
-  }
+/* Layer Control Glassmorphism */
+.leaflet-control-layers {
+  background: rgba(15, 23, 42, 0.92) !important;
+  color: #f1f5f9 !important;
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.6) !important;
+  font-family: inherit !important;
+  font-size: 11px !important;
+  padding: 8px 12px !important;
 }
 
-.live-dot-pulse {
-  animation: liveDotPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+.leaflet-control-layers-base label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  margin-bottom: 4px;
 }
 
-/* Toast Container */
+.leaflet-control-layers-base label:last-child {
+  margin-bottom: 0;
+}
+
+.leaflet-popup-content-wrapper {
+  background: rgba(15, 23, 42, 0.95) !important;
+  color: #fff !important;
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 16px !important;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6) !important;
+}
+
+.leaflet-popup-tip {
+  background: rgba(15, 23, 42, 0.95) !important;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* Chat Message Bubbles */
+.chat-bubble-user {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  color: #0F172A;
+  font-weight: 500;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-bubble-ai {
+  background: rgba(30, 41, 59, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #F1F5F9;
+  border-bottom-left-radius: 4px;
+}
+
+/* AI Typing Cursor */
+.typing-cursor::after {
+  content: '▋';
+  display: inline-block;
+  vertical-align: middle;
+  color: #F59E0B;
+  animation: blink 0.8s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Role Active Badges */
+.role-badge-student { background: rgba(59, 130, 246, 0.15); color: #60A5FA; border-color: rgba(59, 130, 246, 0.3); }
+.role-badge-new_student { background: rgba(16, 185, 129, 0.15); color: #34D399; border-color: rgba(16, 185, 129, 0.3); }
+.role-badge-faculty { background: rgba(168, 85, 247, 0.15); color: #C084FC; border-color: rgba(168, 85, 247, 0.3); }
+.role-badge-staff { background: rgba(245, 158, 11, 0.15); color: #FBBF24; border-color: rgba(245, 158, 11, 0.3); }
+.role-badge-visitor { background: rgba(6, 182, 212, 0.15); color: #22D3EE; border-color: rgba(6, 182, 212, 0.3); }
+.role-badge-admin { background: rgba(244, 63, 94, 0.15); color: #FB7185; border-color: rgba(244, 63, 94, 0.3); }
+
+/* Toast Notifications Container */
 #toast-container {
   position: fixed;
   bottom: 24px;
@@ -309,22 +280,85 @@ body {
   z-index: 99999;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   pointer-events: none;
 }
 
 .toast-item {
   pointer-events: auto;
-  background: #FFFFFF;
-  border: 1px solid var(--border-subtle);
-  border-radius: 12px;
-  padding: 10px 16px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-title);
-  box-shadow: 0 10px 24px -5px rgba(0, 0, 0, 0.08), 0 4px 8px -2px rgba(0, 0, 0, 0.03);
-  animation: slideInBounce 220ms var(--spring-bounce) forwards;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes toastSlideIn {
+  from {
+    transform: translateX(100%) scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* 3D Flip Student Card */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.card-flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: left;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-style: preserve-3d;
+}
+
+.card-flipped .card-flip-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: 1.5rem;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+}
+
+/* ANPR Camera Scanline */
+.camera-scanline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, #10B981 50%, transparent 100%);
+  box-shadow: 0 0 10px #10B981;
+  animation: scanline 3s linear infinite;
+}
+
+@keyframes scanline {
+  0% { top: 0%; opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* Hologram Shimmer */
+.hologram-shimmer {
+  background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(245,158,11,0.12) 25%, rgba(6,182,212,0.15) 50%, rgba(139,92,246,0.12) 75%, rgba(255,255,255,0.03) 100%);
+  background-size: 250% 250%;
+  animation: hologramShift 6s ease infinite;
+}
+
+@keyframes hologramShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
