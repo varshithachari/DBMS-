@@ -1790,7 +1790,8 @@ function tickANPRCamera() {
 setInterval(tickANPRCamera, 6000);
 
 document.addEventListener('DOMContentLoaded', () => {
-  initParticleCanvas();
+  init3DParticleNetwork();
+  init3DTiltEffects();
   initRealtimeSocket();
   initAuthSession();
   initCampusMap();
@@ -1948,3 +1949,103 @@ window.addEventListener('keydown', (e) => {
     openSpotlightModal();
   }
 });
+
+
+// ============================================================================
+// 3D PARALLAX & TILT INTERACTION ENGINE
+// ============================================================================
+function init3DTiltEffects() {
+  const cards = document.querySelectorAll('.bento-card, .glass-card');
+  cards.forEach(card => {
+    card.classList.add('tilt-3d');
+
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      // Calculate subtle 3D rotation angles (-7deg to +7deg)
+      const rotateX = ((y - centerY) / centerY) * -6;
+      const rotateY = ((x - centerX) / centerX) * 6;
+
+      card.style.setProperty('--rx', `${rotateX.toFixed(2)}deg`);
+      card.style.setProperty('--ry', `${rotateY.toFixed(2)}deg`);
+    });
+
+    card.addEventListener('mouseleave', () => {
+      card.style.setProperty('--rx', '0deg');
+      card.style.setProperty('--ry', '0deg');
+      card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
+    });
+  });
+}
+
+// Enhance Particle Network to 3D Field
+function init3DParticleNetwork() {
+  const canvas = document.getElementById('bg-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let width, height;
+  let particles3D = [];
+  const count = 55;
+
+  function resize() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  class Particle3D {
+    constructor() {
+      this.reset();
+    }
+    reset() {
+      this.x = (Math.random() - 0.5) * width * 1.2;
+      this.y = (Math.random() - 0.5) * height * 1.2;
+      this.z = Math.random() * 800 + 100;
+      this.vz = 0.8 + Math.random() * 0.8;
+      this.baseColor = Math.random() > 0.5 ? [245, 158, 11] : [6, 182, 212];
+    }
+    update() {
+      this.z -= this.vz;
+      if (this.z <= 10) {
+        this.reset();
+        this.z = 800;
+      }
+    }
+    draw() {
+      const fov = 350;
+      const scale = fov / (fov + this.z);
+      const projX = (this.x * scale) + (width / 2);
+      const projY = (this.y * scale) + (height / 2);
+      const radius = Math.max(0.6, (1 - this.z / 800) * 2.8);
+      const alpha = Math.max(0.08, (1 - this.z / 800) * 0.7);
+
+      if (projX < 0 || projX > width || projY < 0 || projY > height) return;
+
+      ctx.beginPath();
+      ctx.arc(projX, projY, radius, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${this.baseColor[0]}, ${this.baseColor[1]}, ${this.baseColor[2]}, ${alpha})`;
+      ctx.shadowBlur = 10 * scale;
+      ctx.shadowColor = `rgba(${this.baseColor[0]}, ${this.baseColor[1]}, ${this.baseColor[2]}, ${alpha})`;
+      ctx.fill();
+    }
+  }
+
+  for (let i = 0; i < count; i++) {
+    particles3D.push(new Particle3D());
+  }
+
+  function renderLoop() {
+    ctx.clearRect(0, 0, width, height);
+    for (let p of particles3D) {
+      p.update();
+      p.draw();
+    }
+    requestAnimationFrame(renderLoop);
+  }
+  renderLoop();
+}
