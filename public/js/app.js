@@ -1825,6 +1825,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Keyboard shortcut: Escape closes modals
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
+      closeSpotlightModal();
       closeRegisterModal();
       closeDigitalPassModal();
       closeCustomMapModal();
@@ -1833,4 +1834,117 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   console.log("🎓 Chanakya Campus Connect Interactive Dashboard Ready!");
+});
+
+// ============================================================================
+// SPOTLIGHT OMNIBAR SEARCH (Ctrl+K)
+// ============================================================================
+function openSpotlightModal() {
+  sfx.play('click');
+  const modal = document.getElementById('spotlight-modal');
+  const input = document.getElementById('spotlight-input');
+  if (modal) {
+    modal.classList.remove('hidden');
+    if (input) {
+      input.value = '';
+      setTimeout(() => input.focus(), 50);
+      handleSpotlightSearch('');
+    }
+  }
+}
+
+function closeSpotlightModal() {
+  const modal = document.getElementById('spotlight-modal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function handleSpotlightSearch(query) {
+  const container = document.getElementById('spotlight-results');
+  if (!container) return;
+  const q = (query || '').toLowerCase().trim();
+
+  let results = [];
+
+  // Search Landmarks
+  if (appState.landmarks && appState.landmarks.length > 0) {
+    appState.landmarks.forEach(lm => {
+      if (!q || lm.name.toLowerCase().includes(q) || (lm.shortName && lm.shortName.toLowerCase().includes(q)) || (lm.category && lm.category.toLowerCase().includes(q))) {
+        results.push({
+          type: 'Landmark',
+          icon: '📍',
+          title: lm.name,
+          subtitle: lm.category + ' • ' + (lm.openHours || 'Open'),
+          action: () => {
+            closeSpotlightModal();
+            switchTab('map');
+            setTimeout(() => focusLandmark(lm.id), 250);
+          }
+        });
+      }
+    });
+  }
+
+  // Search Events
+  if (appState.events && appState.events.length > 0) {
+    appState.events.forEach(ev => {
+      if (!q || ev.title.toLowerCase().includes(q) || ev.category.toLowerCase().includes(q)) {
+        results.push({
+          type: 'Event',
+          icon: '📅',
+          title: ev.title,
+          subtitle: ev.category + ' • ' + (ev.venueName || 'Auditorium'),
+          action: () => {
+            closeSpotlightModal();
+            switchTab('events');
+          }
+        });
+      }
+    });
+  }
+
+  // Search Facilities
+  if (appState.facilities && appState.facilities.length > 0) {
+    appState.facilities.forEach(fac => {
+      if (!q || fac.name.toLowerCase().includes(q) || fac.type.toLowerCase().includes(q)) {
+        results.push({
+          type: 'Facility',
+          icon: '🏛️',
+          title: fac.name,
+          subtitle: fac.type + ' • Capacity: ' + fac.capacity,
+          action: () => {
+            closeSpotlightModal();
+            switchTab('facilities');
+          }
+        });
+      }
+    });
+  }
+
+  if (results.length === 0) {
+    container.innerHTML = '<div class="p-4 text-center text-slate-400">No campus resources found matching "' + escapeHtml(q) + '".</div>';
+    return;
+  }
+
+  window._spotlightActions = results.map(r => r.action);
+
+  container.innerHTML = results.slice(0, 8).map((r, idx) => `
+    <div onclick="window._spotlightActions[${idx}]()" class="p-2.5 rounded-xl hover:bg-slate-800/80 cursor-pointer flex items-center justify-between transition border border-transparent hover:border-amber-500/30 group">
+      <div class="flex items-center gap-3">
+        <span class="text-base">${r.icon}</span>
+        <div>
+          <h4 class="text-xs font-bold text-white group-hover:text-amber-400 transition">${escapeHtml(r.title)}</h4>
+          <span class="text-[10px] text-slate-400">${escapeHtml(r.subtitle)}</span>
+        </div>
+      </div>
+      <span class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">${r.type}</span>
+    </div>
+  `).join('');
+}
+
+// Global Spotlight Key Listener
+window.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    openSpotlightModal();
+  }
 });
