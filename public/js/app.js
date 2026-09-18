@@ -1795,6 +1795,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initRealtimeSocket();
   initAuthSession();
   initCampusMap();
+  setTimeout(initThreeJSCampus, 300);
 
   // Load backend stores
   fetch('/api/config')
@@ -2048,4 +2049,199 @@ function init3DParticleNetwork() {
     requestAnimationFrame(renderLoop);
   }
   renderLoop();
+}
+
+
+// ============================================================================
+// THREE.JS INTERACTIVE 3D CAMPUS DIGITAL TWIN ENGINE
+// ============================================================================
+let threeScene, threeCamera, threeRenderer, threeAnimationId;
+let buildingGroup;
+let isDragging3D = false;
+let previousMousePosition = { x: 0, y: 0 };
+
+function initThreeJSCampus() {
+  const container = document.getElementById('threejs-canvas-wrapper');
+  if (!container || typeof THREE === 'undefined') return;
+
+  const width = container.clientWidth || 800;
+  const height = container.clientHeight || 288;
+
+  // Scene setup
+  threeScene = new THREE.Scene();
+  threeScene.fog = new THREE.FogExp2(0x070B14, 0.003);
+
+  // Camera setup
+  threeCamera = new THREE.PerspectiveCamera(45, width / height, 1, 2000);
+  threeCamera.position.set(0, 180, 320);
+  threeCamera.lookAt(0, 20, 0);
+
+  // WebGL Renderer
+  threeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  threeRenderer.setSize(width, height);
+  threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  threeRenderer.shadowMap.enabled = true;
+  container.innerHTML = '';
+  container.appendChild(threeRenderer.domElement);
+
+  // Ambient & Directional Lights
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+  threeScene.add(ambientLight);
+
+  const dirLight = new THREE.DirectionalLight(0xF59E0B, 1.2);
+  dirLight.position.set(120, 200, 80);
+  threeScene.add(dirLight);
+
+  const cyanLight = new THREE.DirectionalLight(0x06B6D4, 0.9);
+  cyanLight.position.set(-120, 150, -80);
+  threeScene.add(cyanLight);
+
+  // Ground Grid & Concentric Rings (Chanakya Academic Circle Quad)
+  const gridHelper = new THREE.GridHelper(500, 40, 0x1E293B, 0x0F172A);
+  gridHelper.position.y = 0;
+  threeScene.add(gridHelper);
+
+  // Concentric Walkway Rings
+  for (let r of [50, 90, 140]) {
+    const ringGeo = new THREE.RingGeometry(r - 1.5, r + 1.5, 64);
+    const ringMat = new THREE.MeshBasicMaterial({ color: 0xF59E0B, opacity: 0.35, transparent: true, side: THREE.DoubleSide });
+    const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+    ringMesh.rotation.x = Math.PI / 2;
+    ringMesh.position.y = 0.5;
+    threeScene.add(ringMesh);
+  }
+
+  // Buildings Group
+  buildingGroup = new THREE.Group();
+  threeScene.add(buildingGroup);
+
+  // Central Fountain/Plaza Monument
+  const monumentGeo = new THREE.CylinderGeometry(12, 16, 25, 32);
+  const monumentMat = new THREE.MeshStandardMaterial({
+    color: 0xF59E0B,
+    metalness: 0.8,
+    roughness: 0.2,
+    emissive: 0x78350F,
+    emissiveIntensity: 0.4
+  });
+  const monument = new THREE.Mesh(monumentGeo, monumentMat);
+  monument.position.set(0, 12.5, 0);
+  buildingGroup.add(monument);
+
+  // Academic Buildings Representation
+  const campusBlocks = [
+    { name: "Academic Block 1 (Law & Admin)", x: -75, z: 40, w: 55, h: 38, d: 35, color: 0xF59E0B },
+    { name: "Academic Block 2 (AI & Computing)", x: 75, z: 40, w: 60, h: 48, d: 40, color: 0x06B6D4 },
+    { name: "Grand Auditorium", x: 0, z: -85, w: 70, h: 32, d: 50, color: 0x8B5CF6 },
+    { name: "Nalanda Hostels Zone", x: -110, z: -60, w: 45, h: 55, d: 35, color: 0x10B981 },
+    { name: "Annapurna Food Pavilion", x: 110, z: -60, w: 50, h: 26, d: 45, color: 0xFBBF24 },
+    { name: "Olympic Stadium Arena", x: 140, z: 60, w: 65, h: 18, d: 50, color: 0x3B82F6 }
+  ];
+
+  campusBlocks.forEach(b => {
+    const geo = new THREE.BoxGeometry(b.w, b.h, b.d);
+    const mat = new THREE.MeshStandardMaterial({
+      color: b.color,
+      metalness: 0.6,
+      roughness: 0.3,
+      transparent: true,
+      opacity: 0.88
+    });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(b.x, b.h / 2, b.z);
+    
+    // Add wireframe edge glow
+    const edgeGeo = new THREE.EdgesGeometry(geo);
+    const edgeMat = new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.4, transparent: true });
+    const wireframe = new THREE.LineSegments(edgeGeo, edgeMat);
+    mesh.add(wireframe);
+
+    buildingGroup.add(mesh);
+  });
+
+  // Floating Pulse Marker on TechSangam Venue
+  const markerGeo = new THREE.ConeGeometry(5, 14, 16);
+  const markerMat = new THREE.MeshBasicMaterial({ color: 0xEF4444 });
+  const pulseMarker = new THREE.Mesh(markerGeo, markerMat);
+  pulseMarker.position.set(0, 50, -85);
+  pulseMarker.rotation.x = Math.PI;
+  buildingGroup.add(pulseMarker);
+
+  // Mouse Interaction (Orbit / Rotate)
+  const dom = threeRenderer.domElement;
+  dom.addEventListener('mousedown', (e) => {
+    isDragging3D = true;
+    previousMousePosition = { x: e.clientX, y: e.clientY };
+  });
+
+  window.addEventListener('mouseup', () => {
+    isDragging3D = false;
+  });
+
+  dom.addEventListener('mousemove', (e) => {
+    if (!isDragging3D || !buildingGroup) return;
+    const deltaX = e.clientX - previousMousePosition.x;
+    const deltaY = e.clientY - previousMousePosition.y;
+
+    buildingGroup.rotation.y += deltaX * 0.007;
+    threeCamera.position.y = Math.max(60, Math.min(300, threeCamera.position.y - deltaY * 0.5));
+    threeCamera.lookAt(0, 20, 0);
+
+    previousMousePosition = { x: e.clientX, y: e.clientY };
+  });
+
+  // Wheel Zoom
+  dom.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    threeCamera.position.z = Math.max(140, Math.min(500, threeCamera.position.z + e.deltaY * 0.2));
+  }, { passive: false });
+
+  // Window Resize
+  window.addEventListener('resize', () => {
+    if (!container || !threeRenderer || !threeCamera) return;
+    const w = container.clientWidth;
+    const h = container.clientHeight || 288;
+    threeCamera.aspect = w / h;
+    threeCamera.updateProjectionMatrix();
+    threeRenderer.setSize(w, h);
+  });
+
+  // Animation Loop
+  function animate3D() {
+    threeAnimationId = requestAnimationFrame(animate3D);
+
+    // Subtle idle slow rotation when not dragging
+    if (!isDragging3D && buildingGroup) {
+      buildingGroup.rotation.y += 0.002;
+    }
+
+    // Pulse the venue marker
+    if (pulseMarker) {
+      pulseMarker.position.y = 48 + Math.sin(Date.now() * 0.004) * 4;
+    }
+
+    threeRenderer.render(threeScene, threeCamera);
+  }
+
+  animate3D();
+}
+
+function reset3DCamera() {
+  if (threeCamera && buildingGroup) {
+    threeCamera.position.set(0, 180, 320);
+    threeCamera.lookAt(0, 20, 0);
+    buildingGroup.rotation.set(0, 0, 0);
+    sfx.play('click');
+  }
+}
+
+function toggle3DVisualizer() {
+  sfx.play('whoosh');
+  const container = document.getElementById('threejs-container');
+  if (container) {
+    container.classList.toggle('hidden');
+    if (!container.classList.contains('hidden') && !threeRenderer) {
+      setTimeout(initThreeJSCampus, 100);
+    }
+  }
 }
