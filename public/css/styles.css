@@ -818,6 +818,41 @@ body {
   animation: shimmer 2.6s infinite;
 }
 
+/* Neural video treatment replaces the former particle and 3D background. */
+.neural-video {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+  background: #03060c;
+}
+
+.neural-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(140% 60% at 50% 40%, rgba(6, 10, 18, .50) 0%, rgba(6, 10, 18, .26) 50%, rgba(6, 10, 18, 0) 100%),
+    linear-gradient(180deg, rgba(6, 10, 18, .34) 0%, rgba(6, 10, 18, 0) 28%, rgba(6, 10, 18, .36) 100%);
+}
+
+#bg-canvas,
+#threejs-container,
+button[onclick="toggle3DVisualizer()"] {
+  display: none !important;
+}
+
+.tilt-3d,
+.tilt-3d:hover {
+  transform: none !important;
+}
+
 /* Animated Tab Fade & Slide */
 .tab-content {
   animation: tabAppear 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;

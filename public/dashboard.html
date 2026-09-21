@@ -18,9 +18,6 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   
   <!-- Three.js CDN for High-Impact 3D Visualizations -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <!-- Socket.io Client -->
   <script src="/socket.io/socket.io.js"></script>
@@ -62,7 +59,8 @@
   <div class="veil" aria-hidden="true"></div>
 
   <!-- Background 3D Animated Canvas -->
-  <canvas id="bg-canvas"></canvas>
+  <video class="neural-video" autoplay muted loop playsinline preload="auto" aria-hidden="true" poster="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/130837c4-0244-4f37-9c61-8d801d93fd29.jpg" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260912_104303_0c6d60b2-9353-408e-9449-585108a22fb5.mp4"></video>
+  <div class="neural-veil" aria-hidden="true"></div>
   <div class="ambient-glow-amber"></div>
   <div class="ambient-glow-cyan"></div>
 

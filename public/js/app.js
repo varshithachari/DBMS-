@@ -1790,12 +1790,9 @@ function tickANPRCamera() {
 setInterval(tickANPRCamera, 6000);
 
 document.addEventListener('DOMContentLoaded', () => {
-  init3DParticleNetwork();
-  init3DTiltEffects();
   initRealtimeSocket();
   initAuthSession();
   initCampusMap();
-  setTimeout(initBlenderCampus, 300);
 
   // Load backend stores
   fetch('/api/config')
