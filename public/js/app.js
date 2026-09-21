@@ -1795,7 +1795,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initRealtimeSocket();
   initAuthSession();
   initCampusMap();
-  setTimeout(initThreeJSCampus, 300);
+  setTimeout(initBlenderCampus, 300);
 
   // Load backend stores
   fetch('/api/config')
@@ -2055,12 +2055,12 @@ function init3DParticleNetwork() {
 // ============================================================================
 // THREE.JS INTERACTIVE 3D CAMPUS DIGITAL TWIN ENGINE
 // ============================================================================
-let threeScene, threeCamera, threeRenderer, threeAnimationId;
+let threeScene, threeCamera, threeRenderer, threeAnimationId, threeControls;
 let buildingGroup;
 let isDragging3D = false;
 let previousMousePosition = { x: 0, y: 0 };
 
-function initThreeJSCampus() {
+function initThreeJSCampusLegacy() {
   const container = document.getElementById('threejs-canvas-wrapper');
   if (!container || typeof THREE === 'undefined') return;
 
@@ -2226,10 +2226,855 @@ function initThreeJSCampus() {
   animate3D();
 }
 
+function initThreeJSCampus() {
+  const container = document.getElementById('threejs-canvas-wrapper');
+  if (!container || typeof THREE === 'undefined') return;
+
+  const width = container.clientWidth || 900;
+  const height = container.clientHeight || 390;
+  threeScene = new THREE.Scene();
+  threeScene.background = new THREE.Color(0x122831);
+  threeScene.fog = new THREE.Fog(0x122831, 420, 900);
+
+  threeCamera = new THREE.PerspectiveCamera(38, width / height, 1, 1600);
+  threeCamera.position.set(0, 330, 180);
+  threeCamera.lookAt(0, -4, 0);
+
+  threeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+  threeRenderer.setSize(width, height);
+  threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  threeRenderer.shadowMap.enabled = true;
+  threeRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  container.innerHTML = '';
+  container.appendChild(threeRenderer.domElement);
+
+  threeScene.add(new THREE.HemisphereLight(0xffffff, 0x8fc8c7, 1.8));
+  const sun = new THREE.DirectionalLight(0xffd28a, 2.2);
+  sun.position.set(-180, 300, 180);
+  sun.castShadow = true;
+  threeScene.add(sun);
+  const fill = new THREE.DirectionalLight(0x6ddce5, 1.2);
+  fill.position.set(220, 120, -180);
+  threeScene.add(fill);
+
+  const campus = new THREE.Group();
+  buildingGroup = campus;
+  // Match the broad portrait-style footprint of the aerial reference inside
+  // the dashboard's landscape viewport.
+  campus.scale.set(1.52, 1, 1.08);
+  threeScene.add(campus);
+
+  const platform = new THREE.Mesh(
+    new THREE.CylinderGeometry(128, 116, 8, 64),
+    new THREE.MeshStandardMaterial({ color: 0x213b43, roughness: 0.58, metalness: 0.18 })
+  );
+  platform.position.y = -18;
+  platform.castShadow = true;
+  platform.receiveShadow = true;
+  campus.add(platform);
+
+  const platformEdge = new THREE.Mesh(
+    new THREE.TorusGeometry(118, 2.4, 12, 96),
+    new THREE.MeshBasicMaterial({ color: 0x16b8b3 })
+  );
+  platformEdge.rotation.x = Math.PI / 2;
+  platformEdge.position.y = -11;
+  campus.add(platformEdge);
+
+  [45, 78, 112].forEach((radius, index) => {
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(radius, index === 2 ? 1.5 : 1, 8, 100),
+      new THREE.MeshBasicMaterial({ color: index === 1 ? 0xff876f : 0x63cfcb, transparent: true, opacity: 0.78 })
+    );
+    ring.rotation.x = Math.PI / 2;
+    ring.position.y = -10 + index * 2;
+    campus.add(ring);
+  });
+
+  const buildingMaterial = new THREE.MeshStandardMaterial({ color: 0xc77d68, roughness: 0.46, metalness: 0.08 });
+  const trimMaterial = new THREE.MeshStandardMaterial({ color: 0x8d4e47, roughness: 0.34, metalness: 0.18 });
+  const glassMaterial = new THREE.MeshStandardMaterial({ color: 0x38aeb2, roughness: 0.16, metalness: 0.45, emissive: 0x0a6770, emissiveIntensity: 0.22 });
+  const roofMaterial = new THREE.MeshStandardMaterial({ color: 0xe9ddc8, roughness: 0.3, metalness: 0.22 });
+  const coralMaterial = new THREE.MeshStandardMaterial({ color: 0xe88b6f, roughness: 0.4, metalness: 0.12 });
+  const gardenMaterial = new THREE.MeshStandardMaterial({ color: 0x4c9d78, roughness: 0.92 });
+
+  const addBox = (group, size, position, material) => {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(size[0], size[1], size[2]), material);
+    mesh.position.set(position[0], position[1], position[2]);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    group.add(mesh);
+    return mesh;
+  };
+
+  const mainHall = new THREE.Group();
+  campus.add(mainHall);
+  addBox(mainHall, [74, 52, 34], [0, 18, 12], buildingMaterial);
+  addBox(mainHall, [50, 18, 3], [0, 48, -6], roofMaterial);
+  addBox(mainHall, [58, 42, 4], [0, 20, -7], glassMaterial);
+
+  [-28, -14, 14, 28].forEach(x => {
+    addBox(mainHall, [4, 47, 5], [x, 18, -10], trimMaterial);
+  });
+
+  const leftWing = new THREE.Group();
+  const rightWing = new THREE.Group();
+  campus.add(leftWing, rightWing);
+  addBox(leftWing, [66, 39, 30], [-70, 13, 25], buildingMaterial);
+  addBox(rightWing, [66, 39, 30], [70, 13, 25], buildingMaterial);
+  addBox(leftWing, [70, 4, 34], [-70, 36, 25], roofMaterial);
+  addBox(rightWing, [70, 4, 34], [70, 36, 25], roofMaterial);
+  addBox(leftWing, [52, 28, 3], [-70, 13, 9], glassMaterial);
+  addBox(rightWing, [52, 28, 3], [70, 13, 9], glassMaterial);
+
+  [-70, 70].forEach(x => {
+    [-82, -65, -48, -31].forEach(z => addBox(campus, [9, 5, 5], [x, 39, z], glassMaterial));
+  });
+
+  const tower = new THREE.Group();
+  campus.add(tower);
+  addBox(tower, [30, 70, 24], [0, 27, -40], buildingMaterial);
+  addBox(tower, [20, 60, 3], [0, 26, -28], glassMaterial);
+  const towerRoof = new THREE.Mesh(new THREE.ConeGeometry(24, 20, 4), roofMaterial);
+  towerRoof.position.set(0, 72, -40);
+  towerRoof.rotation.y = Math.PI / 4;
+  towerRoof.castShadow = true;
+  tower.add(towerRoof);
+
+  // Keep the original blocks as data-compatible fallbacks, but let the cleaner
+  // curved campus model carry the visible composition.
+  leftWing.visible = false;
+  rightWing.visible = false;
+  tower.visible = false;
+
+  const sign = addBox(campus, [46, 8, 2], [0, 45, -27], trimMaterial);
+  sign.rotation.x = -0.04;
+
+  // Front portico and flag reference the real Chanakya facade used across the app.
+  const porticoColumns = new THREE.Group();
+  campus.add(porticoColumns);
+  [-22, -11, 0, 11, 22].forEach(x => {
+    const column = new THREE.Mesh(new THREE.CylinderGeometry(2.2, 2.6, 28, 16), buildingMaterial);
+    column.position.set(x, 12, 31);
+    column.castShadow = true;
+    porticoColumns.add(column);
+  });
+  addBox(porticoColumns, [58, 4, 10], [0, 27, 31], trimMaterial);
+  addBox(porticoColumns, [66, 3, 15], [0, -1, 31], trimMaterial);
+
+  const flagPole = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.8, 1.1, 82, 12),
+    new THREE.MeshStandardMaterial({ color: 0xb7a889, metalness: 0.65, roughness: 0.28 })
+  );
+  flagPole.position.set(0, 34, 36);
+  campus.add(flagPole);
+  const flag = new THREE.Mesh(
+    new THREE.PlaneGeometry(20, 11),
+    new THREE.MeshBasicMaterial({ color: 0xffb84d, side: THREE.DoubleSide })
+  );
+  flag.position.set(9, 67, 36);
+  flag.rotation.y = Math.PI / 2;
+  campus.add(flag);
+
+  const plaza = new THREE.Mesh(
+    new THREE.CylinderGeometry(34, 34, 1.8, 64),
+    new THREE.MeshStandardMaterial({ color: 0xd9b8a9, roughness: 0.82 })
+  );
+  plaza.position.set(0, -10, 0);
+  campus.add(plaza);
+  const fountain = new THREE.Mesh(
+    new THREE.CylinderGeometry(8, 11, 9, 32),
+    new THREE.MeshStandardMaterial({ color: 0xa6cdd0, roughness: 0.18, metalness: 0.35 })
+  );
+  fountain.position.set(0, -4, 0);
+  campus.add(fountain);
+
+  const gardenRing = new THREE.Mesh(
+    new THREE.TorusGeometry(47, 7, 8, 96),
+    gardenMaterial
+  );
+  gardenRing.rotation.x = Math.PI / 2;
+  gardenRing.position.y = -8.5;
+  campus.add(gardenRing);
+
+  const aerialWingMaterial = new THREE.MeshStandardMaterial({ color: 0xe6b27f, roughness: 0.62, metalness: 0.06 });
+  const aerialRoofMaterial = new THREE.MeshStandardMaterial({ color: 0xe7ece5, roughness: 0.48, metalness: 0.08 });
+  [[-65, -5, -0.16], [65, -5, 0.16], [0, -74, 0]].forEach(([x, z, rotation]) => {
+    const wing = new THREE.Group();
+    wing.position.set(x, -3, z);
+    wing.rotation.y = rotation;
+    const body = new THREE.Mesh(new THREE.BoxGeometry(72, 18, 24), aerialWingMaterial);
+    body.castShadow = true;
+    body.receiveShadow = true;
+    wing.add(body);
+    const roof = new THREE.Mesh(new THREE.BoxGeometry(78, 3, 28), aerialRoofMaterial);
+    roof.position.y = 10;
+    roof.castShadow = true;
+    wing.add(roof);
+    for (let index = -2; index <= 2; index += 1) {
+      const windowStrip = new THREE.Mesh(new THREE.BoxGeometry(9, 5, 1.2), glassMaterial);
+      windowStrip.position.set(index * 13, 1, 12.4);
+      wing.add(windowStrip);
+    }
+    campus.add(wing);
+  });
+
+  // Curved academic wings recreate the three-sided ring from the aerial reference.
+  const curvedWingShape = new THREE.Shape();
+  curvedWingShape.moveTo(-48, -12);
+  curvedWingShape.quadraticCurveTo(0, 18, 48, -12);
+  curvedWingShape.lineTo(43, -18);
+  curvedWingShape.quadraticCurveTo(0, 8, -43, -18);
+  curvedWingShape.closePath();
+  const curvedWingGeometry = new THREE.ExtrudeGeometry(curvedWingShape, {
+    depth: 18,
+    bevelEnabled: true,
+    bevelSegments: 2,
+    bevelSize: 2,
+    bevelThickness: 2
+  });
+  curvedWingGeometry.rotateX(-Math.PI / 2);
+  [[0, 19, -58, 0], [-75, 14, 8, -0.95], [75, 14, 8, 0.95]].forEach(([x, y, z, rotation]) => {
+    const wing = new THREE.Mesh(curvedWingGeometry, buildingMaterial);
+    wing.position.set(x, y, z);
+    wing.rotation.y = rotation;
+    wing.castShadow = true;
+    wing.receiveShadow = true;
+    campus.add(wing);
+  });
+
+  const entrySteps = new THREE.Group();
+  campus.add(entrySteps);
+  [0, 1, 2, 3].forEach(step => {
+    addBox(entrySteps, [74 - step * 10, 3, 12], [0, -8 + step * 3, 54 - step * 8], step % 2 ? trimMaterial : roofMaterial);
+  });
+
+  const treeMaterial = new THREE.MeshStandardMaterial({ color: 0x43bf83, roughness: 0.8 });
+  const trunkMaterial = new THREE.MeshStandardMaterial({ color: 0x9a684b, roughness: 1 });
+  [[-112, 12], [112, 12], [-120, -36], [120, -36], [-42, -70], [42, -70]].forEach(([x, z]) => {
+    const tree = new THREE.Group();
+    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(2, 3, 18, 10), trunkMaterial);
+    trunk.position.y = 2;
+    const crown = new THREE.Mesh(new THREE.IcosahedronGeometry(14, 1), treeMaterial);
+    crown.position.y = 17;
+    crown.castShadow = true;
+    tree.add(trunk, crown);
+    tree.position.set(x, -8, z);
+    campus.add(tree);
+  });
+
+  const pulseMarker = new THREE.Mesh(
+    new THREE.SphereGeometry(5, 24, 24),
+    new THREE.MeshBasicMaterial({ color: 0xff645d })
+  );
+  pulseMarker.position.set(0, 91, -40);
+  campus.add(pulseMarker);
+
+  // Replace the earlier prototypes with one clean radial campus composition.
+  campus.children.forEach(child => { child.visible = false; });
+  const radialCampus = new THREE.Group();
+  campus.add(radialCampus);
+
+  const radialBase = new THREE.Mesh(
+    new THREE.CylinderGeometry(126, 118, 8, 64),
+    new THREE.MeshBasicMaterial({ color: 0x29494b })
+  );
+  radialBase.position.y = -13;
+  radialBase.receiveShadow = true;
+  radialCampus.add(radialBase);
+
+  const lawn = new THREE.Mesh(
+    new THREE.CylinderGeometry(91, 91, 1.5, 64),
+    new THREE.MeshBasicMaterial({ color: 0x4f986c })
+  );
+  lawn.position.y = -8.5;
+  radialCampus.add(lawn);
+
+  [36, 58, 82].forEach((radius, index) => {
+    const pathRing = new THREE.Mesh(
+      new THREE.TorusGeometry(radius, index === 1 ? 7 : 3.2, 8, 96),
+      new THREE.MeshBasicMaterial({ color: index === 1 ? 0xd8b6a5 : 0xf0e6d0 })
+    );
+    pathRing.rotation.x = Math.PI / 2;
+    pathRing.position.y = -7.3;
+    radialCampus.add(pathRing);
+  });
+
+  const radialBody = new THREE.MeshBasicMaterial({ color: 0xd98d72 });
+  const radialRoof = new THREE.MeshBasicMaterial({ color: 0xf1dfc1 });
+  const radialAccent = new THREE.MeshBasicMaterial({ color: 0xb85f53 });
+  const radialGlass = new THREE.MeshBasicMaterial({ color: 0x36b9bd });
+
+  [0, 2.25, 4.5].forEach((rotation, wingIndex) => {
+    const wing = new THREE.Group();
+    const arc = new THREE.Mesh(new THREE.TorusGeometry(78, 15, 10, 48, 1.28), radialBody);
+    arc.rotation.x = Math.PI / 2;
+    arc.rotation.y = rotation;
+    arc.position.y = 9;
+    arc.castShadow = true;
+    wing.add(arc);
+
+    const roofArc = new THREE.Mesh(new THREE.TorusGeometry(78, 17, 8, 48, 1.28), radialRoof);
+    roofArc.rotation.x = Math.PI / 2;
+    roofArc.rotation.y = rotation;
+    roofArc.position.y = 27;
+    roofArc.castShadow = true;
+    wing.add(roofArc);
+
+    for (let windowIndex = 0; windowIndex < 6; windowIndex += 1) {
+      const angle = rotation - 0.58 + windowIndex * 0.23;
+      const windowPanel = new THREE.Mesh(new THREE.BoxGeometry(9, 9, 2), radialGlass);
+      windowPanel.position.set(Math.cos(angle) * 78, 11, Math.sin(angle) * 78);
+      windowPanel.rotation.y = -angle;
+      wing.add(windowPanel);
+    }
+
+    const accent = new THREE.Mesh(new THREE.TorusGeometry(78, 2.2, 6, 48, 1.28), radialAccent);
+    accent.rotation.x = Math.PI / 2;
+    accent.rotation.y = rotation;
+    accent.position.y = 23;
+    wing.add(accent);
+    radialCampus.add(wing);
+  });
+
+  const radialFountain = new THREE.Mesh(
+    new THREE.CylinderGeometry(12, 16, 12, 32),
+    new THREE.MeshBasicMaterial({ color: 0xbfd8d2 })
+  );
+  radialFountain.position.y = 0;
+  radialCampus.add(radialFountain);
+
+  const radialEntry = new THREE.Group();
+  for (let step = 0; step < 4; step += 1) {
+    addBox(radialEntry, [62 - step * 8, 3, 10], [0, -7 + step * 3, 96 - step * 8], step % 2 ? radialAccent : radialRoof);
+  }
+  radialCampus.add(radialEntry);
+
+  const cleanMarker = new THREE.Mesh(new THREE.SphereGeometry(5, 24, 24), new THREE.MeshBasicMaterial({ color: 0xff806b }));
+  cleanMarker.position.set(0, 54, 0);
+  radialCampus.add(cleanMarker);
+  radialCampus.scale.setScalar(0.74);
+
+  radialCampus.visible = false;
+
+  // Final reference-faithful model: four separated curved academic blocks around
+  // the circular lawn, with the larger terraced block facing the viewer.
+  const referenceCampus = new THREE.Group();
+  campus.add(referenceCampus);
+  const referenceGround = new THREE.Mesh(
+    new THREE.CylinderGeometry(148, 138, 7, 64),
+    new THREE.MeshBasicMaterial({ color: 0x203c42 })
+  );
+  referenceGround.position.y = -16;
+  referenceCampus.add(referenceGround);
+
+  const referenceLawn = new THREE.Mesh(
+    new THREE.CylinderGeometry(108, 108, 1.5, 64),
+    new THREE.MeshBasicMaterial({ color: 0x438a60 })
+  );
+  referenceLawn.position.y = -12;
+  referenceCampus.add(referenceLawn);
+
+  [42, 68, 94].forEach((radius, index) => {
+    const path = new THREE.Mesh(
+      new THREE.TorusGeometry(radius, index === 1 ? 7 : 3.5, 8, 96),
+      new THREE.MeshBasicMaterial({ color: index === 1 ? 0xd6afa0 : 0xe5e1c9 })
+    );
+    path.rotation.x = Math.PI / 2;
+    path.position.y = -10.5;
+    referenceCampus.add(path);
+  });
+
+  const refBodyMaterial = new THREE.MeshBasicMaterial({ color: 0xe7dac2 });
+  const refRoofMaterial = new THREE.MeshBasicMaterial({ color: 0xf7f1e5 });
+  const refTerracottaMaterial = new THREE.MeshBasicMaterial({ color: 0xc86e59 });
+  const refGlassMaterial = new THREE.MeshBasicMaterial({ color: 0x35aeb0 });
+
+  function createReferenceWing(angle, width, height, roofDepth) {
+    const outerRadius = 91;
+    const innerRadius = outerRadius - width;
+    const arc = 1.18;
+    const shape = new THREE.Shape();
+    const segments = 18;
+    for (let index = 0; index <= segments; index += 1) {
+      const theta = -arc / 2 + (arc * index) / segments;
+      const x = Math.cos(theta) * outerRadius;
+      const y = Math.sin(theta) * outerRadius;
+      if (index === 0) shape.moveTo(x, y);
+      else shape.lineTo(x, y);
+    }
+    for (let index = segments; index >= 0; index -= 1) {
+      const theta = -arc / 2 + (arc * index) / segments;
+      shape.lineTo(Math.cos(theta) * innerRadius, Math.sin(theta) * innerRadius);
+    }
+    shape.closePath();
+
+    const buildingGeometry = new THREE.ExtrudeGeometry(shape, { depth: height, bevelEnabled: false });
+    buildingGeometry.rotateX(-Math.PI / 2);
+    const building = new THREE.Mesh(buildingGeometry, refBodyMaterial);
+    building.position.y = -9;
+    building.rotation.y = angle;
+    building.castShadow = true;
+    referenceCampus.add(building);
+
+    const roofGeometry = new THREE.ExtrudeGeometry(shape, { depth: roofDepth, bevelEnabled: false });
+    roofGeometry.rotateX(-Math.PI / 2);
+    const roof = new THREE.Mesh(roofGeometry, refRoofMaterial);
+    roof.position.y = height - 7;
+    roof.rotation.y = angle;
+    roof.castShadow = true;
+    referenceCampus.add(roof);
+
+    for (let index = 0; index < 7; index += 1) {
+      const theta = -arc / 2 + 0.12 + index * 0.16;
+      const panel = new THREE.Mesh(new THREE.BoxGeometry(8, height * 0.44, 2), index % 3 === 0 ? refTerracottaMaterial : refGlassMaterial);
+      const panelRadius = innerRadius - 1.5;
+      panel.position.set(Math.cos(theta + angle) * panelRadius, height * 0.37 - 9, Math.sin(theta + angle) * panelRadius);
+      panel.rotation.y = -(theta + angle);
+      referenceCampus.add(panel);
+    }
+  }
+
+  createReferenceWing(Math.PI / 2, 28, 30, 6);
+  createReferenceWing(Math.PI, 30, 26, 6);
+  createReferenceWing(0, 30, 26, 6);
+  createReferenceWing(-Math.PI / 2, 38, 34, 7);
+
+  const referenceFountain = new THREE.Mesh(new THREE.CylinderGeometry(13, 17, 10, 32), refGlassMaterial);
+  referenceFountain.position.y = -3;
+  referenceCampus.add(referenceFountain);
+  const referenceMonument = new THREE.Mesh(new THREE.CylinderGeometry(3, 5, 28, 20), refRoofMaterial);
+  referenceMonument.position.y = 16;
+  referenceCampus.add(referenceMonument);
+
+  for (let step = 0; step < 5; step += 1) {
+    const entry = new THREE.Mesh(new THREE.BoxGeometry(70 - step * 8, 3, 10), step % 2 ? refTerracottaMaterial : refRoofMaterial);
+    entry.position.set(0, -10 + step * 3, -112 + step * 8);
+    referenceCampus.add(entry);
+  }
+  referenceCampus.scale.setScalar(0.82);
+
+  const dom = threeRenderer.domElement;
+  dom.addEventListener('mousedown', (event) => {
+    isDragging3D = true;
+    previousMousePosition = { x: event.clientX, y: event.clientY };
+  });
+  window.addEventListener('mouseup', () => { isDragging3D = false; });
+  dom.addEventListener('mousemove', (event) => {
+    if (!isDragging3D || !buildingGroup) return;
+    buildingGroup.rotation.y += (event.clientX - previousMousePosition.x) * 0.006;
+    threeCamera.position.y = Math.max(70, Math.min(280, threeCamera.position.y - (event.clientY - previousMousePosition.y) * 0.45));
+    threeCamera.lookAt(0, -4, 0);
+    previousMousePosition = { x: event.clientX, y: event.clientY };
+  });
+  dom.addEventListener('wheel', (event) => {
+    event.preventDefault();
+    threeCamera.position.z = Math.max(180, Math.min(500, threeCamera.position.z + event.deltaY * 0.25));
+  }, { passive: false });
+
+  window.addEventListener('resize', () => {
+    if (!container || !threeRenderer || !threeCamera) return;
+    const nextWidth = container.clientWidth;
+    const nextHeight = container.clientHeight || 390;
+    threeCamera.aspect = nextWidth / nextHeight;
+    threeCamera.updateProjectionMatrix();
+    threeRenderer.setSize(nextWidth, nextHeight);
+  });
+
+  const animate3D = () => {
+    threeAnimationId = requestAnimationFrame(animate3D);
+    if (!isDragging3D && buildingGroup) buildingGroup.rotation.y += 0.0015;
+    if (buildingGroup) buildingGroup.position.y = Math.sin(Date.now() * 0.0015) * 4;
+    pulseMarker.scale.setScalar(1 + Math.sin(Date.now() * 0.005) * 0.2);
+    threeRenderer.render(threeScene, threeCamera);
+  };
+  animate3D();
+}
+
+function initBlenderCampus() {
+  const container = document.getElementById('threejs-canvas-wrapper');
+  if (!container || typeof THREE === 'undefined' || !THREE.GLTFLoader || !THREE.OrbitControls) return;
+
+  if (threeAnimationId) cancelAnimationFrame(threeAnimationId);
+  container.innerHTML = '';
+  const width = container.clientWidth || 900;
+  const height = container.clientHeight || 560;
+  threeScene = new THREE.Scene();
+  threeScene.background = new THREE.Color(0x102329);
+  threeCamera = new THREE.PerspectiveCamera(34, width / height, 0.1, 5000);
+  threeCamera.position.set(260, 220, 280);
+
+  threeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+  threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  threeRenderer.setSize(width, height);
+  threeRenderer.outputEncoding = THREE.sRGBEncoding;
+  threeRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+  threeRenderer.toneMappingExposure = 0.92;
+  threeRenderer.shadowMap.enabled = true;
+  threeRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  container.appendChild(threeRenderer.domElement);
+  threeControls = new THREE.OrbitControls(threeCamera, threeRenderer.domElement);
+  threeControls.enableDamping = true;
+  threeControls.dampingFactor = 0.075;
+  threeControls.enablePan = true;
+  threeControls.screenSpacePanning = true;
+  threeControls.minDistance = 90;
+  threeControls.maxDistance = 900;
+  threeControls.minPolarAngle = 0.12;
+  threeControls.maxPolarAngle = Math.PI * 0.49;
+  threeControls.autoRotate = false;
+  threeControls.target.set(0, 0, 0);
+
+  threeScene.add(new THREE.HemisphereLight(0xbfe8e5, 0x34524a, 1.55));
+  const keyLight = new THREE.DirectionalLight(0xffe0b6, 2.2);
+  keyLight.position.set(-260, 460, 220);
+  keyLight.castShadow = true;
+  threeScene.add(keyLight);
+  const fillLight = new THREE.DirectionalLight(0x8ad9e8, 1.05);
+  fillLight.position.set(280, 240, -280);
+  threeScene.add(fillLight);
+
+  buildingGroup = new THREE.Group();
+  threeScene.add(buildingGroup);
+  const loader = new THREE.GLTFLoader();
+  loader.load('/assets/models/chanakya_university_3d_campus.glb', gltf => {
+    const model = gltf.scene;
+    // This Blender export is Z-up with the campus plan on its XY plane.
+    model.rotation.x = -Math.PI / 2;
+    model.traverse(node => {
+      if (node.isMesh) {
+        node.castShadow = true;
+        node.receiveShadow = true;
+        if (node.material) {
+          node.material.side = THREE.DoubleSide;
+          if ('envMapIntensity' in node.material) node.material.envMapIntensity = 0.8;
+        }
+      }
+    });
+    const bounds = new THREE.Box3().setFromObject(model);
+    const size = bounds.getSize(new THREE.Vector3());
+    const center = bounds.getCenter(new THREE.Vector3());
+    model.position.sub(center);
+    const largestDimension = Math.max(size.x, size.y, size.z);
+    const scale = 230 / largestDimension;
+    model.scale.setScalar(scale);
+    buildingGroup.add(model);
+    const normalizedBounds = new THREE.Box3().setFromObject(buildingGroup);
+    const normalizedSize = normalizedBounds.getSize(new THREE.Vector3());
+    const distance = Math.max(normalizedSize.x, normalizedSize.z) * 1.18;
+    threeCamera.position.set(distance * 0.9, distance * 0.72, distance * 0.9);
+    threeControls.target.set(0, 0, 0);
+    threeControls.update();
+  }, undefined, error => {
+    console.error('Unable to load Blender campus model:', error);
+  });
+
+  window.addEventListener('resize', () => {
+    if (!threeRenderer || !threeCamera) return;
+    const nextWidth = container.clientWidth || 900;
+    const nextHeight = container.clientHeight || 560;
+    threeCamera.aspect = nextWidth / nextHeight;
+    threeCamera.updateProjectionMatrix();
+    threeRenderer.setSize(nextWidth, nextHeight);
+  });
+
+  const animate3D = () => {
+    threeAnimationId = requestAnimationFrame(animate3D);
+    if (threeControls) threeControls.update();
+    threeRenderer.render(threeScene, threeCamera);
+  };
+  animate3D();
+}
+
+/*
+ * Reference-faithful procedural fallback retained for development/export
+ * comparison, but the live dashboard uses the Blender GLB above.
+ */
+function initProceduralThreeJSCampus() {
+  const container = document.getElementById('threejs-canvas-wrapper');
+  if (!container || typeof THREE === 'undefined') return;
+
+  if (threeAnimationId) cancelAnimationFrame(threeAnimationId);
+  container.innerHTML = '';
+
+  const width = container.clientWidth || 900;
+  const height = container.clientHeight || 390;
+  threeScene = new THREE.Scene();
+  threeScene.background = new THREE.Color(0x08151b);
+  threeScene.fog = new THREE.Fog(0x08151b, 430, 1050);
+
+  threeCamera = new THREE.PerspectiveCamera(42, width / height, 1, 2200);
+  // The reference is an aerial masterplan, so keep the default view almost
+  // orthographic in composition while retaining perspective depth.
+  threeCamera.position.set(0, 610, 28);
+  threeCamera.lookAt(0, -4, -18);
+
+  threeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+  threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  threeRenderer.setSize(width, height);
+  threeRenderer.shadowMap.enabled = true;
+  threeRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  container.appendChild(threeRenderer.domElement);
+
+  threeScene.add(new THREE.HemisphereLight(0x8ab7ba, 0x071014, 1.35));
+  const keyLight = new THREE.DirectionalLight(0xffd5ad, 2.4);
+  keyLight.position.set(-220, 360, 240);
+  keyLight.castShadow = true;
+  keyLight.shadow.mapSize.set(2048, 2048);
+  threeScene.add(keyLight);
+  const rimLight = new THREE.DirectionalLight(0x42d1d3, 1.4);
+  rimLight.position.set(260, 180, -220);
+  threeScene.add(rimLight);
+
+  const mat = (color, roughness = 0.7, metalness = 0.05) =>
+    new THREE.MeshStandardMaterial({ color, roughness, metalness });
+  const terrainMat = mat(0x17363b, 0.95);
+  const lawnMat = mat(0x27634f, 0.9);
+  const lawnLightMat = mat(0x3c8761, 0.86);
+  const waterMat = mat(0x167f94, 0.18, 0.2);
+  const roadMat = mat(0x1a252a, 0.95);
+  const creamMat = mat(0xd9d3c0, 0.45);
+  const whiteRoofMat = mat(0xe7e1d2, 0.32);
+  const terracottaMat = mat(0x9e5549, 0.55);
+  const terracottaLightMat = mat(0xc4745c, 0.48);
+  const glassMat = mat(0x2c9eaa, 0.18, 0.38);
+  const goldMat = mat(0xd6a65b, 0.32, 0.35);
+  const treeMat = mat(0x3d9a62, 0.9);
+  const trunkMat = mat(0x6b4b35, 1);
+
+  const campus = new THREE.Group();
+  buildingGroup = campus;
+  campus.scale.set(1.52, 1, 1.08);
+  threeScene.add(campus);
+
+  const box = (group, size, position, material, bevel = 0) => {
+    const geometry = new THREE.BoxGeometry(size[0], size[1], size[2]);
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.set(position[0], position[1], position[2]);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    group.add(mesh);
+    return mesh;
+  };
+
+  const disc = (radius, depth, y, material, segments = 64) => {
+    const mesh = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, depth, segments), material);
+    mesh.position.y = y;
+    mesh.receiveShadow = true;
+    campus.add(mesh);
+    return mesh;
+  };
+
+  const ground = box(campus, [390, 8, 560], [0, -18, -20], terrainMat);
+  ground.receiveShadow = true;
+  box(campus, [338, 1, 510], [0, -13.5, -20], lawnMat);
+
+  // Lake and sports complex at the rear-left of the reference.
+  const lake = new THREE.Mesh(new THREE.CylinderGeometry(76, 76, 2, 48), waterMat);
+  lake.scale.z = 1.3;
+  lake.rotation.y = -0.18;
+  lake.position.set(-134, -10, -183);
+  lake.receiveShadow = true;
+  campus.add(lake);
+  box(campus, [58, 1.4, 88], [-36, -10, -186], lawnLightMat);
+  box(campus, [48, 1.8, 66], [-36, -8.8, -186], roadMat);
+  box(campus, [42, 1.9, 58], [-36, -7.8, -186], lawnMat);
+  [-1, 1].forEach(side => {
+    const field = box(campus, [34, 1.6, 42], [-36 + side * 46, -9, -185], lawnLightMat);
+    field.rotation.y = side * 0.1;
+  });
+  box(campus, [4, 2, 85], [-36, -7.4, -186], terracottaLightMat);
+  box(campus, [58, 3, 4], [-36, -7.2, -186], terracottaLightMat);
+
+  const road = box(campus, [42, 1.6, 370], [0, -9.4, 65], roadMat);
+  road.receiveShadow = true;
+  [0, 1].forEach(side => {
+    const lane = box(campus, [3, 1.8, 350], [side ? 12 : -12, -8.3, 65], goldMat);
+    lane.material = mat(0x6f7b6c, 0.8);
+  });
+  [0, 1].forEach(side => {
+    const parking = box(campus, [62, 1.7, 30], [side ? 96 : -96, -9, 45], roadMat);
+    parking.rotation.y = side ? -0.08 : 0.08;
+  });
+
+  const addOffice = (x, z, width, depth, floors = 3, color = creamMat) => {
+    const office = new THREE.Group();
+    office.position.set(x, -8, z);
+    box(office, [width, floors * 10, depth], [0, floors * 5, 0], color);
+    box(office, [width + 4, 3, depth + 4], [0, floors * 10 + 2, 0], whiteRoofMat);
+    for (let floor = 0; floor < floors; floor += 1) {
+      for (let panel = -1; panel <= 1; panel += 1) {
+        box(office, [Math.max(6, width / 4), 4.2, 1.2], [panel * width / 3.2, 5 + floor * 10, depth / 2 + 0.8], glassMat);
+      }
+    }
+    campus.add(office);
+  };
+
+  // Rear academic and residential blocks.
+  [[78, -205, 44, 34, 5], [130, -167, 44, 34, 6], [82, -133, 50, 34, 5], [130, -100, 42, 34, 5]]
+    .forEach(item => addOffice(item[0], item[1], item[2], item[3], item[4], creamMat));
+  [[-98, -204, 42, 28, 3], [-36, -207, 40, 28, 3], [32, -206, 42, 28, 3]]
+    .forEach(item => addOffice(item[0], item[1], item[2], item[3], item[4], terracottaMat));
+
+  const createCurvedBlock = (x, z, scaleX, scaleZ, rotation = 0, floors = 3) => {
+    const shape = new THREE.Shape();
+    shape.moveTo(-1, -1);
+    shape.quadraticCurveTo(0, 1.1, 1, -1);
+    shape.lineTo(0.78, -1.25);
+    shape.quadraticCurveTo(0, 0.62, -0.78, -1.25);
+    shape.closePath();
+    const geometry = new THREE.ExtrudeGeometry(shape, { depth: 1, bevelEnabled: true, bevelSize: 0.08, bevelThickness: 0.08 });
+    geometry.rotateX(-Math.PI / 2);
+    const block = new THREE.Group();
+    block.position.set(x, -8, z);
+    block.rotation.y = rotation;
+    const body = new THREE.Mesh(geometry, creamMat);
+    body.scale.set(scaleX, floors * 10, scaleZ);
+    body.castShadow = true;
+    body.receiveShadow = true;
+    block.add(body);
+    const roof = new THREE.Mesh(geometry, whiteRoofMat);
+    roof.scale.set(scaleX * 1.04, 2.2, scaleZ * 1.04);
+    roof.position.y = floors * 10 + 2;
+    block.add(roof);
+    for (let panel = -2; panel <= 2; panel += 1) {
+      const window = box(block, [9, floors * 7, 1.4], [panel * 16, floors * 4.5, scaleZ * 0.58], glassMat);
+      window.rotation.y = rotation * 0.2;
+    }
+    campus.add(block);
+    return block;
+  };
+
+  // The defining central horseshoe/crescent campus in the reference.
+  createCurvedBlock(-6, -38, 54, 32, 0, 3);
+  createCurvedBlock(-75, -6, 37, 26, -0.78, 3);
+  createCurvedBlock(75, -6, 37, 26, 0.78, 3);
+
+  // Repeated middle-campus blocks form the strong north/south spine visible in
+  // the reference image between the court and the rear academic zone.
+  [
+    [-54, -104, 42, 22], [0, -108, 45, 22], [54, -104, 42, 22],
+    [-48, -143, 32, 18], [0, -148, 34, 18], [48, -143, 32, 18]
+  ].forEach(([x, z, width, depth], index) => {
+    const spine = new THREE.Group();
+    spine.position.set(x, -8, z);
+    box(spine, [width, index < 3 ? 22 : 17, depth], [0, index < 3 ? 11 : 8.5, 0], index % 2 ? creamMat : whiteRoofMat);
+    box(spine, [width + 5, 3, depth + 4], [0, index < 3 ? 23 : 18.5, 0], whiteRoofMat);
+    box(spine, [width * 0.72, 6, 1.5], [0, index < 3 ? 10 : 7.5, depth / 2 + 0.8], glassMat);
+    campus.add(spine);
+  });
+
+  // Central ring court and fountain.
+  disc(69, 1.8, -8.5, lawnLightMat);
+  [30, 48, 64].forEach((radius, index) => {
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(radius, index === 1 ? 4.2 : 2.1, 8, 96),
+      index === 1 ? creamMat : terracottaLightMat
+    );
+    ring.rotation.x = Math.PI / 2;
+    ring.position.y = -7;
+    campus.add(ring);
+  });
+  const fountain = new THREE.Mesh(new THREE.CylinderGeometry(10, 13, 7, 32), waterMat);
+  fountain.position.set(0, -2, -20);
+  campus.add(fountain);
+  const monument = new THREE.Mesh(new THREE.CylinderGeometry(1.8, 2.6, 26, 16), whiteRoofMat);
+  monument.position.set(0, 14, -20);
+  campus.add(monument);
+
+  // Front signature building, entry terraces and university sign.
+  const front = new THREE.Group();
+  front.position.set(0, -8, 52);
+  box(front, [112, 20, 26], [0, 12, 0], terracottaMat);
+  box(front, [88, 24, 12], [0, 16, -9], glassMat);
+  box(front, [120, 4, 32], [0, 26, 0], whiteRoofMat);
+  box(front, [48, 9, 3], [0, 16, 13.5], goldMat);
+  campus.add(front);
+  for (let step = 0; step < 5; step += 1) {
+    box(campus, [72 - step * 11, 2.6, 11], [0, -8 + step * 2.8, 69 - step * 8], step % 2 ? terracottaLightMat : whiteRoofMat);
+  }
+
+  // Lower-left circular arena and lower glass innovation hall.
+  const arena = new THREE.Mesh(new THREE.CylinderGeometry(44, 44, 17, 48), whiteRoofMat);
+  arena.scale.z = 0.82;
+  arena.position.set(-112, 0, 124);
+  arena.castShadow = true;
+  campus.add(arena);
+  const arenaBand = new THREE.Mesh(new THREE.CylinderGeometry(42, 42, 8, 48), terracottaMat);
+  arenaBand.scale.z = 0.82;
+  arenaBand.position.set(-112, -8, 124);
+  campus.add(arenaBand);
+  box(campus, [92, 20, 48], [95, 4, 145], glassMat);
+  box(campus, [100, 4, 56], [95, 17, 145], whiteRoofMat);
+  box(campus, [58, 12, 2], [95, 5, 121], glassMat);
+
+  [[-150, 105], [-72, 111], [142, 104], [-155, 25], [157, 18], [-130, -55], [126, -42]]
+    .forEach(([x, z]) => {
+      const tree = new THREE.Group();
+      const trunk = new THREE.Mesh(new THREE.CylinderGeometry(1.8, 2.4, 12, 10), trunkMat);
+      trunk.position.y = -2;
+      const crown = new THREE.Mesh(new THREE.IcosahedronGeometry(8, 1), treeMat);
+      crown.position.y = 6;
+      tree.add(trunk, crown);
+      tree.position.set(x, -8, z);
+      campus.add(tree);
+    });
+
+  const pulseMarker = new THREE.Mesh(new THREE.SphereGeometry(4, 20, 20), new THREE.MeshBasicMaterial({ color: 0xff806b }));
+  pulseMarker.position.set(0, 42, -20);
+  campus.add(pulseMarker);
+
+  const dom = threeRenderer.domElement;
+  dom.addEventListener('mousedown', event => {
+    isDragging3D = true;
+    previousMousePosition = { x: event.clientX, y: event.clientY };
+  });
+  window.addEventListener('mouseup', () => { isDragging3D = false; });
+  dom.addEventListener('mousemove', event => {
+    if (!isDragging3D || !buildingGroup) return;
+    buildingGroup.rotation.y += (event.clientX - previousMousePosition.x) * 0.005;
+    threeCamera.position.y = Math.max(300, Math.min(780, threeCamera.position.y - (event.clientY - previousMousePosition.y) * 0.35));
+    threeCamera.lookAt(0, -4, -18);
+    previousMousePosition = { x: event.clientX, y: event.clientY };
+  });
+  dom.addEventListener('wheel', event => {
+    event.preventDefault();
+    threeCamera.position.y = Math.max(300, Math.min(780, threeCamera.position.y + event.deltaY * 0.45));
+    threeCamera.lookAt(0, -4, -18);
+  }, { passive: false });
+
+  const onResize = () => {
+    if (!container || !threeRenderer || !threeCamera) return;
+    const nextWidth = container.clientWidth || 900;
+    const nextHeight = container.clientHeight || 390;
+    threeCamera.aspect = nextWidth / nextHeight;
+    threeCamera.updateProjectionMatrix();
+    threeRenderer.setSize(nextWidth, nextHeight);
+  };
+  window.addEventListener('resize', onResize);
+
+  const animate3D = () => {
+    threeAnimationId = requestAnimationFrame(animate3D);
+    if (!isDragging3D && buildingGroup) buildingGroup.rotation.y += 0.00045;
+    if (buildingGroup) buildingGroup.position.y = Math.sin(Date.now() * 0.0012) * 1.2;
+    pulseMarker.scale.setScalar(1 + Math.sin(Date.now() * 0.005) * 0.18);
+    threeRenderer.render(threeScene, threeCamera);
+  };
+  animate3D();
+}
+
 function reset3DCamera() {
   if (threeCamera && buildingGroup) {
-    threeCamera.position.set(0, 180, 320);
-    threeCamera.lookAt(0, 20, 0);
+    const bounds = new THREE.Box3().setFromObject(buildingGroup);
+    const size = bounds.getSize(new THREE.Vector3());
+    const distance = Math.max(size.x, size.z) * 1.18;
+    threeCamera.position.set(distance * 0.9, distance * 0.72, distance * 0.9);
+    if (threeControls) {
+      threeControls.target.set(0, 0, 0);
+      threeControls.update();
+    } else {
+      threeCamera.lookAt(0, 0, 0);
+    }
     buildingGroup.rotation.set(0, 0, 0);
     sfx.play('click');
   }
@@ -2241,7 +3086,7 @@ function toggle3DVisualizer() {
   if (container) {
     container.classList.toggle('hidden');
     if (!container.classList.contains('hidden') && !threeRenderer) {
-      setTimeout(initThreeJSCampus, 100);
+      setTimeout(initBlenderCampus, 100);
     }
   }
 }

@@ -11,7 +11,7 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Sora:wght@100..900&display=swap" rel="stylesheet">
   
   <!-- Leaflet CSS & JS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
@@ -19,6 +19,8 @@
   
   <!-- Three.js CDN for High-Impact 3D Visualizations -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <!-- Socket.io Client -->
   <script src="/socket.io/socket.io.js"></script>
@@ -55,6 +57,9 @@
   </script>
 </head>
 <body class="bg-[#070B14] text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-amber-500 selection:text-black overflow-x-hidden">
+
+  <video class="art" autoplay muted loop playsinline preload="auto" aria-hidden="true" poster="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/130837c4-0244-4f37-9c61-8d801d93fd29.jpg" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260912_104303_0c6d60b2-9353-408e-9449-585108a22fb5.mp4"></video>
+  <div class="veil" aria-hidden="true"></div>
 
   <!-- Background 3D Animated Canvas -->
   <canvas id="bg-canvas"></canvas>
@@ -109,12 +114,6 @@
           <span class="text-slate-700">|</span>
           <span id="live-clock" class="font-mono text-cyan-400 font-medium">12:00:00</span>
         </div>
-
-        <!-- 3D View Toggle Button -->
-        <button onclick="toggle3DVisualizer()" class="hidden sm:flex items-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold bg-gradient-to-r from-purple-500/20 to-cyan-500/20 hover:from-purple-500/30 hover:to-cyan-500/30 text-cyan-300 border border-cyan-500/40 transition btn-tactile shadow-sm" title="Toggle 3D Interactive Campus Visualizer">
-          <span>🌐</span>
-          <span>3D View</span>
-        </button>
 
         <!-- Feed AI Button -->
         <button onclick="openFeedDataModal()" class="hidden sm:flex items-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500/20 to-cyan-500/10 hover:from-cyan-500/30 hover:to-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition btn-tactile">
@@ -277,35 +276,6 @@
       <!-- Dynamic Role Welcome Banner -->
       <div id="role-welcome-banner" class="bento-card p-6 border-white/[0.08] tilt-3d">
         <!-- Injected via JavaScript based on active persona -->
-      </div>
-
-      <!-- ================================================================== -->
-      <!-- INTERACTIVE 3D CAMPUS VISUALIZER (Three.js WebGL Engine) -->
-      <!-- ================================================================== -->
-      <div id="threejs-container" class="bento-card p-5 border-cyan-500/30 relative overflow-hidden transition-all duration-500">
-        <div class="flex items-center justify-between mb-3">
-          <div class="flex items-center gap-2">
-            <span class="text-lg">🏛️</span>
-            <div>
-              <h3 class="text-sm font-extrabold text-white font-outfit">Interactive 3D Digital Twin</h3>
-              <p class="text-[11px] text-slate-400">Real-time 3D rendered academic buildings & concentric promenade (Drag to rotate, scroll to zoom)</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-2">
-            <button onclick="reset3DCamera()" class="py-1 px-3 rounded-lg text-xs font-bold bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 transition btn-tactile">
-              🔄 Reset Camera
-            </button>
-            <button onclick="toggle3DVisualizer()" class="py-1 px-2.5 rounded-lg text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 transition btn-tactile">
-              ✕
-            </button>
-          </div>
-        </div>
-
-        <div id="threejs-canvas-wrapper" class="w-full h-72 rounded-2xl overflow-hidden bg-slate-950 relative border border-white/[0.06]">
-          <div class="absolute top-3 left-3 z-10 text-[10px] font-mono bg-slate-900/80 px-2.5 py-1 rounded-full text-cyan-300 border border-cyan-500/30">
-            WebGL 3D Engine • 60 FPS
-          </div>
-        </div>
       </div>
 
       <!-- ================================================================== -->
