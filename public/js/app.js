@@ -542,6 +542,13 @@ function switchTab(tabId) {
       window.utsavHub.init();
     }, 50);
   }
+
+  // Refresh Certificates data when opening certificates tab
+  if (tabId === 'certificates' && window.utsavHub) {
+    setTimeout(() => {
+      window.utsavHub.loadCertificatesVault('all');
+    }, 50);
+  }
 }
 
 // ============================================================================

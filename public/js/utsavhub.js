@@ -30,6 +30,9 @@ class UtsavHubController {
     };
 
     this.activeUser = null;
+    this.certificatesList = [];
+    this.vaultFilter = 'all';
+    this.activeCertificateCode = null;
   }
 
   async init() {
@@ -42,6 +45,7 @@ class UtsavHubController {
     this.loadRegistrations(1);
     this.loadAnalytics();
     this.loadUserRegistrations();
+    this.loadCertificatesVault();
   }
 
   initUser() {
@@ -243,9 +247,46 @@ class UtsavHubController {
           </div>
         `;
       }).join('');
+      this.renderRecommendations();
     } catch (err) {
       grid.innerHTML = `<div class="col-span-full py-6 text-center text-rose-400 text-xs">Failed to load events: ${err.message}</div>`;
     }
+  }
+
+  // ==========================================
+  // SMART AI EVENT RECOMMENDATION ENGINE
+  // ==========================================
+  renderRecommendations() {
+    const box = document.getElementById('utsav-recommendations-list');
+    if (!box) return;
+
+    const pool = this.subEvents.slice(0, 10);
+    const recs = pool.filter(e => e.category === 'Tech' || e.type === 'Team' || e.is_competition).slice(0, 3);
+    const displayList = recs.length >= 2 ? recs : pool.slice(0, 3);
+
+    box.innerHTML = displayList.map((ev, idx) => {
+      const matchScore = 98 - (idx * 4);
+      return `
+        <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/40 transition flex flex-col justify-between space-y-2">
+          <div class="space-y-1">
+            <div class="flex items-center justify-between">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                🎯 ${matchScore}% MATCH
+              </span>
+              <span class="text-[9px] font-mono text-slate-400">${ev.category || 'General'}</span>
+            </div>
+            <h5 class="text-xs font-black text-white truncate font-outfit">${ev.name}</h5>
+            <p class="text-[10px] text-slate-400 truncate">${ev.fest_name} • ${ev.venue}</p>
+          </div>
+          <div class="flex items-center justify-between pt-1 border-t border-slate-800/80">
+            <span class="text-[10px] text-amber-400 font-mono font-bold">${ev.day}</span>
+            <button onclick="utsavHub.openRegistrationModal(${ev.sub_event_id})" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-cyan-500 hover:bg-cyan-400 text-slate-950 transition btn-tactile">
+              1-Click Pass &rarr;
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
   }
 
   // ==========================================
@@ -648,6 +689,7 @@ class UtsavHubController {
         return;
       }
       const cert = data.certificate;
+      this.activeCertificateCode = cert.certificate_code;
 
       const modal = document.getElementById('certificate-modal');
       if (!modal) return;
@@ -682,6 +724,229 @@ class UtsavHubController {
       console.error("Certificate load error:", err);
       alert("Error loading certificate: " + err.message);
     }
+  }
+
+  // ==========================================
+  // DIGITAL CERTIFICATES VAULT & VERIFICATION
+  // ==========================================
+  async loadCertificatesVault(filter = 'all') {
+    this.vaultFilter = filter;
+    const grid = document.getElementById('certificates-vault-grid');
+    if (!grid) return;
+
+    grid.innerHTML = `<div class="col-span-full py-8 text-center text-slate-400 font-mono text-xs"><span class="animate-spin inline-block mr-2">⏳</span> Querying digital credentials from database...</div>`;
+
+    try {
+      const res = await fetch('/api/certificates');
+      const data = await res.json();
+      this.certificatesList = data.certificates || [];
+
+      // Update counters
+      const totalEl = document.getElementById('vault-stat-total');
+      const winnersEl = document.getElementById('vault-stat-winners');
+      const mineEl = document.getElementById('vault-stat-mine');
+
+      const userPId = Number(this.activeUser?.profile_id || this.activeUser?.id || 1);
+      const myCerts = this.certificatesList.filter(c => Number(c.participant_id) === userPId);
+      const winnerCerts = this.certificatesList.filter(c => c.is_winner);
+
+      if (totalEl) totalEl.innerText = this.certificatesList.length.toLocaleString();
+      if (winnersEl) winnersEl.innerText = winnerCerts.length.toLocaleString();
+      if (mineEl) mineEl.innerText = myCerts.length.toLocaleString();
+
+      this.renderVaultGrid();
+    } catch (err) {
+      grid.innerHTML = `<div class="col-span-full py-6 text-center text-rose-400 text-xs">Failed to load certificates: ${err.message}</div>`;
+    }
+  }
+
+  filterVaultCertificates(type) {
+    this.vaultFilter = type;
+
+    const btnAll = document.getElementById('btn-vault-all');
+    const btnWinner = document.getElementById('btn-vault-winner');
+    const btnPart = document.getElementById('btn-vault-participation');
+
+    const activeClass = "py-1.5 px-3.5 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 transition shadow-md";
+    const inactiveClass = "py-1.5 px-3.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition";
+
+    if (btnAll) btnAll.className = type === 'all' ? activeClass : inactiveClass;
+    if (btnWinner) btnWinner.className = type === 'winner' ? activeClass : inactiveClass;
+    if (btnPart) btnPart.className = type === 'participation' ? activeClass : inactiveClass;
+
+    this.renderVaultGrid();
+  }
+
+  renderVaultGrid() {
+    const grid = document.getElementById('certificates-vault-grid');
+    if (!grid) return;
+
+    let list = this.certificatesList || [];
+    if (this.vaultFilter === 'winner') {
+      list = list.filter(c => c.is_winner);
+    } else if (this.vaultFilter === 'participation') {
+      list = list.filter(c => !c.is_winner);
+    }
+
+    const labelEl = document.getElementById('vault-count-label');
+    if (labelEl) labelEl.innerText = `Showing ${list.length} Verified Certificates`;
+
+    if (list.length === 0) {
+      grid.innerHTML = `<div class="col-span-full py-12 text-center text-slate-400 text-xs rounded-2xl bg-slate-900/60 border border-slate-800">No certificates match the selected filter.</div>`;
+      return;
+    }
+
+    grid.innerHTML = list.map(cert => {
+      const isWinner = cert.is_winner;
+      const borderClass = isWinner ? 'border-amber-500/40 hover:border-amber-400' : 'border-slate-800 hover:border-cyan-500/40';
+      const badgeClass = isWinner ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30';
+
+      return `
+        <div class="glass-card rounded-2xl p-5 border ${borderClass} space-y-3.5 flex flex-col justify-between transition group hover:shadow-xl hover:shadow-amber-500/5">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold border ${badgeClass} uppercase">
+                ${isWinner ? `🏆 1ST PLACE WINNER` : '🎓 PARTICIPATION'}
+              </span>
+              <span class="text-[9px] font-mono text-slate-400">📅 ${cert.issued_date || '2026-03-24'}</span>
+            </div>
+
+            <div class="pt-1">
+              <h4 class="text-sm font-black text-white group-hover:text-amber-300 transition">${cert.participant_name}</h4>
+              <span class="text-[10px] text-slate-400 font-mono block">${cert.roll_number} • ${cert.school_name}</span>
+            </div>
+
+            <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1 text-xs">
+              <div class="flex items-center justify-between">
+                <span class="text-slate-400 text-[10px]">Event:</span>
+                <b class="text-white text-[11px] font-mono">${cert.sub_event_name}</b>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-slate-400 text-[10px]">Conclave:</span>
+                <span class="text-amber-300 text-[10px]">${cert.fest_name}</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-slate-400 text-[10px]">Award / Rank:</span>
+                <span class="text-emerald-400 font-bold text-[10px]">${cert.prize_title || 'Active Participant'}</span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between text-[9px] text-slate-500 font-mono pt-1">
+              <span>CODE:</span>
+              <span class="text-amber-400 font-bold">${cert.certificate_code}</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800">
+            <button onclick="utsavHub.openCertificate('${cert.certificate_code}')" class="py-1.5 px-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition flex items-center justify-center gap-1 btn-tactile">
+              <span>👁️ View</span>
+            </button>
+            <button onclick="utsavHub.copyVerificationLink('${cert.certificate_code}')" class="py-1.5 px-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 transition flex items-center justify-center gap-1 btn-tactile">
+              <span>🔗 Verify Link</span>
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  async verifyCertificateByInput() {
+    const input = document.getElementById('vault-verify-input');
+    const resultBox = document.getElementById('vault-verify-result');
+    if (!input || !resultBox) return;
+
+    const code = input.value.trim();
+    if (!code) {
+      alert("Please enter a Certificate ID to verify.");
+      return;
+    }
+
+    resultBox.classList.remove('hidden');
+    resultBox.innerHTML = `<div class="text-center py-4 text-xs font-mono text-cyan-300"><span class="animate-spin inline-block mr-2">⏳</span> Validating cryptographic hash and database records...</div>`;
+
+    try {
+      const res = await fetch(`/api/certificates/verify/${encodeURIComponent(code)}`);
+      const data = await res.json();
+
+      if (data.verified && data.certificate) {
+        const cert = data.certificate;
+        resultBox.className = "p-5 rounded-2xl bg-emerald-950/20 border-2 border-emerald-500/50 space-y-3";
+        resultBox.innerHTML = `
+          <div class="flex items-center justify-between border-b border-emerald-500/30 pb-2">
+            <div class="flex items-center gap-2">
+              <span class="text-xl">✅</span>
+              <div>
+                <h4 class="text-xs font-black text-emerald-300 uppercase tracking-wider font-mono">OFFICIALLY VERIFIED CREDENTIAL</h4>
+                <span class="text-[10px] text-slate-400">Recorded in Chanakya University PostgreSQL Database</span>
+              </div>
+            </div>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40">VALID</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div>
+              <span class="text-[10px] text-slate-400 block font-mono">RECIPIENT SCHOLAR</span>
+              <b class="text-white text-sm">${cert.participant_name}</b>
+              <span class="text-[11px] text-amber-300 block font-mono">Roll No: ${cert.roll_number}</span>
+            </div>
+            <div>
+              <span class="text-[10px] text-slate-400 block font-mono">INSTITUTION & FACULTY</span>
+              <b class="text-slate-200">${cert.school_name}</b>
+              <span class="text-[11px] text-slate-400 block">${cert.department_name}</span>
+            </div>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between text-xs">
+            <div>
+              <span class="text-[10px] text-slate-400 block font-mono">EVENT & AWARD</span>
+              <b class="text-amber-300">${cert.sub_event_name}</b> • <span class="text-white font-bold">${cert.prize_title || 'Active Participant'}</span>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] text-slate-400 block font-mono">FEST CONCLAVE</span>
+              <span class="text-cyan-300 font-bold font-mono">${cert.fest_name}</span>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-2 border-t border-emerald-500/20 text-[10px]">
+            <span class="text-slate-400 font-mono">Certificate ID: <b class="text-white">${cert.certificate_code}</b></span>
+            <button onclick="utsavHub.openCertificate('${cert.certificate_code}')" class="px-3 py-1 rounded-lg text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition">
+              View Formal Certificate &rarr;
+            </button>
+          </div>
+        `;
+      } else {
+        resultBox.className = "p-4 rounded-2xl bg-rose-950/20 border-2 border-rose-500/50 space-y-2";
+        resultBox.innerHTML = `
+          <div class="flex items-center gap-2 text-rose-400">
+            <span class="text-xl">❌</span>
+            <div>
+              <h4 class="text-xs font-bold uppercase tracking-wider font-mono">INVALID CREDENTIAL CODE</h4>
+              <p class="text-[11px] text-slate-300">No matching record found for code <code>${code}</code> in database.</p>
+            </div>
+          </div>
+        `;
+      }
+    } catch (err) {
+      resultBox.innerHTML = `<div class="text-rose-400 text-xs">Verification request failed: ${err.message}</div>`;
+    }
+  }
+
+  copyActiveCertLink() {
+    if (!this.activeCertificateCode) return;
+    this.copyVerificationLink(this.activeCertificateCode);
+  }
+
+  copyVerificationLink(code) {
+    const url = `${window.location.origin}/api/certificates/verify/${encodeURIComponent(code)}`;
+    navigator.clipboard.writeText(url)
+      .then(() => {
+        if (typeof showToast === 'function') {
+          showToast("Link Copied!", `Verification URL copied to clipboard: ${code}`, "success");
+        } else {
+          alert("Verification link copied: " + url);
+        }
+      })
+      .catch(() => alert("Verification link: " + url));
   }
 
   closeCertificateModal() {

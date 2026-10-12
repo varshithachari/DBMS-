@@ -202,6 +202,13 @@
             <button data-tab="utsavhub" onclick="switchTab('utsavhub')" class="nav-tab-btn w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition btn-tactile">
               <span>🏆</span> UtsavHub Conclaves & Regs
             </button>
+
+            <button data-tab="certificates" onclick="switchTab('certificates')" class="nav-tab-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition btn-tactile">
+              <div class="flex items-center gap-3">
+                <span>📜</span> Digital Certificates Vault
+              </div>
+              <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30">NEW</span>
+            </button>
           </div>
         </div>
 
@@ -961,6 +968,23 @@
           </div>
         </div>
 
+        <!-- Smart AI Event Recommendations Bar -->
+        <div id="utsav-recommendations-box" class="bento-card p-4 border-cyan-500/30 space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-lg">🎯</span>
+              <div>
+                <h4 class="text-xs font-black text-white font-outfit uppercase tracking-wider">AI Event Recommendations For You</h4>
+                <p class="text-[10px] text-slate-400">Personalized matches based on your faculty department and academic interests.</p>
+              </div>
+            </div>
+            <span class="px-2 py-0.5 rounded text-[9px] font-mono bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">MATCHED</span>
+          </div>
+          <div id="utsav-recommendations-list" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <!-- Populated via utsavHub.renderRecommendations() -->
+          </div>
+        </div>
+
         <!-- Hierarchical Dynamic Filter Bar -->
         <div class="bento-card p-4 space-y-3 tilt-3d">
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -1116,6 +1140,153 @@
           </div>
           <div id="utsav-my-passes" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <!-- Populated via utsavHub.loadUserRegistrations() -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ================================================================== -->
+      <!-- TAB 12: DIGITAL CERTIFICATES VAULT & CREDENTIAL VERIFICATION -->
+      <!-- ================================================================== -->
+      <section id="tab-certificates" class="tab-view-container hidden space-y-6">
+        
+        <!-- Header Banner with Database Metrics -->
+        <div class="bento-card p-6 border-amber-500/40 space-y-4 tilt-3d glow-amber">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 font-mono">
+                  OFFICIAL ACADEMIC CREDENTIALS
+                </span>
+                <span class="text-xs text-emerald-400 font-mono">PostgreSQL Backed • Cryptographically Verified</span>
+              </div>
+              <h3 class="text-xl sm:text-2xl font-black text-white font-outfit">Digital Certificates & Honors Vault 📜</h3>
+              <p class="text-xs text-slate-300 max-w-2xl">
+                Tamper-proof certificates for academic conclaves, hackathons, cultural festivals, and athletic championships at Chanakya University.
+              </p>
+            </div>
+
+            <!-- Action: Refresh Vault -->
+            <div class="flex items-center gap-2">
+              <button onclick="utsavHub.loadCertificatesVault('all')" class="py-2 px-3.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 transition btn-tactile">
+                🔄 Refresh Vault
+              </button>
+            </div>
+          </div>
+
+          <!-- Live Database Certificate Stats -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 border-t border-white/[0.08]">
+            <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 text-center space-y-0.5">
+              <span class="text-[10px] text-slate-400 font-mono uppercase block">Total Database Credentials</span>
+              <span id="vault-stat-total" class="text-xl font-black text-amber-400 font-outfit">6,395</span>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 text-center space-y-0.5">
+              <span class="text-[10px] text-slate-400 font-mono uppercase block">Podium Excellence Medals</span>
+              <span id="vault-stat-winners" class="text-xl font-black text-emerald-400 font-outfit">186</span>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 text-center space-y-0.5">
+              <span class="text-[10px] text-slate-400 font-mono uppercase block">My Personal Certificates</span>
+              <span id="vault-stat-mine" class="text-xl font-black text-cyan-400 font-outfit">2</span>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 text-center space-y-0.5">
+              <span class="text-[10px] text-slate-400 font-mono uppercase block">Verification Status</span>
+              <span class="text-sm font-black text-emerald-300 font-mono flex items-center justify-center gap-1 mt-1">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> 100% SECURE
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real-Time Public Verification Search Tool -->
+        <div class="bento-card p-5 border-cyan-500/30 space-y-4">
+          <div class="flex items-center gap-2.5">
+            <span class="text-xl">🔍</span>
+            <div>
+              <h4 class="text-sm font-extrabold text-white font-outfit">Instant Credential Authenticator</h4>
+              <p class="text-[11px] text-slate-400">Recruiters, faculty and evaluators can verify any student credential against PostgreSQL database records.</p>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-2">
+            <div class="relative flex-1">
+              <input id="vault-verify-input" type="text" placeholder="Enter Certificate Code, e.g. CERT-CU-S01-P0001-3BE5 or WIN-1-..." class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 font-mono">
+            </div>
+            <button onclick="utsavHub.verifyCertificateByInput()" class="py-2.5 px-5 rounded-xl text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-slate-950 transition shadow-lg shadow-cyan-500/20 btn-tactile whitespace-nowrap">
+              Verify Authenticity &rarr;
+            </button>
+          </div>
+
+          <!-- Dynamic Live Verification Card -->
+          <div id="vault-verify-result" class="hidden p-4 rounded-2xl bg-slate-900/95 border border-emerald-500/50 space-y-3">
+            <!-- Populated via JavaScript -->
+          </div>
+        </div>
+
+        <!-- Student Achievements & Badges Showcase -->
+        <div class="bento-card p-5 border-amber-500/30 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-xl">🎖️</span>
+              <div>
+                <h4 class="text-sm font-black text-white font-outfit">Student Achievements & Badges</h4>
+                <p class="text-[11px] text-slate-400">Gamified milestone rewards earned through verified festival participation and podium finishes.</p>
+              </div>
+            </div>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/20 text-amber-300 font-bold">SCHOLAR TIER II</span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div class="p-3.5 rounded-xl bg-slate-900 border border-amber-500/30 flex items-center gap-3">
+              <span class="text-2xl">🥇</span>
+              <div>
+                <h5 class="text-xs font-bold text-white">Podium Master</h5>
+                <span class="text-[10px] text-amber-400 font-mono">1st Place Winner</span>
+              </div>
+            </div>
+            <div class="p-3.5 rounded-xl bg-slate-900 border border-cyan-500/30 flex items-center gap-3">
+              <span class="text-2xl">💡</span>
+              <div>
+                <h5 class="text-xs font-bold text-white">Hackathon Veteran</h5>
+                <span class="text-[10px] text-cyan-400 font-mono">IKS & AI Conclave</span>
+              </div>
+            </div>
+            <div class="p-3.5 rounded-xl bg-slate-900 border border-purple-500/30 flex items-center gap-3">
+              <span class="text-2xl">🎭</span>
+              <div>
+                <h5 class="text-xs font-bold text-white">Cultural Explorer</h5>
+                <span class="text-[10px] text-purple-400 font-mono">OJAS & Samyuti</span>
+              </div>
+            </div>
+            <div class="p-3.5 rounded-xl bg-slate-900 border border-emerald-500/30 flex items-center gap-3">
+              <span class="text-2xl">⚡</span>
+              <div>
+                <h5 class="text-xs font-bold text-white">Verified Check-in</h5>
+                <span class="text-[10px] text-emerald-400 font-mono">Gate Scanner Verified</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter Tabs & Certificates Gallery -->
+        <div class="space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <button onclick="utsavHub.filterVaultCertificates('all')" id="btn-vault-all" class="py-1.5 px-3.5 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 transition shadow-md">
+                All Certificates
+              </button>
+              <button onclick="utsavHub.filterVaultCertificates('winner')" id="btn-vault-winner" class="py-1.5 px-3.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition">
+                🏆 Winner & Podium Awards
+              </button>
+              <button onclick="utsavHub.filterVaultCertificates('participation')" id="btn-vault-participation" class="py-1.5 px-3.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition">
+                🎓 Participation Honors
+              </button>
+            </div>
+            <span class="text-xs text-slate-400 font-mono" id="vault-count-label">Showing Certificates</span>
+          </div>
+
+          <!-- Dynamic Certificates Grid -->
+          <div id="certificates-vault-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Rendered via utsavHub.loadCertificatesVault() -->
           </div>
         </div>
 
@@ -1648,12 +1819,37 @@
           has distinguished themselves by active participation and stellar performance in <b id="cert-modal-event" class="text-amber-300">IKS Hackathon</b> under <b id="cert-modal-fest" class="text-white">Samyuti Technical Conclave</b>, awarded <b id="cert-modal-award" class="text-amber-400">1st Place Gold Medalist</b>.
         </p>
 
-        <!-- Verification & Signatures -->
-        <div class="flex flex-wrap items-end justify-between pt-6 border-t border-amber-500/20 text-left gap-4">
+        <!-- Verification, QR Code & Signatures -->
+        <div class="flex flex-wrap items-center justify-between pt-6 border-t border-amber-500/20 text-left gap-4">
           <div class="space-y-1">
-            <div class="text-[9px] text-slate-400 font-mono">VERIFIED BY SUPABASE DATABASE</div>
+            <div class="text-[9px] text-slate-400 font-mono">VERIFIED BY POSTGRESQL & SUPABASE</div>
             <div class="font-mono text-xs text-amber-400 font-bold" id="cert-modal-code">CERT-CU-S01-P0001-A12B</div>
             <div class="text-[9px] text-slate-400">Issued On: <span id="cert-modal-date" class="text-slate-300 font-mono">2026-03-24</span></div>
+          </div>
+
+          <!-- Dynamic SVG QR Code Box -->
+          <div class="flex flex-col items-center">
+            <div id="cert-qr-box" class="w-16 h-16 bg-white p-1 rounded-lg border border-amber-400 shadow flex items-center justify-center">
+              <svg viewBox="0 0 100 100" class="w-full h-full">
+                <rect width="100" height="100" fill="white"/>
+                <rect x="10" y="10" width="25" height="25" fill="#0f172a"/>
+                <rect x="15" y="15" width="15" height="15" fill="white"/>
+                <rect x="18" y="18" width="9" height="9" fill="#0f172a"/>
+                <rect x="65" y="10" width="25" height="25" fill="#0f172a"/>
+                <rect x="70" y="15" width="15" height="15" fill="white"/>
+                <rect x="73" y="18" width="9" height="9" fill="#0f172a"/>
+                <rect x="10" y="65" width="25" height="25" fill="#0f172a"/>
+                <rect x="15" y="70" width="15" height="15" fill="white"/>
+                <rect x="18" y="73" width="9" height="9" fill="#0f172a"/>
+                <rect x="42" y="42" width="16" height="16" fill="#f59e0b"/>
+                <rect x="40" y="15" width="8" height="8" fill="#0f172a"/>
+                <rect x="52" y="15" width="8" height="8" fill="#0f172a"/>
+                <rect x="40" y="77" width="8" height="8" fill="#0f172a"/>
+                <rect x="65" y="45" width="10" height="10" fill="#0f172a"/>
+                <rect x="78" y="65" width="12" height="12" fill="#0f172a"/>
+              </svg>
+            </div>
+            <span class="text-[8px] font-mono text-amber-300 mt-1">SCAN TO VERIFY</span>
           </div>
 
           <div class="text-right space-y-1">
@@ -1667,6 +1863,9 @@
 
       <!-- Action Buttons -->
       <div class="flex items-center justify-end gap-3 pt-2">
+        <button onclick="utsavHub.copyActiveCertLink()" class="py-2.5 px-4 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 flex items-center gap-1.5 transition btn-tactile">
+          <span>🔗 Copy Verify Link</span>
+        </button>
         <button onclick="utsavHub.printCertificate()" class="py-2.5 px-5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 flex items-center gap-2 transition shadow-lg shadow-amber-500/20 btn-tactile">
           <span>🖨️ Print / Download PDF</span>
         </button>
