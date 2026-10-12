@@ -1,9 +1,12 @@
+require('dotenv').config();
 const http = require('http');
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const { Server } = require('socket.io');
 
+const dbAdapter = require('./config/database');
+const relationalStore = require('./data/relationalStore');
 const store = require('./data/store');
 const apiRoutes = require('./routes/api');
 
@@ -62,6 +65,10 @@ app.get('/faculty', (req, res) => {
 
 app.get(['/admin', '/operations'], (req, res) => {
   res.redirect('/dashboard?role=admin');
+});
+
+app.get(['/admin-portal', '/operations-portal'], (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
 // Catch-all route to serve Main Landing / Index
@@ -141,9 +148,16 @@ setInterval(() => {
 }, 8000);
 
 server.listen(PORT, () => {
+  const dbStatus = dbAdapter.getStatus();
+  const overview = relationalStore.getAnalyticsOverview();
   console.log('====================================================');
   console.log('🎓 CHANAKYA CAMPUS CONNECT PLATFORM IS RUNNING');
   console.log('🌐 Local URL: http://localhost:' + PORT);
   console.log('📡 Real-time WebSockets & Telemetry: ACTIVE');
+  console.log(`🗄️  Database Engine: ${dbStatus.mode.toUpperCase()}`);
+  console.log(`📊 Loaded Records:  ${overview.totalRegistrations} Registrations, ${overview.totalEvents} Fests, ${overview.totalSubEvents} Sub-Events`);
+  if (dbStatus.blocker) {
+    console.log(`⚠️  Cloud Blocker:   ${dbStatus.blocker}`);
+  }
   console.log('====================================================');
 });

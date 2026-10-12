@@ -189,7 +189,70 @@ class AdminPortalApp {
     const modal = document.getElementById(id);
     if (modal) modal.classList.add('hidden');
   }
+
+  async loadDatabaseConclaveData() {
+    try {
+      // 1. Overview KPIs
+      const ovRes = await fetch('/api/analytics/overview');
+      const ov = await ovRes.json();
+      const setVal = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = typeof val === 'number' ? val.toLocaleString() : val;
+      };
+      setVal('adminDbSchools', ov.totalSchools);
+      setVal('adminDbSubs', ov.totalSubEvents);
+      setVal('adminDbRegs', ov.totalRegistrations);
+      setVal('adminDbParts', ov.totalParticipants);
+      setVal('adminDbPoints', ov.totalPointsAwarded);
+
+      // 2. School Leaderboard
+      const lbRes = await fetch('/api/leaderboard/schools');
+      const lb = await lbRes.json();
+      const lbBody = document.getElementById('adminLeaderboardBody');
+      if (lbBody && lb.leaderboard) {
+        lbBody.innerHTML = lb.leaderboard.map((s, idx) => `
+          <tr class="border-b border-slate-800/80 hover:bg-slate-800/40 transition">
+            <td class="py-2 px-2.5 font-mono font-bold">${idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : '#' + (idx + 1)))}</td>
+            <td class="py-2 px-2.5 text-xs font-bold text-white">${s.school_name}</td>
+            <td class="py-2 px-2.5 text-right font-mono font-black text-amber-400 text-xs">${s.points.toLocaleString()}</td>
+            <td class="py-2 px-2.5 text-right text-xs text-slate-300">🥇${s.gold} 🥈${s.silver} 🥉${s.bronze}</td>
+          </tr>
+        `).join('');
+      }
+
+      // 3. Recent Registrations
+      const regRes = await fetch('/api/registrations?limit=10&page=1');
+      const regData = await regRes.json();
+      const regBody = document.getElementById('adminRecentRegsBody');
+      const countEl = document.getElementById('adminRosterCount');
+      if (countEl && regData.total) {
+        countEl.textContent = `${regData.total.toLocaleString()} Rows`;
+      }
+      if (regBody && regData.data) {
+        regBody.innerHTML = regData.data.map(r => `
+          <tr class="border-b border-slate-800/80 hover:bg-slate-800/40 transition">
+            <td class="py-2 px-2.5 font-mono text-[11px] text-amber-400 font-bold">${r.registration_code}</td>
+            <td class="py-2 px-2.5 text-xs text-white">
+              <div class="font-bold">${r.participant_name}</div>
+              <div class="text-[10px] text-slate-400 font-mono">${r.participant_roll || ''}</div>
+            </td>
+            <td class="py-2 px-2.5 text-xs text-slate-300">${r.sub_event_name}</td>
+            <td class="py-2 px-2.5 text-right">
+              <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold ${r.checked_in ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'}">
+                ${r.checked_in ? 'ATTENDED' : 'CONFIRMED'}
+              </span>
+            </td>
+          </tr>
+        `).join('');
+      }
+    } catch (e) {
+      console.warn('[Admin Portal] Could not load database stats:', e);
+    }
+  }
 }
 
 const adminApp = new AdminPortalApp();
-window.addEventListener('DOMContentLoaded', () => adminApp.init());
+window.addEventListener('DOMContentLoaded', () => {
+  adminApp.init();
+  adminApp.loadDatabaseConclaveData();
+});

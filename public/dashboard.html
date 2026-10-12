@@ -198,6 +198,10 @@
             <button data-tab="events" onclick="switchTab('events')" class="nav-tab-btn w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition btn-tactile">
               <span>📅</span> Events & Tech Fests
             </button>
+
+            <button data-tab="utsavhub" onclick="switchTab('utsavhub')" class="nav-tab-btn w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition btn-tactile">
+              <span>🏆</span> UtsavHub Conclaves & Regs
+            </button>
           </div>
         </div>
 
@@ -899,6 +903,224 @@
 
       </section>
 
+      <!-- ================================================================== -->
+      <!-- TAB 11: UTSAVHUB CONCLAVES, REGISTRATIONS & LIVE LEADERBOARDS -->
+      <!-- ================================================================== -->
+      <section id="tab-utsavhub" class="tab-view-container hidden space-y-6">
+        
+        <!-- Header Banner & Real DB Metrics -->
+        <div class="bento-card p-6 border-amber-500/30 space-y-4 tilt-3d glow-amber">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500 text-slate-950">
+                  UTSAVHUB UNIFIED ENGINE
+                </span>
+                <span class="text-xs text-emerald-400 font-mono">School → Dept → Fest → Sub-Event → Roster</span>
+              </div>
+              <h3 class="text-xl font-extrabold text-white font-outfit">Chanakya University & UtsavHub Conclaves 🏛️</h3>
+              <p class="text-xs text-slate-300">Live database-backed event hierarchy, QR digital passes, and school championship standings.</p>
+            </div>
+
+            <!-- Scalability Trigger Action -->
+            <button id="btn-run-scale" onclick="utsavHub.runDatasetGenerator()" class="py-2.5 px-4 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 shadow-lg shadow-amber-500/20 transition flex items-center gap-2 btn-tactile">
+              <span>⚡ Generate 1,700+ Records (100/sub-event)</span>
+            </button>
+          </div>
+
+          <!-- Live Database Stats Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 pt-2 border-t border-white/[0.08]">
+            <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-center">
+              <span class="text-[10px] text-slate-400 font-mono uppercase block">Schools</span>
+              <span id="stat-total-schools" class="text-lg font-black text-amber-400 font-outfit">6</span>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-center">
+              <span class="text-[10px] text-slate-400 font-mono uppercase block">Depts</span>
+              <span id="stat-total-depts" class="text-lg font-black text-cyan-400 font-outfit">14</span>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-center">
+              <span class="text-[10px] text-slate-400 font-mono uppercase block">Fests</span>
+              <span id="stat-total-fests" class="text-lg font-black text-purple-400 font-outfit">6</span>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-center">
+              <span class="text-[10px] text-slate-400 font-mono uppercase block">Sub-Events</span>
+              <span id="stat-total-subs" class="text-lg font-black text-emerald-400 font-outfit">17</span>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-center">
+              <span class="text-[10px] text-slate-400 font-mono uppercase block">Registrations</span>
+              <span id="stat-total-regs" class="text-lg font-black text-amber-400 font-outfit">1,704</span>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-center">
+              <span class="text-[10px] text-slate-400 font-mono uppercase block">Participants</span>
+              <span id="stat-unique-attendees" class="text-lg font-black text-blue-400 font-outfit">693</span>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-center">
+              <span class="text-[10px] text-slate-400 font-mono uppercase block">Attendance</span>
+              <span id="stat-attendance-rate" class="text-lg font-black text-emerald-400 font-outfit">35%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hierarchical Dynamic Filter Bar -->
+        <div class="bento-card p-4 space-y-3 tilt-3d">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="text-[10px] font-mono text-slate-400 block mb-1">1. School Filter:</label>
+              <select id="utsav-filter-school" onchange="utsavHub.onSchoolChange()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400 truncate">
+                <option value="all">All Schools</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] font-mono text-slate-400 block mb-1">2. Department Filter:</label>
+              <select id="utsav-filter-dept" onchange="utsavHub.onDepartmentChange()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400 truncate">
+                <option value="all">All Departments</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] font-mono text-slate-400 block mb-1">3. Conclave / Fest:</label>
+              <select id="utsav-filter-fest" onchange="utsavHub.onFestChange()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400 truncate">
+                <option value="all">All Conclaves</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-white/[0.06]">
+            <!-- Category Pills -->
+            <div class="flex flex-wrap items-center gap-1.5">
+              <button data-cat="all" onclick="utsavHub.onCategoryChange('all')" class="utsav-cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 shadow-md transition">All Categories</button>
+              <button data-cat="Technical" onclick="utsavHub.onCategoryChange('Technical')" class="utsav-cat-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-900/60 hover:bg-slate-800 transition">Technical</button>
+              <button data-cat="Robotics" onclick="utsavHub.onCategoryChange('Robotics')" class="utsav-cat-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-900/60 hover:bg-slate-800 transition">Robotics</button>
+              <button data-cat="Coding" onclick="utsavHub.onCategoryChange('Coding')" class="utsav-cat-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-900/60 hover:bg-slate-800 transition">Coding</button>
+              <button data-cat="Cultural" onclick="utsavHub.onCategoryChange('Cultural')" class="utsav-cat-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-900/60 hover:bg-slate-800 transition">Cultural</button>
+              <button data-cat="Music" onclick="utsavHub.onCategoryChange('Music')" class="utsav-cat-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-900/60 hover:bg-slate-800 transition">Music</button>
+              <button data-cat="Management" onclick="utsavHub.onCategoryChange('Management')" class="utsav-cat-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-900/60 hover:bg-slate-800 transition">Management</button>
+              <button data-cat="Sports" onclick="utsavHub.onCategoryChange('Sports')" class="utsav-cat-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-900/60 hover:bg-slate-800 transition">Sports</button>
+            </div>
+
+            <!-- Search Box -->
+            <div class="relative w-full sm:w-64">
+              <input type="text" oninput="utsavHub.onSearchChange(this.value)" placeholder="Search sub-event, venue..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 pl-8">
+              <span class="absolute left-2.5 top-2 text-slate-500 text-xs">🔍</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sub-Events Grid -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-extrabold text-white font-outfit">Active Sub-Events & Competitions</h4>
+            <span class="text-xs text-slate-400 font-mono">Solo & Team Passes Available</span>
+          </div>
+          <div id="utsav-events-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <!-- Populated via utsavHub.loadSubEvents() -->
+          </div>
+        </div>
+
+        <!-- Gate 1 Fast Check-in & Scanner Bar -->
+        <div class="bento-card p-5 border-cyan-500/30 space-y-3 tilt-3d">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                <h4 class="text-sm font-bold text-white font-outfit">Gate Check-in & Pass Scanner</h4>
+              </div>
+              <p class="text-[11px] text-slate-400">Scan or enter attendee registration pass code (e.g. CU-S01-P0001-A12B) to verify attendance in PostgreSQL.</p>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <input id="utsav-checkin-code" type="text" placeholder="Pass Code (e.g. CU-S01...)" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs font-mono text-amber-300 uppercase focus:outline-none focus:border-cyan-400">
+              <button onclick="utsavHub.executeCheckIn()" class="py-2 px-4 rounded-xl text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-slate-950 transition btn-tactile">
+                Verify Pass &rarr;
+              </button>
+            </div>
+          </div>
+          <div id="utsav-checkin-result" class="hidden"></div>
+        </div>
+
+        <!-- Two Columns: School Leaderboard + Paginated Registrations Roster -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- School Championship Leaderboard -->
+          <div class="bento-card p-5 space-y-4 tilt-3d">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div>
+                <h4 class="text-sm font-extrabold text-white font-outfit">🏆 School Championship Standings</h4>
+                <p class="text-[11px] text-slate-400">Verified points from competition podiums</p>
+              </div>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left">
+                <thead>
+                  <tr class="text-[10px] text-slate-400 uppercase font-mono border-b border-slate-800">
+                    <th class="py-2 px-3 text-center">Rank</th>
+                    <th class="py-2 px-3">School</th>
+                    <th class="py-2 px-3 text-right">Points</th>
+                    <th class="py-2 px-3 text-right">Medals</th>
+                  </tr>
+                </thead>
+                <tbody id="utsav-leaderboard-body">
+                  <!-- Populated via utsavHub.loadLeaderboard() -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Paginated Database Registrations Roster -->
+          <div class="lg:col-span-2 bento-card p-5 space-y-4 tilt-3d">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+              <div>
+                <div class="flex items-center gap-2">
+                  <h4 class="text-sm font-extrabold text-white font-outfit">📋 Live Event Registrations Roster</h4>
+                  <span id="utsav-reg-count" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">1,704 Records</span>
+                </div>
+                <p class="text-[11px] text-slate-400">Server-side paginated & indexed across schools, departments, and attendees</p>
+              </div>
+
+              <!-- Pagination Controls -->
+              <div class="flex items-center gap-2">
+                <span id="utsav-reg-page-info" class="text-xs text-slate-400 font-mono">Page 1 of 114</span>
+                <button onclick="utsavHub.prevPage()" class="p-1.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-amber-400 text-xs text-white transition">◀ Prev</button>
+                <button onclick="utsavHub.nextPage()" class="p-1.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-amber-400 text-xs text-white transition">Next ▶</button>
+              </div>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left">
+                <thead>
+                  <tr class="text-[10px] text-slate-400 uppercase font-mono border-b border-slate-800">
+                    <th class="py-2 px-3.5">Pass Code</th>
+                    <th class="py-2 px-3.5">Attendee</th>
+                    <th class="py-2 px-3.5">School / Dept</th>
+                    <th class="py-2 px-3.5">Event & Fest</th>
+                    <th class="py-2 px-3.5">Pass Tier</th>
+                    <th class="py-2 px-3.5 text-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="utsav-reg-table-body">
+                  <!-- Populated via utsavHub.loadRegistrations() -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Personalized Registered Passes Card -->
+        <div class="bento-card p-5 space-y-3 tilt-3d">
+          <div class="flex items-center justify-between">
+            <div>
+              <h4 class="text-sm font-extrabold text-white font-outfit">🎟️ My Active Registration Passes</h4>
+              <p class="text-[11px] text-slate-400">Your verified passes, seat allocations, and participation QR codes.</p>
+            </div>
+          </div>
+          <div id="utsav-my-passes" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <!-- Populated via utsavHub.loadUserRegistrations() -->
+          </div>
+        </div>
+
+      </section>
+
     </main>
 
   </div>
@@ -1268,7 +1490,196 @@
   <!-- Toast Container -->
   <div id="toast-container"></div>
 
+  <!-- ======================================================================== -->
+  <!-- UTSAVHUB EVENT REGISTRATION MODAL -->
+  <!-- ======================================================================== -->
+  <div id="utsav-reg-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+    <div class="glass-card rounded-3xl p-6 max-w-lg w-full border border-amber-500/40 shadow-2xl space-y-4 glow-amber">
+      
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold">UTSAVHUB PASS DESK</span>
+          <h3 id="utsav-modal-title" class="text-base font-extrabold text-white font-outfit mt-1">Register for Event</h3>
+          <p id="utsav-modal-fest" class="text-xs text-slate-400">Fest Details</p>
+        </div>
+        <button onclick="utsavHub.closeModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm">✕</button>
+      </div>
+
+      <!-- Current Attendee Badge -->
+      <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between text-xs">
+        <div class="flex items-center gap-2">
+          <span class="text-base" id="utsav-modal-avatar">🎓</span>
+          <div>
+            <span class="text-[9px] text-slate-400 block font-mono uppercase tracking-wider">Pass Issued To:</span>
+            <b class="text-white text-xs font-bold" id="utsav-modal-attendee-name">Registered Attendee</b>
+          </div>
+        </div>
+        <span class="text-[11px] text-amber-400 font-mono font-bold" id="utsav-modal-attendee-roll">24UG0101</span>
+      </div>
+
+      <!-- Registration Form -->
+      <form id="utsav-reg-form" onsubmit="utsavHub.submitRegistration(event)" class="space-y-3.5">
+        <input type="hidden" id="utsav-modal-sub-id" value="">
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Pass Tier</label>
+          <select id="utsav-modal-ticket" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+            <option value="Standard Delegate Pass">Standard Delegate Pass (Free)</option>
+            <option value="VIP All-Access Pass">VIP All-Access Pass</option>
+            <option value="Student Conclave Pass">Student Conclave Pass</option>
+          </select>
+        </div>
+
+        <!-- Optional Team Fields -->
+        <div id="utsav-team-fields" class="space-y-2.5 p-3 rounded-xl bg-slate-900/60 border border-slate-800 hidden">
+          <div>
+            <label class="block text-[11px] font-bold text-amber-300 mb-1">Team Name (Optional)</label>
+            <input id="utsav-modal-team-name" type="text" placeholder="e.g. ByteRunners AI" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-400">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-300 mb-1">Team Members (One per line: Name)</label>
+            <textarea id="utsav-modal-members" rows="2" placeholder="Aryan Verma&#10;Pooja Hegde" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-amber-400 font-mono"></textarea>
+          </div>
+        </div>
+
+        <div class="p-2.5 rounded-xl bg-slate-900/40 border border-slate-800 text-[11px] text-slate-400">
+          <span class="font-bold text-slate-300 block mb-0.5">Rules & Verification:</span>
+          <span id="utsav-modal-rules">Standard Chanakya Code of Conduct.</span>
+        </div>
+
+        <button type="submit" id="btn-confirm-reg" class="w-full py-3 px-4 rounded-xl text-xs font-black bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-1.5 btn-tactile">
+          <span>Confirm Registration & Issue Pass</span>
+          <span>&rarr;</span>
+        </button>
+      </form>
+
+      <!-- Success Pass Display Box -->
+      <div id="utsav-reg-pass-result" class="hidden space-y-4 text-center py-2">
+        <div class="w-14 h-14 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto text-3xl border border-emerald-500/40 animate-bounce">
+          ✓
+        </div>
+        <div>
+          <h4 class="text-base font-black text-white font-outfit">Digital Access Pass Generated!</h4>
+          <p class="text-xs text-slate-300 mt-0.5">Your registration is verified and recorded in PostgreSQL database.</p>
+        </div>
+
+        <!-- 3D Digital Holographic Pass Card -->
+        <div class="p-4 rounded-2xl bg-slate-900 border border-amber-500/50 text-left space-y-2.5 relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="text-[9px] font-mono uppercase text-amber-400 tracking-wider">CHANAKYA DIGITAL ACCESS PASS</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          </div>
+
+          <div class="flex items-center justify-between pt-1 border-t border-slate-800/80">
+            <div>
+              <span class="text-[9px] text-slate-500 block">PASS HOLDER</span>
+              <b id="pass-holder-display" class="text-white text-xs">Registered Attendee</b>
+            </div>
+            <div class="text-right">
+              <span class="text-[9px] text-slate-500 block">EVENT</span>
+              <b id="pass-event-display" class="text-amber-300 text-xs font-mono">Campus Conclave</b>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-1">
+            <div>
+              <span class="text-[10px] text-slate-400 block">Pass Code:</span>
+              <span id="pass-code-display" class="font-mono font-black text-lg text-amber-400 tracking-widest">CU-S01-P0001-A12B</span>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] text-slate-400 block">Seat Allocation:</span>
+              <span id="pass-seat-display" class="font-mono font-bold text-white text-sm">AUD-A12</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between text-[11px] text-slate-300 pt-1 border-t border-slate-800">
+            <span id="pass-ticket-display">Standard Delegate Pass</span>
+            <span id="pass-date-display" class="font-mono text-slate-400">Date</span>
+          </div>
+          <div class="text-center pt-2">
+            <span class="font-mono text-[9px] text-slate-500 tracking-widest">||| |||| | |||||| | ||| ||||</span>
+          </div>
+        </div>
+
+        <button onclick="utsavHub.closeModal()" class="w-full py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white transition btn-tactile">
+          Done & Close Desk
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Digital Certificate Viewer Modal -->
+  <div id="certificate-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="relative w-full max-w-2xl bg-gradient-to-b from-slate-900 to-slate-950 rounded-2xl border-2 border-amber-500/40 shadow-2xl p-6 sm:p-8 space-y-6 overflow-hidden">
+      
+      <!-- Modal Close Button -->
+      <button onclick="utsavHub.closeCertificateModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm transition">✕</button>
+
+      <!-- Printable Certificate Canvas Area -->
+      <div id="printable-certificate" class="p-6 sm:p-8 rounded-xl bg-gradient-to-br from-amber-500/5 via-slate-900/90 to-amber-500/10 border-2 border-amber-400/40 relative shadow-inner text-center space-y-4">
+        
+        <!-- Watermark / Header -->
+        <div class="flex items-center justify-between border-b border-amber-500/20 pb-4">
+          <div class="text-left flex items-center gap-3">
+            <span class="text-3xl">🏛️</span>
+            <div>
+              <h3 class="text-xs font-black tracking-widest text-amber-400 uppercase font-outfit">Chanakya University</h3>
+              <p class="text-[9px] text-slate-400 font-mono">Global Campus, Bengaluru • Karnataka 562129</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <span id="cert-modal-type-badge" class="px-2.5 py-1 rounded text-[10px] font-bold font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase">
+              CERTIFICATE OF EXCELLENCE
+            </span>
+          </div>
+        </div>
+
+        <div class="py-2 space-y-2">
+          <p class="text-[11px] text-slate-400 uppercase tracking-widest font-mono">This Official Document Certifies That</p>
+          <h2 id="cert-modal-recipient" class="text-2xl sm:text-3xl font-black text-white font-outfit tracking-wide">
+            Rahul Sharma
+          </h2>
+          <p class="text-xs text-amber-300 font-mono">
+            Roll No: <span id="cert-modal-roll">24UG0101</span> • <span id="cert-modal-school">School of Engineering</span>
+          </p>
+        </div>
+
+        <p class="text-xs text-slate-300 max-w-lg mx-auto leading-relaxed">
+          has distinguished themselves by active participation and stellar performance in <b id="cert-modal-event" class="text-amber-300">IKS Hackathon</b> under <b id="cert-modal-fest" class="text-white">Samyuti Technical Conclave</b>, awarded <b id="cert-modal-award" class="text-amber-400">1st Place Gold Medalist</b>.
+        </p>
+
+        <!-- Verification & Signatures -->
+        <div class="flex flex-wrap items-end justify-between pt-6 border-t border-amber-500/20 text-left gap-4">
+          <div class="space-y-1">
+            <div class="text-[9px] text-slate-400 font-mono">VERIFIED BY SUPABASE DATABASE</div>
+            <div class="font-mono text-xs text-amber-400 font-bold" id="cert-modal-code">CERT-CU-S01-P0001-A12B</div>
+            <div class="text-[9px] text-slate-400">Issued On: <span id="cert-modal-date" class="text-slate-300 font-mono">2026-03-24</span></div>
+          </div>
+
+          <div class="text-right space-y-1">
+            <div class="text-base text-amber-300 font-serif italic">C. N. Ramanathan</div>
+            <div class="text-[10px] text-slate-300 font-bold">Dean of Student Affairs</div>
+            <div class="text-[9px] text-slate-500">Chanakya University Conclave Council</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center justify-end gap-3 pt-2">
+        <button onclick="utsavHub.printCertificate()" class="py-2.5 px-5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 flex items-center gap-2 transition shadow-lg shadow-amber-500/20 btn-tactile">
+          <span>🖨️ Print / Download PDF</span>
+        </button>
+        <button onclick="utsavHub.closeCertificateModal()" class="py-2.5 px-4 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
+          Close
+        </button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Application Logic -->
   <script src="/js/app.js"></script>
+  <script src="/js/utsavhub.js"></script>
 </body>
 </html>

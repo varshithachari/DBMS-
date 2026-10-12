@@ -224,6 +224,43 @@ class CampusDataStore extends EventEmitter {
     this.campusStats.totalRegistrations += 1;
     this.registrations.push(regRecord);
 
+    // Sync registration into Relational / PostgreSQL database store
+    try {
+      const relationalStore = require('./relationalStore');
+      const cleanEmail = (userData.userEmail || '').trim().toLowerCase();
+      let profile = relationalStore.indexUserProfileEmail.get(cleanEmail);
+      if (!profile) {
+        profile = {
+          profile_id: relationalStore.nextProfileId++,
+          auth_user_id: require('uuid').v4(),
+          email: cleanEmail,
+          name: userData.userName || 'Student Attendee',
+          role: userData.userRole || 'student',
+          school_id: 1,
+          department_id: 1,
+          created_at: new Date().toISOString()
+        };
+        relationalStore.userProfiles.push(profile);
+        relationalStore.indexUserProfileEmail.set(cleanEmail, profile);
+      }
+      relationalStore.registrations.push({
+        registration_id: relationalStore.registrations.length + 1,
+        sub_event_id: 1,
+        main_event_id: 1,
+        participant_id: profile.profile_id,
+        registration_code: regRecord.qrCode,
+        pass_code: regRecord.qrCode,
+        ticket_type: regRecord.ticketType,
+        seat_number: regRecord.seatNumber,
+        status: "confirmed",
+        checked_in: false,
+        registered_at: regRecord.registeredAt
+      });
+      relationalStore.indexRegistrationsCode.set(regRecord.qrCode, relationalStore.registrations[relationalStore.registrations.length - 1]);
+    } catch (e) {
+      console.warn("Relational store sync notice:", e.message);
+    }
+
     this.emit('registration_created', { event, regRecord });
 
     return regRecord;

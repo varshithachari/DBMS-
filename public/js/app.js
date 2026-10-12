@@ -381,18 +381,19 @@ function escapeHtml(str) {
 // 6. ROLE SWITCHING & AUTHENTICATION
 // ============================================================================
 function switchRole(roleKey) {
+  if (roleKey === 'authenticated_user') {
+    initAuthSession();
+    return;
+  }
   if (!DEMO_USERS[roleKey]) return;
   sfx.play('click');
   appState.currentRole = roleKey;
   appState.currentUser = { ...DEMO_USERS[roleKey] };
 
   // Update UI Elements for Role
-  document.querySelectorAll('.role-indicator-name').forEach(el => el.textContent = appState.currentUser.name);
-  document.querySelectorAll('.role-indicator-label').forEach(el => el.textContent = appState.currentUser.roleLabel);
-  document.querySelectorAll('.role-indicator-avatar').forEach(el => el.textContent = appState.currentUser.avatar);
-  document.querySelectorAll('.role-indicator-dept').forEach(el => el.textContent = appState.currentUser.dept);
+  updateUserUI();
 
-  // Update Active Role in Role Selector
+  // Update Active Role in Role Selector Buttons
   document.querySelectorAll('.role-select-btn').forEach(btn => {
     const r = btn.getAttribute('data-role');
     if (r === roleKey) {
@@ -533,6 +534,13 @@ function switchTab(tabId) {
     setTimeout(() => {
       drawAnalyticsCharts();
     }, 150);
+  }
+
+  // Refresh UtsavHub data when opening utsavhub tab
+  if (tabId === 'utsavhub' && window.utsavHub) {
+    setTimeout(() => {
+      window.utsavHub.init();
+    }, 50);
   }
 }
 
@@ -880,7 +888,8 @@ function renderEvents(filterCat = 'all') {
   }
 
   container.innerHTML = list.map(evt => {
-    const isFull = evt.registeredCount >= evt.capacity;
+    const capacity = evt.maxCapacity || evt.capacity || 2500;
+    const isFull = evt.registeredCount >= capacity;
     const isApproved = evt.status === 'approved';
     const canApprove = appState.currentRole === 'admin' || appState.currentRole === 'faculty';
 
@@ -915,13 +924,13 @@ function renderEvents(filterCat = 'all') {
 
           <div class="space-y-3 pt-2 border-t border-slate-800">
             <div class="flex items-center justify-between text-xs">
-              <span class="text-slate-400">Registered: <b class="text-white">${evt.registeredCount} / ${evt.capacity}</b></span>
+              <span class="text-slate-400">Registered: <b class="text-white">${evt.registeredCount.toLocaleString()} / ${capacity.toLocaleString()}</b></span>
               <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">${evt.ticketType || 'Free Registration'}</span>
             </div>
 
             <!-- Progress Bar -->
             <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-              <div class="h-full bg-gradient-to-r from-amber-500 to-amber-300 rounded-full" style="width: ${Math.min(100, (evt.registeredCount / evt.capacity) * 100)}%"></div>
+              <div class="h-full bg-gradient-to-r from-amber-500 to-amber-300 rounded-full" style="width: ${Math.min(100, (evt.registeredCount / capacity) * 100)}%"></div>
             </div>
 
             <!-- Action Buttons -->
@@ -943,58 +952,113 @@ function renderEvents(filterCat = 'all') {
   }).join('');
 }
 
+let activeRegisterEventId = 'EVT-2026-001';
+
 function openRegisterModal(evtId, evtTitle) {
   sfx.play('click');
-  const modal = document.getElementById('event-reg-modal');
-  document.getElementById('reg-event-id').value = evtId;
-  document.getElementById('reg-event-title').textContent = evtTitle;
-  document.getElementById('reg-user-name').value = appState.currentUser.name;
-  document.getElementById('reg-user-email').value = appState.currentUser.email;
+  activeRegisterEventId = evtId || 'EVT-2026-001';
+
+  const modal = document.getElementById('register-modal') || document.getElementById('event-reg-modal');
+  if (!modal) return;
+
+  const titleEl = document.getElementById('reg-modal-event-title') || document.getElementById('reg-event-title');
+  if (titleEl) titleEl.textContent = evtTitle;
+
+  const user = appState.currentUser || { name: 'Student Attendee', email: 'student@chanakya.edu', dept: 'Engineering' };
+  const nameEl = document.getElementById('reg-name') || document.getElementById('reg-user-name');
+  const emailEl = document.getElementById('reg-email') || document.getElementById('reg-user-email');
+  const deptEl = document.getElementById('reg-dept');
+
+  if (nameEl) nameEl.value = user.name || '';
+  if (emailEl) emailEl.value = user.email || '';
+  if (deptEl) deptEl.value = user.dept || user.department_name || 'School of Engineering & Tech';
+
   modal.classList.remove('hidden');
 }
 
 function closeRegisterModal() {
-  document.getElementById('event-reg-modal').classList.add('hidden');
+  const modal = document.getElementById('register-modal') || document.getElementById('event-reg-modal');
+  if (modal) modal.classList.add('hidden');
 }
 
-function submitEventRegistration() {
-  const evtId = document.getElementById('reg-event-id').value;
-  const name = document.getElementById('reg-user-name').value;
-  const email = document.getElementById('reg-user-email').value;
+async function handleRegistrationSubmit(e) {
+  if (e && e.preventDefault) e.preventDefault();
+  sfx.play('click');
 
-  fetch(`/api/events/${evtId}/register`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      userName: name,
-      userEmail: email,
-      userRole: appState.currentRole
-    })
-  })
-  .then(res => res.json())
-  .then(reg => {
+  const evtId = activeRegisterEventId || 'EVT-2026-001';
+  const nameEl = document.getElementById('reg-name') || document.getElementById('reg-user-name');
+  const emailEl = document.getElementById('reg-email') || document.getElementById('reg-user-email');
+  const deptEl = document.getElementById('reg-dept');
+  const ticketEl = document.getElementById('reg-ticket');
+
+  const name = nameEl ? nameEl.value.trim() : (appState.currentUser?.name || 'Student');
+  const email = emailEl ? emailEl.value.trim() : (appState.currentUser?.email || 'student@chanakya.edu');
+  const dept = deptEl ? deptEl.value.trim() : (appState.currentUser?.dept || 'Engineering');
+  const ticketType = ticketEl ? ticketEl.value : 'VIP All-Access Pass';
+
+  const submitBtn = e && e.target ? e.target.querySelector('button[type="submit"]') : null;
+  if (submitBtn) submitBtn.innerHTML = `<span class="animate-spin">⏳</span> Securing Pass in Database...`;
+
+  try {
+    const res = await fetch(`/api/events/${evtId}/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userName: name,
+        userEmail: email,
+        userDept: dept,
+        userRole: appState.currentRole || 'student',
+        ticketType: ticketType
+      })
+    });
+    const reg = await res.json();
     closeRegisterModal();
     sfx.play('success');
+    showToast("Registration Confirmed", `Digital Pass allocated for ${reg.eventTitle || 'Campus Event'}!`, "success");
     openDigitalPassModal(reg);
-    loadEvents();
-  })
-  .catch(err => {
+    loadEvents(); // Update numbers on UI
+  } catch (err) {
     showToast("Registration Failed", err.message, 'alert');
-  });
+  } finally {
+    if (submitBtn) submitBtn.innerHTML = `Generate Digital Pass & QR Code`;
+  }
 }
+
+window.submitEventRegistration = handleRegistrationSubmit;
+window.handleRegistrationSubmit = handleRegistrationSubmit;
 
 function openDigitalPassModal(reg) {
   const modal = document.getElementById('digital-pass-modal');
-  document.getElementById('pass-event-title').textContent = reg.eventTitle;
-  document.getElementById('pass-user-name').textContent = reg.userName;
-  document.getElementById('pass-ticket-id').textContent = reg.id;
-  document.getElementById('pass-seat').textContent = reg.seatNumber || 'GEN-A12';
-  document.getElementById('pass-qr-text').textContent = reg.qrCode || `CU-${reg.id}`;
+  if (!modal) return;
+
+  const titleEl = document.getElementById('pass-event-title');
+  if (titleEl) titleEl.textContent = reg.eventTitle || 'Chanakya Campus Event';
+
+  const ticketTypeEl = document.getElementById('pass-ticket-type');
+  if (ticketTypeEl) ticketTypeEl.textContent = reg.ticketType || 'All-Access Delegate Pass';
+
+  const attendeeEl = document.getElementById('pass-attendee') || document.getElementById('pass-user-name');
+  if (attendeeEl) attendeeEl.textContent = reg.userName || appState.currentUser?.name || 'Student Attendee';
+
+  const seatEl = document.getElementById('pass-seat');
+  if (seatEl) seatEl.textContent = reg.seatNumber || 'AUD-A12';
+
+  const regIdEl = document.getElementById('pass-reg-id') || document.getElementById('pass-ticket-id');
+  if (regIdEl) regIdEl.textContent = reg.id || reg.qrCode || 'REG-2026-001';
+
   modal.classList.remove('hidden');
 }
 
 function closeDigitalPassModal() {
-  document.getElementById('digital-pass-modal').classList.add('hidden');
+  const modal = document.getElementById('digital-pass-modal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function simulateCheckIn() {
+  sfx.play('success');
+  const regId = document.getElementById('pass-reg-id')?.textContent || 'REG-1001';
+  showToast("Gate Check-In Verified", `Turnstile access granted for pass ${regId}. Status: ATTENDED.`, "success");
+  closeDigitalPassModal();
 }
 
 function approveEvent(evtId) {
@@ -1583,14 +1647,68 @@ function handleLogout() {
   }, 400);
 }
 
+function updateUserUI() {
+  const user = appState.currentUser;
+  if (!user) return;
+
+  document.querySelectorAll('.role-indicator-name').forEach(el => el.textContent = user.name);
+  document.querySelectorAll('.role-indicator-label').forEach(el => el.textContent = user.roleLabel || user.role);
+  document.querySelectorAll('.role-indicator-avatar').forEach(el => el.textContent = user.avatar || '🎓');
+  document.querySelectorAll('.role-indicator-dept').forEach(el => el.textContent = user.dept || user.department_name || '');
+
+  // Update 3D Digital Student ID Card on Command Center Tab
+  const cardName = document.querySelector('#student-id-card h3');
+  if (cardName && user.name) cardName.textContent = user.name;
+
+  const cardId = document.querySelector('#student-id-card span.font-mono');
+  if (cardId && user.roll_number) cardId.textContent = `ID: ${user.roll_number}`;
+
+  const cardDept = document.querySelectorAll('#student-id-card span.text-slate-300')[0];
+  if (cardDept && (user.dept || user.department_name)) cardDept.textContent = user.dept || user.department_name;
+
+  const cardInitials = document.querySelector('#student-id-card .rounded-2xl.bg-gradient-to-tr');
+  if (cardInitials && user.name) {
+    const initials = user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+    cardInitials.textContent = initials;
+  }
+}
+
 function initAuthSession() {
   try {
     const raw = localStorage.getItem('chanakya_user');
     if (raw) {
       const user = JSON.parse(raw);
-      if (user && user.role) {
-        appState.currentUser = user;
-        switchRole(user.role);
+      if (user && user.name) {
+        appState.currentUser = {
+          id: user.profile_id || user.id || 1,
+          name: user.name,
+          email: user.email,
+          role: user.role || 'student',
+          roleLabel: (user.role || 'student').toUpperCase(),
+          dept: user.department_name || user.dept || 'School of Engineering & Tech',
+          school: user.school_name || 'Engineering',
+          roll_number: user.roll_number || 'CU-2026-001',
+          avatar: user.avatar || (user.role === 'admin' ? '👑' : (user.role === 'faculty' ? '👨‍🏫' : '🎓')),
+          points: user.points || 100
+        };
+        appState.currentRole = user.role || 'student';
+
+        // Update top-right role selector with the user's authentic name
+        const roleSel = document.getElementById('role-selector');
+        if (roleSel) {
+          let opt = roleSel.querySelector('option[value="authenticated_user"]');
+          if (!opt) {
+            opt = document.createElement('option');
+            opt.value = "authenticated_user";
+            roleSel.insertBefore(opt, roleSel.firstChild);
+          }
+          opt.textContent = `${appState.currentUser.avatar} ${appState.currentUser.name} (${appState.currentUser.roleLabel})`;
+          roleSel.value = "authenticated_user";
+        }
+
+        updateUserUI();
+        adaptRoleViews();
+        return;
       }
     }
   } catch (e) {
