@@ -113,6 +113,17 @@
           <span id="live-clock" class="font-mono text-cyan-400 font-medium">12:00:00</span>
         </div>
 
+        <!-- Direct Quick Access: Certificates Vault & UtsavHub -->
+        <button onclick="switchTab('certificates')" class="flex items-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-black bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 shadow-md shadow-amber-500/20 transition btn-tactile">
+          <span>📜</span>
+          <span class="inline">Certificates Vault</span>
+        </button>
+
+        <button onclick="switchTab('utsavhub')" class="hidden sm:flex items-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 transition btn-tactile">
+          <span>🏆</span>
+          <span>UtsavHub</span>
+        </button>
+
         <!-- Feed AI Button -->
         <button onclick="openFeedDataModal()" class="hidden sm:flex items-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500/20 to-cyan-500/10 hover:from-cyan-500/30 hover:to-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition btn-tactile">
           <span>🧠</span>
@@ -487,6 +498,39 @@
               </button>
             </div>
 
+          </div>
+        </div>
+
+        <!-- Quick Access: UtsavHub Conclaves & Digital Certificates Vault Banner -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div onclick="switchTab('certificates')" class="p-5 rounded-2xl bg-gradient-to-r from-amber-500/20 via-slate-900 to-slate-900 border-2 border-amber-500/40 hover:border-amber-400 cursor-pointer transition space-y-2 group shadow-xl btn-tactile">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500 text-slate-950 font-mono">
+                ACADEMIC HONORS & PODIUMS
+              </span>
+              <span class="text-xs text-amber-400 font-bold group-hover:translate-x-1 transition">Open Vault &rarr;</span>
+            </div>
+            <h4 class="text-base font-black text-white font-outfit group-hover:text-amber-300 transition flex items-center gap-2">
+              <span>📜</span> Digital Certificates Vault
+            </h4>
+            <p class="text-xs text-slate-300">
+              Access official participation credentials, excellence medals, cryptographic verification links, and printable certificates.
+            </p>
+          </div>
+
+          <div onclick="switchTab('utsavhub')" class="p-5 rounded-2xl bg-gradient-to-r from-cyan-500/20 via-slate-900 to-slate-900 border-2 border-cyan-500/40 hover:border-cyan-400 cursor-pointer transition space-y-2 group shadow-xl btn-tactile">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-cyan-500 text-slate-950 font-mono">
+                62 CONCLAVE SUB-EVENTS
+              </span>
+              <span class="text-xs text-cyan-400 font-bold group-hover:translate-x-1 transition">Explore Fests &rarr;</span>
+            </div>
+            <h4 class="text-base font-black text-white font-outfit group-hover:text-cyan-300 transition flex items-center gap-2">
+              <span>🏆</span> UtsavHub Festival Conclaves
+            </h4>
+            <p class="text-xs text-slate-300">
+              Samyuti, OJAS, Sports Olympiad, Srujana Tech Fest, IKS Hackathons, team registrations, and real-time school championship leaderboard.
+            </p>
           </div>
         </div>
 

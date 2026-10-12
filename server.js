@@ -43,8 +43,16 @@ app.get('/logout', (req, res) => {
 });
 
 // Specific Dashboard & Landing Routes
-app.get(['/dashboard', '/campus'], (req, res) => {
+app.get(['/', '/dashboard', '/campus'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
+});
+
+app.get(['/certificates', '/vault'], (req, res) => {
+  res.redirect('/dashboard?tab=certificates');
+});
+
+app.get(['/utsavhub', '/events-hub'], (req, res) => {
+  res.redirect('/dashboard?tab=utsavhub');
 });
 
 app.get('/nexeus', (req, res) => {

@@ -1946,6 +1946,11 @@ document.addEventListener('DOMContentLoaded', () => {
     adaptRoleViews();
   }
 
+  const initialTab = urlParams.get('tab');
+  if (initialTab) {
+    setTimeout(() => switchTab(initialTab), 100);
+  }
+
   // Keyboard shortcut: Escape closes modals
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
