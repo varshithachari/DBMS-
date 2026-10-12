@@ -397,7 +397,18 @@ router.get('/certificates/user/:participantId', (req, res) => {
 router.get('/certificates/verify/:code', (req, res) => {
   try {
     const cert = relationalStore.getCertificateByCode(req.params.code);
-    if (!cert) return res.status(404).json({ verified: false, error: "Invalid certificate code" });
+    if (!cert) {
+      if (req.headers.accept && req.headers.accept.includes('text/html')) {
+        return res.redirect(`/certificate.html?code=${encodeURIComponent(req.params.code)}&error=not_found`);
+      }
+      return res.status(404).json({ verified: false, error: "Invalid certificate code" });
+    }
+
+    // If browser navigates here, display the beautiful visual certificate page!
+    if (req.headers.accept && req.headers.accept.includes('text/html')) {
+      return res.redirect(`/certificate.html?code=${encodeURIComponent(cert.certificate_code)}`);
+    }
+
     res.json({ verified: true, certificate: cert });
   } catch (err) {
     res.status(500).json({ error: err.message });
