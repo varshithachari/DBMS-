@@ -2,4 +2,7 @@ node_modules/
 .env
 .DS_Store
 cloudflared.exe
+*.log
 
+
+ACTIVE_URL.txt

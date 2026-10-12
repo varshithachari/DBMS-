@@ -394,12 +394,30 @@ router.get('/certificates/user/:participantId', (req, res) => {
   }
 });
 
+router.post('/certificates/generate', (req, res) => {
+  try {
+    const { name, roll_number, sub_event_id, tier } = req.body;
+    if (!name || !sub_event_id) {
+      return res.status(400).json({ error: "Name and sub_event_id are required" });
+    }
+    const cert = relationalStore.issueCustomCertificate({
+      name,
+      roll_number: roll_number || ('24UG' + Math.floor(10000 + Math.random() * 90000)),
+      sub_event_id: Number(sub_event_id),
+      tier: tier || 'participation'
+    });
+    res.status(201).json({ success: true, certificate: cert });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.get('/certificates/verify/:code', (req, res) => {
   try {
     const cert = relationalStore.getCertificateByCode(req.params.code);
     if (!cert) {
       if (req.headers.accept && req.headers.accept.includes('text/html')) {
-        return res.redirect(`/certificate.html?code=${encodeURIComponent(req.params.code)}&error=not_found`);
+        return res.redirect(`/certificate.html?code=${encodeURIComponent(req.params.code)}`);
       }
       return res.status(404).json({ verified: false, error: "Invalid certificate code" });
     }

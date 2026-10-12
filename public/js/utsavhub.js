@@ -737,6 +737,7 @@ class UtsavHubController {
     grid.innerHTML = `<div class="col-span-full py-8 text-center text-slate-400 font-mono text-xs"><span class="animate-spin inline-block mr-2">⏳</span> Querying digital credentials from database...</div>`;
 
     try {
+      this.populateCertEvents();
       const res = await fetch('/api/certificates');
       const data = await res.json();
       this.certificatesList = data.certificates || [];
@@ -928,6 +929,100 @@ class UtsavHubController {
       }
     } catch (err) {
       resultBox.innerHTML = `<div class="text-rose-400 text-xs">Verification request failed: ${err.message}</div>`;
+    }
+  }
+
+  async populateCertEvents() {
+    const sel = document.getElementById('gen-cert-event');
+    if (!sel) return;
+
+    if (!this.subEvents || this.subEvents.length === 0) {
+      try {
+        const res = await fetch('/api/sub-events');
+        const data = await res.json();
+        this.subEvents = data.sub_events || [];
+      } catch (e) {
+        console.error("Error loading events for certificate generator:", e);
+      }
+    }
+
+    if (this.subEvents && this.subEvents.length > 0) {
+      sel.innerHTML = this.subEvents.map(s => `
+        <option value="${s.sub_event_id}">${s.fest_name || 'Conclave'} - ${s.name} (${s.category})</option>
+      `).join('');
+    }
+  }
+
+  async generateCustomCertificate(e) {
+    if (e && e.preventDefault) e.preventDefault();
+
+    const nameInput = document.getElementById('gen-cert-name');
+    const rollInput = document.getElementById('gen-cert-roll');
+    const eventSelect = document.getElementById('gen-cert-event');
+    const tierSelect = document.getElementById('gen-cert-tier');
+    const submitBtn = document.getElementById('btn-generate-cert');
+
+    const name = nameInput ? nameInput.value.trim() : '';
+    const roll = rollInput ? rollInput.value.trim() : '';
+    const subEventId = eventSelect ? eventSelect.value : '';
+    const tier = tierSelect ? tierSelect.value : 'participation';
+
+    if (!name) {
+      alert("Please enter the scholar / participant's full name.");
+      if (nameInput) nameInput.focus();
+      return;
+    }
+    if (!subEventId) {
+      alert("Please select an event for the certificate.");
+      return;
+    }
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span>⏳ Issuing Certificate...</span>`;
+    }
+
+    try {
+      const res = await fetch('/api/certificates/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name,
+          roll_number: roll,
+          sub_event_id: Number(subEventId),
+          tier: tier
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Failed to issue digital certificate');
+      }
+
+      const newCert = data.certificate;
+
+      if (!this.certificatesList) this.certificatesList = [];
+      this.certificatesList.unshift(newCert);
+      this.renderVaultGrid();
+
+      const totalEl = document.getElementById('vault-stat-total');
+      if (totalEl) totalEl.innerText = this.certificatesList.length.toLocaleString();
+
+      // Open the visual digital certificate in a new tab!
+      window.open(`/certificate.html?code=${encodeURIComponent(newCert.certificate_code)}`, '_blank');
+
+      if (typeof showToast === 'function') {
+        showToast("Official Certificate Generated!", `${newCert.certificate_code} issued for ${newCert.participant_name}`, "success");
+      } else {
+        alert(`🎓 Official Certificate Generated!\n\nID: ${newCert.certificate_code}\nRecipient: ${newCert.participant_name}\nEvent: ${newCert.sub_event_name}\n\nOpened official certificate in new tab!`);
+      }
+    } catch (err) {
+      alert("Certificate generation error: " + err.message);
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>⚡ Generate & Download Official Certificate</span>`;
+      }
     }
   }
 

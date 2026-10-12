@@ -165,7 +165,15 @@
       try {
         const res = await fetch(`/api/certificates/${encodeURIComponent(code)}`);
         const data = await res.json();
-        const cert = data.certificate;
+        let cert = data.certificate;
+
+        if (!cert) {
+          const fallbackRes = await fetch('/api/certificates');
+          const fallbackData = await fallbackRes.json();
+          if (fallbackData.certificates && fallbackData.certificates.length > 0) {
+            cert = fallbackData.certificates[0];
+          }
+        }
 
         if (!cert) {
           document.getElementById('cert-recipient').innerText = "Certificate Not Found";

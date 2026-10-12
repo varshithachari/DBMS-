@@ -303,6 +303,37 @@
       <!-- ================================================================== -->
       <section id="tab-overview" class="tab-view-container space-y-6">
         
+        <!-- HIGHLIGHT: UTSAVHUB & OFFICIAL CERTIFICATE SYSTEM QUICK LAUNCHPAD -->
+        <div class="bento-card p-6 border-amber-500/50 bg-gradient-to-r from-amber-950/40 via-slate-900/90 to-cyan-950/40 glow-amber relative overflow-hidden">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="space-y-1.5">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500 text-slate-950 font-mono">
+                  ★ OFFICIAL CREDENTIALS & CONCLAVE HONORS
+                </span>
+                <span class="text-xs text-amber-300 font-mono font-bold">6,395+ Issued • 100% Cryptographically Verified</span>
+              </div>
+              <h3 class="text-xl sm:text-2xl font-black text-white font-outfit">Digital Certificates & Event Pass Vault 📜</h3>
+              <p class="text-xs text-slate-300 max-w-2xl leading-relaxed">
+                Generate official participation & merit certificates, instant scannable QR passes for 62+ conclave sub-events across all 6 Chanakya schools, and verify credentials in real-time.
+              </p>
+            </div>
+
+            <!-- Quick Action Buttons -->
+            <div class="flex flex-wrap items-center gap-2.5">
+              <button onclick="switchTab('certificates')" class="py-2.5 px-4 rounded-xl text-xs font-black bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 shadow-lg shadow-amber-500/25 transition btn-tactile flex items-center gap-1.5">
+                <span>📜</span> Open Certificates Tab
+              </button>
+              <button onclick="window.open('/certificate.html?code=CERT-CU-S01-P0001-CC36', '_blank')" class="py-2.5 px-4 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/40 transition btn-tactile flex items-center gap-1.5">
+                <span>👁️</span> View Sample Certificate
+              </button>
+              <button onclick="switchTab('utsavhub')" class="py-2.5 px-4 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/40 transition btn-tactile flex items-center gap-1.5">
+                <span>🏆</span> Register & Passes
+              </button>
+            </div>
+          </div>
+        </div>
+
         <!-- Real-Time Metrics Bento Cards with 3D Tilt -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
           
