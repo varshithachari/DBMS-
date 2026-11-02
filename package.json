@@ -30,6 +30,7 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.3",
     "localtunnel": "^2.0.2",
+    "mime-db": "^1.54.0",
     "pg": "^8.23.1",
     "socket.io": "^4.8.1",
     "uuid": "^11.1.0"
