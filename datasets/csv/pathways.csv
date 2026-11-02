@@ -1,0 +1,33 @@
+pathway_id,from_location_id,to_location_id,distance_meters,allowed_modes,is_accessible,surface_type,is_currently_blocked
+1,main_gate_1,junc_main_gate,30,"[""pedestrian"", ""wheelchair"", ""bicycle"", ""shuttle""]",True,Paved Concrete,False
+2,junc_main_gate,entry_gate,40,"[""pedestrian"", ""wheelchair"", ""bicycle"", ""shuttle""]",True,Paved Concrete,False
+3,junc_main_gate,medical_center,80,"[""pedestrian"", ""wheelchair"", ""bicycle"", ""shuttle""]",True,Paved Concrete,False
+4,entry_gate,junc_south_entry,110,"[""pedestrian"", ""wheelchair"", ""bicycle"", ""shuttle""]",True,Paved Concrete,False
+5,medical_center,junc_south_entry,60,"[""pedestrian"", ""wheelchair"", ""bicycle""]",True,Paved Concrete,False
+6,exit_gate,junc_south_entry,75,"[""pedestrian"", ""wheelchair"", ""bicycle"", ""shuttle""]",True,Paved Concrete,False
+7,exit_gate,main_gate_1,120,"[""pedestrian"", ""wheelchair"", ""bicycle"", ""shuttle""]",True,Paved Concrete,False
+8,junc_south_entry,junc_circle_south,70,"[""pedestrian"", ""wheelchair"", ""bicycle"", ""shuttle""]",True,Paved Concrete,False
+9,junc_circle_south,admin_block,45,"[""pedestrian"", ""wheelchair"", ""bicycle""]",True,Paved Concrete,False
+10,admin_block,central_library,35,"[""pedestrian"", ""wheelchair"", ""bicycle""]",True,Paved Concrete,False
+11,junc_circle_south,junc_circle_center,95,"[""pedestrian"", ""wheelchair"", ""bicycle""]",True,Paved Concrete,False
+12,admin_block,junc_circle_center,80,"[""pedestrian"", ""wheelchair"", ""bicycle""]",True,Paved Concrete,True
+13,central_circle,junc_circle_center,10,"[""pedestrian"", ""wheelchair"", ""bicycle""]",True,Paved Concrete,False
+14,junc_circle_center,convention_hall,85,"[""pedestrian"", ""wheelchair"", ""bicycle""]",True,Paved Concrete,False
+15,junc_circle_center,tech_park,70,"[""pedestrian"", ""wheelchair"", ""bicycle""]",True,Paved Concrete,False
+16,junc_circle_center,food_pavilion,75,"[""pedestrian"", ""wheelchair"", ""bicycle""]",True,Paved Concrete,False
+17,tech_park,junc_circle_north,55,"[""pedestrian"", ""wheelchair"", ""bicycle""]",True,Paved Concrete,False
+18,tech_park,grand_auditorium,50,"[""pedestrian"", ""wheelchair"", ""bicycle""]",True,Paved Concrete,False
+19,grand_auditorium,junc_circle_north,40,"[""pedestrian"", ""wheelchair"", ""bicycle""]",True,Paved Concrete,False
+20,food_pavilion,junc_circle_east,70,"[""pedestrian"", ""wheelchair"", ""bicycle""]",True,Paved Concrete,False
+21,junc_circle_north,junc_circle_east,80,"[""pedestrian"", ""wheelchair"", ""bicycle"", ""shuttle""]",True,Paved Concrete,False
+22,junc_circle_east,faculty_block,65,"[""pedestrian"", ""wheelchair"", ""bicycle"", ""shuttle""]",True,Paved Concrete,True
+23,junc_circle_east,electricity_station,50,"[""pedestrian"", ""bicycle"", ""shuttle""]",False,Gravel / Service Road,False
+24,junc_circle_east,campus_temple,65,"[""pedestrian"", ""wheelchair"", ""bicycle""]",True,Paved Concrete,False
+25,faculty_block,hostel_zone,180,"[""pedestrian"", ""wheelchair"", ""bicycle"", ""shuttle""]",True,Paved Concrete,False
+26,hostel_zone,east_gate_2,110,"[""pedestrian"", ""wheelchair"", ""bicycle"", ""shuttle""]",True,Paved Concrete,False
+27,junc_circle_north,sportspath,350,"[""pedestrian"", ""bicycle"", ""shuttle""]",True,Paved Concrete,False
+28,sportspath,junc_sports_boulevard,60,"[""pedestrian"", ""bicycle"", ""shuttle""]",True,Paved Concrete,False
+29,junc_sports_boulevard,sports_complex,140,"[""pedestrian"", ""wheelchair"", ""bicycle"", ""shuttle""]",True,Paved Concrete,False
+30,junc_sports_boulevard,football_turf,130,"[""pedestrian"", ""wheelchair"", ""bicycle""]",True,Paved Concrete,False
+31,junc_sports_boulevard,basketball_arena,160,"[""pedestrian"", ""wheelchair"", ""bicycle""]",True,Paved Concrete,True
+32,junc_sports_boulevard,cricket_ground,220,"[""pedestrian"", ""bicycle"", ""shuttle""]",True,Paved Concrete,False

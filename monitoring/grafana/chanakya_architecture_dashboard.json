@@ -1,0 +1,115 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": 1,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 100,
+      "title": "System Status & Overview",
+      "type": "row"
+    },
+    {
+      "id": 1,
+      "title": "Modular Monolith Request Latency (p95)",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 1 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(modular_monolith_request_latency_seconds_bucket[1m])) by (le)) * 1000",
+          "legendFormat": "Monolith Latency (ms)"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms" } }
+    },
+    {
+      "id": 2,
+      "title": "Event-Driven Request Latency (p95)",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 1 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(eda_request_latency_seconds_bucket[1m])) by (le)) * 1000",
+          "legendFormat": "EDA Latency (ms)"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms" } }
+    },
+    {
+      "id": 3,
+      "title": "Event Bus Message Throughput",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 1 },
+      "targets": [
+        {
+          "expr": "sum(rate(eda_events_published_total[1m]))",
+          "legendFormat": "Events / sec"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "reqps" } }
+    },
+    {
+      "id": 4,
+      "title": "Active Event Queue Depth",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 1 },
+      "targets": [
+        {
+          "expr": "eda_event_queue_depth",
+          "legendFormat": "Queue Depth"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "none" } }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
+      "id": 101,
+      "title": "Real-Time Telemetry & Performance Comparison",
+      "type": "row"
+    },
+    {
+      "id": 5,
+      "title": "Comparative Throughput: Monolith vs EDA (req/sec)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
+      "targets": [
+        {
+          "expr": "sum(rate(modular_monolith_requests_total[1m]))",
+          "legendFormat": "Modular Monolith"
+        },
+        {
+          "expr": "sum(rate(eda_requests_total[1m]))",
+          "legendFormat": "Event-Driven"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "System CPU & RAM Footprint",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
+      "targets": [
+        {
+          "expr": "process_cpu_seconds_total",
+          "legendFormat": "CPU (s)"
+        },
+        {
+          "expr": "process_resident_memory_bytes / 1024 / 1024",
+          "legendFormat": "RAM (MB)"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 36,
+  "style": "dark",
+  "tags": ["chanakya", "ecs351", "architecture-comparison"],
+  "time": { "from": "now-15m", "to": "now" },
+  "title": "Chanakya Campus Navigator - ECS351 Architecture Comparison Dashboard",
+  "version": 1
+}

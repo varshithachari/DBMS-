@@ -1,0 +1,25 @@
+issue_id,title,category,severity,status,location_id,blocks_pathway,affected_pathway_id,reported_by_id,reported_at,ai_classified_priority,ai_confidence_score,resolution_notes
+1,Water Pipe Leakage near Power Substation,Plumbing,High,Reported,electricity_station,False,,18,2026-03-21 12:00:00,High,0.88,Assigned to Campus Works & Maintenance
+2,Water Pipe Leakage near Entry Boulevard,Plumbing,High,Work in Progress,entry_gate,False,,4,2026-03-12 02:00:00,High,0.96,Assigned to Campus Works & Maintenance
+3,Water Pipe Leakage near Football Turf,Plumbing,High,Reported,football_turf,False,,7,2026-03-20 02:00:00,High,0.86,Assigned to Campus Works & Maintenance
+4,Broken Streetlight near Meditation Sanctuary,Electrical,Medium,Resolved,campus_temple,False,,17,2026-03-11 10:00:00,Medium,0.89,Fixed and verified by Field Engineer.
+5,Broken Streetlight near Academic Circle Quad,Electrical,Medium,Resolved,central_circle,False,,15,2026-03-17 01:00:00,Medium,0.91,Fixed and verified by Field Engineer.
+6,Broken Streetlight near Academic Block 1,Electrical,Medium,Reported,admin_block,False,,2,2026-03-17 02:00:00,Medium,0.88,Assigned to Campus Works & Maintenance
+7,Elevator Maintenance near Meditation Sanctuary,Lift/Mechanical,Medium,Reported,campus_temple,False,,19,2026-03-18 01:00:00,Medium,0.85,Assigned to Campus Works & Maintenance
+8,Blocked Pathway near Faculty Block,Infrastructure,High,Resolved,faculty_block,True,22,5,2026-03-12 12:00:00,High,0.87,Fixed and verified by Field Engineer.
+9,Elevator Maintenance near Academic Circle Quad,Lift/Mechanical,Medium,Under Review,central_circle,False,,19,2026-03-23 11:00:00,Medium,0.91,Assigned to Campus Works & Maintenance
+10,Blocked Pathway near Power Substation,Infrastructure,High,Resolved,electricity_station,True,12,6,2026-03-21 03:00:00,High,0.89,Fixed and verified by Field Engineer.
+11,Elevator Maintenance near Basketball Courts,Lift/Mechanical,Medium,Under Review,basketball_arena,False,,2,2026-03-17 10:00:00,Medium,0.89,Assigned to Campus Works & Maintenance
+12,Elevator Maintenance near Basketball Courts,Lift/Mechanical,Medium,Resolved,basketball_arena,False,,2,2026-03-12 04:00:00,Medium,0.9,Fixed and verified by Field Engineer.
+13,Elevator Maintenance near Faculty Block,Lift/Mechanical,Medium,Under Review,faculty_block,False,,18,2026-03-10 06:00:00,Medium,0.96,Assigned to Campus Works & Maintenance
+14,Water Pipe Leakage near Entry Boulevard,Plumbing,High,Resolved,entry_gate,False,,12,2026-03-20 06:00:00,High,0.89,Fixed and verified by Field Engineer.
+15,Blocked Pathway near Meditation Sanctuary,Infrastructure,High,Under Review,campus_temple,True,31,1,2026-03-18 00:00:00,High,0.92,Assigned to Campus Works & Maintenance
+16,Air Conditioning Failure near Faculty Block,HVAC,Low,Under Review,faculty_block,False,,4,2026-03-17 10:00:00,Low,0.88,Assigned to Campus Works & Maintenance
+17,Air Conditioning Failure near Football Turf,HVAC,Low,Reported,football_turf,False,,8,2026-03-22 05:00:00,Low,0.98,Assigned to Campus Works & Maintenance
+18,Broken Streetlight near Academic Block 2,Electrical,Medium,Under Review,tech_park,False,,19,2026-03-20 12:00:00,Medium,0.95,Assigned to Campus Works & Maintenance
+19,Water Pipe Leakage near Basketball Courts,Plumbing,High,Reported,basketball_arena,False,,12,2026-03-14 09:00:00,High,0.98,Assigned to Campus Works & Maintenance
+20,Elevator Maintenance near Exit Avenue,Lift/Mechanical,Medium,Work in Progress,exit_gate,False,,6,2026-03-25 00:00:00,Medium,0.86,Assigned to Campus Works & Maintenance
+21,Broken Streetlight near Main Gate 1,Electrical,Medium,Under Review,main_gate_1,False,,1,2026-03-25 00:00:00,Medium,0.9,Assigned to Campus Works & Maintenance
+22,Air Conditioning Failure near Faculty Block,HVAC,Low,Under Review,faculty_block,False,,11,2026-03-15 12:00:00,Low,0.97,Assigned to Campus Works & Maintenance
+23,Water Pipe Leakage near Academic Circle Quad,Plumbing,High,Reported,central_circle,False,,5,2026-03-14 12:00:00,High,0.87,Assigned to Campus Works & Maintenance
+24,Air Conditioning Failure near Football Turf,HVAC,Low,Work in Progress,football_turf,False,,3,2026-03-21 11:00:00,Low,0.98,Assigned to Campus Works & Maintenance

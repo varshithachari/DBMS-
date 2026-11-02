@@ -1,0 +1,30 @@
+# Prometheus Configuration for Chanakya Campus Navigator (ECS351)
+# Scrapes both Architecture A (Modular Monolith) and Architecture B (Event-Driven Architecture)
+
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: 'modular_monolith'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['localhost:8001', 'host.docker.internal:8001']
+        labels:
+          architecture: 'modular_monolith'
+          environment: 'production'
+
+  - job_name: 'event_driven_architecture'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['localhost:8002', 'host.docker.internal:8002']
+        labels:
+          architecture: 'event_driven'
+          environment: 'production'
+
+  - job_name: 'portal_gateway'
+    metrics_path: '/api/metrics'
+    static_configs:
+      - targets: ['localhost:3000', 'host.docker.internal:3000']
+        labels:
+          service: 'portal_gateway'

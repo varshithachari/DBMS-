@@ -1,0 +1,14 @@
+department_id,school_id,name
+1,6,Computer Science & Engineering (CSE)
+2,6,Artificial Intelligence & Data Science (AI & DS)
+3,6,Robotics & Embedded Automation
+4,6,Mechanical & Mechatronics
+5,1,Economics & Public Policy
+6,1,Political Science & International Relations
+7,1,Psychology & Cognitive Sciences
+8,2,Business Administration (BBA/MBA)
+9,2,Commerce & Financial Analytics
+10,3,Data Science & Applied Statistics
+11,3,Physics & Quantum Materials
+12,4,Constitutional & Corporate Law (BA LLB)
+13,5,Biotechnology & Bioinformatics

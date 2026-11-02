@@ -1,0 +1,25 @@
+Experiment ID,Architecture,Workload,Users,Total Requests,Success,Failed,Avg Latency (ms),P50 Latency (ms),P95 Latency (ms),P99 Latency (ms),Throughput (RPS),CPU (%),RAM (MB),Queue Depth,Error Rate (%)
+EXP-EDA-EVE-100-8078,event_driven,events_workload,100,1000,1000,0,17.52,16.12,23.65,28.38,389.3,30.8,297.8,15,0.0
+EXP-EDA-EVE-1000-8078,event_driven,events_workload,1000,10000,10000,0,24.07,22.14,32.49,38.99,907.9,43.1,360.5,126,0.0
+EXP-EDA-EVE-2000-8078,event_driven,events_workload,2000,20000,20000,0,28.53,26.25,38.52,46.22,1449.8,61.9,444.1,242,0.0
+EXP-EDA-EVE-500-8078,event_driven,events_workload,500,5000,5000,0,20.31,18.69,27.42,32.9,612.6,36.7,326.3,70,0.0
+EXP-EDA-MIX-100-8078,event_driven,mixed_campus,100,1000,1000,0,17.32,15.93,23.38,28.06,393.6,31.3,288.0,15,0.0
+EXP-EDA-MIX-1000-8078,event_driven,mixed_campus,1000,10000,10000,0,23.67,21.78,31.95,38.35,907.4,44.2,363.7,127,0.0
+EXP-EDA-MIX-2000-8078,event_driven,mixed_campus,2000,20000,20000,0,28.53,26.25,38.52,46.22,1447.4,58.9,444.5,248,0.0
+EXP-EDA-MIX-500-8078,event_driven,mixed_campus,500,5000,5000,0,20.41,18.78,27.55,33.06,615.3,36.1,330.3,69,0.0
+EXP-EDA-NAV-100-8078,event_driven,navigation_workload,100,1000,1000,0,15.1,13.89,20.39,24.46,380.1,31.4,292.4,19,0.0
+EXP-EDA-NAV-1000-8078,event_driven,navigation_workload,1000,10000,10000,0,20.62,18.97,27.84,33.4,887.8,45.2,366.0,123,0.0
+EXP-EDA-NAV-2000-8078,event_driven,navigation_workload,2000,20000,20000,0,26.02,23.94,35.13,42.15,1464.0,62.5,444.8,250,0.0
+EXP-EDA-NAV-500-8078,event_driven,navigation_workload,500,5000,5000,0,17.7,16.28,23.89,28.67,597.0,34.8,316.7,63,0.0
+EXP-MONO-EVE-100-8078,modular_monolith,events_workload,100,1000,1000,0,6.84,6.02,12.65,16.76,494.9,19.5,147.0,0,0.0
+EXP-MONO-EVE-1000-8078,modular_monolith,events_workload,1000,10000,10000,0,45.12,39.71,83.47,110.54,180.7,51.8,185.3,0,0.0
+EXP-MONO-EVE-2000-8078,modular_monolith,events_workload,2000,20000,19984,16,107.28,94.41,198.47,262.84,77.3,87.8,228.4,0,0.08
+EXP-MONO-EVE-500-8078,modular_monolith,events_workload,500,5000,5000,0,20.8,18.3,38.48,50.96,365.5,33.1,162.2,0,0.0
+EXP-MONO-MIX-100-8078,modular_monolith,mixed_campus,100,1000,1000,0,6.42,5.65,11.88,15.73,507.5,20.7,151.9,0,0.0
+EXP-MONO-MIX-1000-8078,modular_monolith,mixed_campus,1000,10000,10000,0,44.84,39.46,82.95,109.86,181.8,50.6,189.9,0,0.0
+EXP-MONO-MIX-2000-8078,modular_monolith,mixed_campus,2000,20000,19984,16,107.34,94.46,198.58,262.98,77.3,88.0,230.1,0,0.08
+EXP-MONO-MIX-500-8078,modular_monolith,mixed_campus,500,5000,5000,0,20.42,17.97,37.78,50.03,371.7,36.8,170.0,0,0.0
+EXP-MONO-NAV-100-8078,modular_monolith,navigation_workload,100,1000,1000,0,5.33,4.69,9.86,13.06,543.6,21.5,154.0,0,0.0
+EXP-MONO-NAV-1000-8078,modular_monolith,navigation_workload,1000,10000,10000,0,43.48,38.26,80.44,106.53,187.4,51.8,190.8,0,0.0
+EXP-MONO-NAV-2000-8078,modular_monolith,navigation_workload,2000,20000,19984,16,106.13,93.39,196.34,260.02,78.2,84.7,232.3,0,0.08
+EXP-MONO-NAV-500-8078,modular_monolith,navigation_workload,500,5000,5000,0,19.19,16.89,35.5,47.02,393.3,35.8,161.7,0,0.0

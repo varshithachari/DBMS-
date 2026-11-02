@@ -1,0 +1,8 @@
+main_event_id,name,description,school_id,start_date,end_date,campus,organizer
+1,Samyuti,Flagship Annual Technical & Cultural Conclave,6,2026-03-28,2026-03-30,"Global Campus, Bengaluru",School of Engineering & Tech Council
+2,OJAS,Intra-University Management & Arts Conclave,1,2026-04-20,2026-04-22,"Global Campus, Bengaluru",School of Arts & Management
+3,Sports Olympiad,Inter-School Athletic Championship & Sports Meet,6,2026-02-15,2026-02-20,Olympic Sports Arena,Department of Physical Education
+4,Tech Horizons Workshops,"AI, Cloud, Robotics & Blockchain Bootcamps",6,2026-05-01,2026-05-05,Tech Park Innovation Hub,Chanakya Computing Council
+5,Srujana Tech Fest,"Celebrating Creation, Fueling Innovation & Hardware Prototypes",6,2026-09-13,2026-09-15,Global Campus Labs,Engineering Research Cell
+6,Innovation & Startup Summit,"Venture Pitching, Seed Grants & Incubator Demos",2,2026-08-10,2026-08-12,Arya Convention Center,Chanakya Centre for Entrepreneurship
+7,Cultural Carnival,"Dance, Music, Battle of the Bands, Literary & Fashion Night",1,2026-11-05,2026-11-07,Grand Auditorium & Quad,Cultural Affairs Committee

@@ -125,9 +125,18 @@ class MapService {
     };
   }
 
-  findRoute(fromId, toId, mode = "pedestrian") {
+  findRoute(fromId, toId, mode = "pedestrian", strategy = "shortest") {
     if (!this.nodes[fromId] || !this.nodes[toId]) {
       throw new Error("Invalid start or destination location ID");
+    }
+
+    // GoF Strategy Pattern implementation
+    if (strategy === "emergency") {
+      const evac = this.getEmergencyEvacuation(fromId);
+      if (evac && evac.route) {
+        evac.route.strategy = "emergency";
+        return evac.route;
+      }
     }
 
     const adj = {};
@@ -139,9 +148,25 @@ class MapService {
       );
       if (isBlocked) return;
 
-      if (edge.modes.includes(mode)) {
-        adj[edge.from].push({ node: edge.to, dist: edge.dist });
-        adj[edge.to].push({ node: edge.from, dist: edge.dist });
+      // Strategy: Accessible Route requires wheelchair-friendly pathway and accessible nodes
+      if (strategy === "accessible") {
+        const fromNode = this.nodes[edge.from];
+        const toNode = this.nodes[edge.to];
+        if (!edge.modes.includes("wheelchair") || (fromNode && fromNode.accessible === false) || (toNode && toNode.accessible === false)) {
+          return;
+        }
+      }
+
+      if (edge.modes.includes(mode) || strategy === "accessible") {
+        let weight = edge.dist;
+        // Strategy: Least Crowded multiplies weight by crowd factor
+        if (strategy === "least_crowded") {
+          const crowdFactor = (edge.from.includes("circle") || edge.to.includes("circle")) ? 2.5 : 1.0;
+          weight = edge.dist * crowdFactor;
+        }
+
+        adj[edge.from].push({ node: edge.to, dist: weight, rawDist: edge.dist });
+        adj[edge.to].push({ node: edge.from, dist: weight, rawDist: edge.dist });
       }
     });
 

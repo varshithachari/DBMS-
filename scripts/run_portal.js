@@ -11,6 +11,21 @@ const desktopDir = path.resolve(process.env.USERPROFILE || 'C:\\Users\\varsh', '
 console.log('🚀 [Supervisor] Initializing Chanakya Campus Connect Server...');
 require('../server.js');
 
+// 1.1 Start Python Microservices & Monolith Backends
+function startBackend(name, modulePath, port) {
+  console.log(`⚡ [Supervisor] Launching ${name} on port ${port}...`);
+  const proc = spawn('python', ['-m', 'uvicorn', modulePath, '--host', '127.0.0.1', '--port', String(port)], {
+    cwd: rootDir,
+    stdio: 'ignore'
+  });
+  proc.on('close', (code) => {
+    console.warn(`[Supervisor] ${name} exited (code ${code}). Restarting in 3s...`);
+    setTimeout(() => startBackend(name, modulePath, port), 3000);
+  });
+}
+startBackend('Architecture A (Modular Monolith)', 'backend.modular_monolith.app:app', 8001);
+startBackend('Architecture B (Event-Driven Architecture)', 'backend.event_driven.app:app', 8002);
+
 let tunnelUrl = null;
 let cfProcess = null;
 let keepAliveTimer = null;
@@ -27,8 +42,10 @@ function saveUrls(url) {
 
   try {
     fs.writeFileSync(path.join(rootDir, 'ACTIVE_URL.txt'), url, 'utf8');
-    
-    // Save to user desktop
+  } catch (e) {}
+
+  try {
+    // Save to user desktop if accessible
     const desktopLinkPath = path.join(desktopDir, 'CHANAKYA_LIVE_LINK.txt');
     const content = `==========================================================
 CHANAKYA CAMPUS CONNECT - LIVE ACCESS LINKS
@@ -40,10 +57,13 @@ CHANAKYA CAMPUS CONNECT - LIVE ACCESS LINKS
 2. DIGITAL CERTIFICATES & HONORS VAULT:
    ${url}/dashboard?tab=certificates
 
-3. OFFICIAL VISUAL CERTIFICATE PREVIEW:
+3. ARCHITECTURE RESEARCH LAB (ECS351):
+   ${url}/dashboard?tab=architecture
+
+4. OFFICIAL VISUAL CERTIFICATE PREVIEW:
    ${url}/certificate.html?code=CERT-CU-S01-P0001-CC36
 
-4. LOCAL ACCESS (ON THIS PC - FASTEST & NEVER DIES):
+5. LOCAL ACCESS (ON THIS PC - FASTEST & NEVER DIES):
    http://localhost:3000
 
 ==========================================================
@@ -59,7 +79,7 @@ Last Updated: ${new Date().toLocaleString()}
 
     console.log(`📁 Saved desktop shortcut and link file to: ${desktopLinkPath}`);
   } catch (e) {
-    console.error('Error saving desktop link file:', e.message);
+    // Desktop write might be sandboxed, perfectly fine
   }
 }
 
@@ -104,7 +124,7 @@ function startCloudflareTunnel() {
 
   const onData = (chunk) => {
     const text = chunk.toString();
-    const match = text.match(/https:\/\/[a-zA-Z0-9-]+\.trycloudflare\.com/);
+    const match = text.match(/https:\/\/(?!api\.)[a-zA-Z0-9-]+\.trycloudflare\.com/);
     if (match && (!tunnelUrl || tunnelUrl !== match[0])) {
       saveUrls(match[0]);
     }

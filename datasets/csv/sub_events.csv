@@ -1,0 +1,54 @@
+sub_event_id,main_event_id,name,category,type,venue_location_id,day,time,is_team_event,team_min,team_max,is_competition,max_capacity
+1,1,IKS Hackathon 36H,Technical,Group,tech_park,Day 1,09:00 AM,True,2,4,True,200
+2,1,Hardware Robotics Derby,Technical,Group,tech_park,Day 1,02:00 PM,True,2,4,True,120
+3,1,E-Sports Valorant Championship,Technical,Group,tech_park,Day 2,10:00 AM,True,5,5,True,160
+4,1,Indic Game Jam,Technical,Group,tech_park,Day 2,11:00 AM,True,2,4,True,100
+5,1,Vastra Verse Fashion Show,Cultural,Solo,grand_auditorium,Day 2,06:00 PM,False,1,1,True,300
+6,1,Drishti Manthan Street Play,Cultural,Group,central_circle,Day 1,04:00 PM,True,4,8,True,250
+7,1,Smrithi Mandaara Classical Music,Cultural,Solo,grand_auditorium,Day 3,03:00 PM,False,1,1,True,200
+8,1,IKS Quiz Championship,Technical,Group,convention_hall,Day 2,02:00 PM,True,2,2,True,150
+9,1,Campus Treasure Hunt,Adventure,Group,central_circle,Day 3,09:30 AM,True,3,4,True,400
+10,2,Chanakya Stock Simulation,Management,Solo,admin_block,Day 1,10:00 AM,False,1,1,True,200
+11,2,Case Craft Business Challenge,Management,Group,admin_block,Day 1,02:00 PM,True,2,3,True,120
+12,2,Parliamentary Debate,Literary,Group,convention_hall,Day 2,11:00 AM,True,3,3,True,150
+13,2,Brand Blitz Ad-Making,Management,Group,admin_block,Day 2,03:00 PM,True,2,4,True,100
+14,2,Kavya Sandhya Poetry Slam,Literary,Solo,central_circle,Day 2,05:30 PM,False,1,1,True,150
+15,2,Policy Hackathon,Governance,Group,admin_block,Day 3,09:00 AM,True,2,4,True,120
+16,2,Crisis Management Press Conf,Management,Solo,convention_hall,Day 3,01:30 PM,False,1,1,True,100
+17,2,Photography & Reel Making,Media,Solo,central_circle,Day 1,10:00 AM,False,1,1,True,200
+18,3,Inter-School Football Trophy,Sports,Group,football_turf,Day 1-3,08:00 AM,True,11,15,True,300
+19,3,Chanakya Cricket Premier League,Sports,Group,cricket_ground,Day 1-4,08:30 AM,True,11,15,True,350
+20,3,Basketball 3x3 Showdown,Sports,Group,basketball_arena,Day 2,04:00 PM,True,3,4,True,160
+21,3,Badminton Singles Men/Women,Sports,Solo,sports_complex,Day 1,09:00 AM,False,1,1,True,128
+22,3,100m & 4x100m Sprint Gala,Sports,Solo,sportspath,Day 2,07:30 AM,False,1,1,True,200
+23,3,Table Tennis Masters,Sports,Solo,sports_complex,Day 3,10:00 AM,False,1,1,True,64
+24,3,Olympic Swimming Freestyle 50m,Sports,Solo,sports_complex,Day 3,02:00 PM,False,1,1,True,80
+25,3,Tug of War Mega Clash,Sports,Group,cricket_ground,Day 4,04:30 PM,True,8,8,True,250
+26,4,Hands-on Generative AI with PyTorch,Workshop,Solo,tech_park,Day 1,10:00 AM,False,1,1,False,150
+27,4,Autonomous Drone Assembly & Flight,Workshop,Group,tech_park,Day 2,09:30 AM,True,2,3,False,90
+28,4,Cybersecurity & Ethical Hacking Lab,Workshop,Solo,tech_park,Day 3,10:00 AM,False,1,1,False,120
+29,4,Fintech & Algorithmic Trading,Workshop,Solo,admin_block,Day 4,11:00 AM,False,1,1,False,100
+30,4,Design Systems & UI/UX Sprint,Workshop,Solo,central_library,Day 5,02:00 PM,False,1,1,False,120
+31,5,Logic Loop Microcontroller Sprint,Technical,Solo,tech_park,Day 1,02:00 PM,False,1,1,True,120
+32,5,CAD Clash 3D Modeling,Technical,Solo,tech_park,Day 2,10:00 AM,False,1,1,True,100
+33,5,Ideathon Sustainable Bengaluru,Innovation,Group,convention_hall,Day 2,03:00 PM,True,2,4,True,180
+34,5,Pixel Poetry Web Dev Contest,Technical,Solo,tech_park,Day 1,11:00 AM,False,1,1,True,120
+35,5,Syntax Saga DSA Speedrun,Technical,Solo,tech_park,Day 1,09:00 AM,False,1,1,True,250
+36,5,Prompt to Product AI Sprint,Innovation,Group,grand_auditorium,Day 3,02:00 PM,True,2,4,True,200
+37,5,IoT Smart Campus Expo,Technical,Group,central_circle,Day 2,10:00 AM,True,2,4,True,150
+38,5,RoboWars Combat Battle,Technical,Group,central_circle,Day 3,04:00 PM,True,3,5,True,200
+39,6,Pitch Deck VC Shark Tank,Startup,Group,convention_hall,Day 1,10:00 AM,True,2,4,True,100
+40,6,DeepTech Product Prototype Showcase,Startup,Group,central_circle,Day 1,02:00 PM,True,2,4,True,120
+41,6,Angel Investor Networking Breakfast,Networking,Solo,food_pavilion,Day 2,08:30 AM,False,1,1,False,150
+42,6,Legal IP & Patent Filing Clinic,Governance,Solo,admin_block,Day 2,11:30 AM,False,1,1,False,80
+43,6,Agritech & Bio-Innovation Forum,Research,Group,convention_hall,Day 2,03:00 PM,True,2,3,True,100
+44,6,NextGen Robotics Live Demo,Demo,Solo,tech_park,Day 3,11:00 AM,False,1,1,False,300
+45,6,Social Impact Venture Award,Startup,Group,grand_auditorium,Day 3,03:30 PM,True,2,4,True,150
+46,7,Battle of the Bands,Music,Group,grand_auditorium,Day 1,06:00 PM,True,3,7,True,400
+47,7,Natya Sangeet Classical Dance,Cultural,Solo,grand_auditorium,Day 1,02:00 PM,False,1,1,True,200
+48,7,Monologue & Theatrical Solo,Cultural,Solo,convention_hall,Day 2,10:00 AM,False,1,1,True,100
+49,7,Street Dance Crew Face-off,Cultural,Group,central_circle,Day 2,04:30 PM,True,4,10,True,350
+50,7,Beatboxing & Rap Cypher,Music,Solo,central_circle,Day 2,07:00 PM,False,1,1,True,250
+51,7,Cosplay & Pop Culture Walk,Cultural,Solo,grand_auditorium,Day 3,04:00 PM,False,1,1,True,300
+52,7,Stand-up Comedy Open Mic,Comedy,Solo,convention_hall,Day 3,06:30 PM,False,1,1,True,250
+53,7,Gala Grand Finale Celebrity DJ Night,Entertainment,Solo,cricket_ground,Day 3,08:00 PM,False,1,1,False,2500

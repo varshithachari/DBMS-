@@ -1849,7 +1849,7 @@ function drawRouteOnMap(waypoints, color = '#06B6D4') {
   }
 }
 
-function planRouteBetween(fromId, toId, mode = 'pedestrian') {
+function planRouteBetween(fromId, toId, mode = 'pedestrian', strategy = 'shortest') {
   if (!fromId || !toId) {
     showToast("Invalid Route", "Please select both starting point and destination.", "alert");
     return;
@@ -1857,17 +1857,19 @@ function planRouteBetween(fromId, toId, mode = 'pedestrian') {
   fetch('/api/map/route', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ fromId, toId, mode })
+    body: JSON.stringify({ fromId, toId, mode, strategy })
   })
   .then(res => res.json())
   .then(data => {
     if (!data.found || !data.waypoints) {
-      showToast("Route Blocked", "No open route found for selected mode.", "alert");
+      showToast("Route Blocked", "No open route found for selected mode and strategy.", "alert");
       return;
     }
-    drawRouteOnMap(data.waypoints, '#06B6D4');
+    const routeColor = strategy === 'emergency' ? '#EF4444' : (strategy === 'accessible' ? '#10B981' : '#06B6D4');
+    drawRouteOnMap(data.waypoints, routeColor);
     sfx.play('success');
-    showToast("Route Calculated", `${data.totalDistanceMeters}m • ~${data.estimatedTimeMins} mins walking via ${data.path.map(p => p.shortName).join(' ➔ ')}`, 'success');
+    const stratLabel = strategy.toUpperCase().replace('_', ' ');
+    showToast(`Route Calculated (${stratLabel})`, `${data.totalDistanceMeters}m • ~${data.estimatedTimeMins} mins via ${data.path.map(p => p.shortName || p.name).join(' ➔ ')}`, 'success');
   });
 }
 

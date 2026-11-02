@@ -1,0 +1,29 @@
+location_id,name,short_name,category,lat,lng,capacity,floors,accessible,description
+central_circle,Chanakya Academic Circle Quad & Concentric Lawns,Academic Circle Quad,Administrative,13.222871,77.755633,3500,1,True,Grand circular quadrangle anchoring all university blocks and central lawn.
+admin_block,Academic Block 1 - Administrative Hub & School of Law,Academic Block 1,Administrative,13.222255,77.755297,1200,4,True,"Administrative headquarters, Vice Chancellor Office, Registrar, School of Law."
+tech_park,"Academic Block 2 - Science, Technology & AI Computing",Academic Block 2,Academic & Research,13.223382,77.75599,1800,5,True,"Engineering classrooms, AI supercomputing cluster, and hardware robotics bay."
+faculty_block,Faculty Block & Visiting Scholars Residence,Faculty Block,Residential,13.223668,77.757229,350,4,True,"Faculty research suites, academic council lounge, and guest apartments."
+hostel_zone,Nalanda & Takshashila Residential Hostels,Student Hostels,Residential,13.224548,77.75887,2500,7,True,Four residential towers with study commons and dining hall.
+campus_temple,Meditation Sanctuary & Peace Garden,Meditation Sanctuary,Cultural,13.223299,77.757493,200,1,True,Spiritual retreat and silent meditation sanctuary.
+electricity_station,Power Substation & 1.2MW Solar Inverters,Power Substation,Infrastructure,13.22317,77.75727,25,1,False,Campus electrical utility grid and solar inverter array.
+entry_gate,South Main Entrance Boulevard,Entry Boulevard,Entrance,13.220539,77.754383,800,1,True,Primary boulevard ingress with ANPR license verification.
+exit_gate,South Main Exit Avenue,Exit Avenue,Entrance,13.220914,77.755205,800,1,True,Vehicle egress lane onto campus peripheral highway.
+main_gate_1,Main Security Gatehouse (Gate 1),Main Gate 1,Entrance,13.220162,77.754079,500,1,True,Main gate visitor verification and 24/7 security dispatch.
+sportspath,Sports Boulevard Promenade,Sports Boulevard,Sports,13.227349,77.758679,2500,1,True,Tree-lined boulevard connecting academic quad to sports arena.
+sports_complex,Olympic Sports Arena & Gymnasium,Sports Complex,Sports,13.2285,77.7582,3000,2,True,"Multi-sport arena, badminton courts, Olympic pool, and gym."
+cricket_ground,Chanakya Cricket Oval & Turf Pavilion,Cricket Oval,Sports,13.228968,77.757163,2000,1,True,Regulation turf cricket pitch with floodlights.
+football_turf,Synthetic Football & Soccer Turf,Football Turf,Sports,13.228467,77.758377,1500,1,True,Floodlit soccer turf for intramural and university leagues.
+basketball_arena,Twin Acrylic Basketball Arena,Basketball Courts,Sports,13.228845,77.758119,800,1,True,Twin synthetic courts with electronic scoreboards.
+central_library,Central Digital Library & Knowledge Colonnade,Central Library,Library,13.222282,77.755341,900,4,True,"400,000+ volumes, silent study pods, IEEE/Scopus research terminal."
+grand_auditorium,Grand Auditorium & Performing Arts Hall,Grand Auditorium,Auditorium,13.2238,77.7562,1200,3,True,"Acoustic auditorium for conclaves, convocations, and cultural fests."
+food_pavilion,Annapurna Food Pavilion & Terrace Canteen,Annapurna Food Court,Dining,13.2226,77.7563,1000,2,True,"Multi-cuisine dining, student canteen, and rooftop terrace."
+convention_hall,Arya Chanakya Convention & Seminar Center,Arya Convention Hall,Auditorium,13.22295,77.7549,450,2,True,Executive symposium hall with telepresence booths.
+medical_center,Sushruta Health & Emergency Medical Center,Medical Center,Health & Emergency,13.221,77.7546,100,2,True,"24/7 OPD, pharmacy, triage bay, and emergency trauma ICU."
+east_gate_2,East Campus Gate & Bus Terminal (Gate 2),East Gate 2,Entrance,13.2248,77.7598,400,1,True,Bus transit hub and logistics entry.
+junc_main_gate,South Gate Security Crossway,Gate Cross,Junction,13.2203,77.7542,500,1,True,Pedestrian crossway at South Gate.
+junc_south_entry,Boulevard Roundabout Ingress,South Ingress,Junction,13.2215,77.7548,500,1,True,Roundabout connecting entry boulevard.
+junc_circle_south,Central Circle South Concourse,South Concourse,Junction,13.222,77.7551,500,1,True,South concourse entrance to academic circle.
+junc_circle_center,Central Academic Quad Fountain Center,Quad Center,Junction,13.222871,77.755633,1000,1,True,Central nexus of academic circle quad.
+junc_circle_east,Academic Ring East Junction,East Ring,Junction,13.2232,77.7568,500,1,True,East ring walkway junction.
+junc_circle_north,Academic Ring North Concourse,North Concourse,Junction,13.2237,77.7565,500,1,True,North concourse walkway junction.
+junc_sports_boulevard,Sports Boulevard North Turn,Sports Turn,Junction,13.227,77.7584,500,1,True,North junction leading to athletic fields.
