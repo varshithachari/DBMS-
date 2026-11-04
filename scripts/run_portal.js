@@ -51,23 +51,23 @@ function saveUrls(url) {
 CHANAKYA CAMPUS CONNECT - LIVE ACCESS LINKS
 ==========================================================
 
-1. MAIN APPLICATION LINK:
-   ${url}
+1. ONE-CLICK FINAL LINK (WORKS DIRECTLY IN BROWSER):
+   http://localhost
 
-2. DIGITAL CERTIFICATES & HONORS VAULT:
-   ${url}/dashboard?tab=certificates
+2. REAL-TIME GRAFANA OBSERVABILITY CONSOLE:
+   http://localhost/dashboard?tab=architecture
 
-3. ARCHITECTURE RESEARCH LAB (ECS351):
-   ${url}/dashboard?tab=architecture
+3. DIGITAL CERTIFICATES & HONORS VAULT:
+   http://localhost/dashboard?tab=certificates
 
-4. OFFICIAL VISUAL CERTIFICATE PREVIEW:
-   ${url}/certificate.html?code=CERT-CU-S01-P0001-CC36
-
-5. LOCAL ACCESS (ON THIS PC - FASTEST & NEVER DIES):
+4. ALTERNATE PORT LINK:
    http://localhost:3000
 
+5. PUBLIC INTERNET / MOBILE LINK:
+   ${url}
+
 ==========================================================
-STATUS: Supervised with HTTP/2 Active Keep-Alive & Auto-Reconnect
+STATUS: Supervised with HTTP/2 Active Keep-Alive & Port 80 + 3000
 Last Updated: ${new Date().toLocaleString()}
 ==========================================================
 `;

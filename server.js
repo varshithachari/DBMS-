@@ -162,10 +162,19 @@ server.listen(PORT, () => {
   console.log('🎓 CHANAKYA CAMPUS CONNECT PLATFORM IS RUNNING');
   console.log('🌐 Local URL: http://localhost:' + PORT);
   console.log('📡 Real-time WebSockets & Telemetry: ACTIVE');
-  console.log(`🗄️  Database Engine: ${dbStatus.mode.toUpperCase()}`);
-  console.log(`📊 Loaded Records:  ${overview.totalRegistrations} Registrations, ${overview.totalEvents} Fests, ${overview.totalSubEvents} Sub-Events`);
+  console.log('🗄️  Database Engine: ' + dbStatus.mode.toUpperCase());
+  console.log('📊 Loaded Records:  ' + overview.totalRegistrations + ' Registrations, ' + overview.totalEvents + ' Fests, ' + overview.totalSubEvents + ' Sub-Events');
   if (dbStatus.blocker) {
-    console.log(`⚠️  Cloud Blocker:   ${dbStatus.blocker}`);
+    console.log('⚠️  Cloud Blocker:   ' + dbStatus.blocker);
   }
   console.log('====================================================');
+
+  try {
+    const port80Server = http.createServer(app);
+    port80Server.listen(80, () => {
+      console.log('🌐 [HTTP Port 80] Direct http://localhost access enabled (no port number needed)!');
+    }).on('error', (err) => {
+      console.log('ℹ️  Port 80 note: ' + err.message);
+    });
+  } catch (e) {}
 });

@@ -511,9 +511,11 @@ function switchTab(tabId) {
     }
   });
 
+  const targetTab = (tabId === 'grafana' || tabId === 'experiments') ? 'architecture' : tabId;
+
   // Switch Views
   document.querySelectorAll('.tab-view-container').forEach(view => {
-    if (view.id === `tab-${tabId}`) {
+    if (view.id === `tab-${targetTab}`) {
       view.classList.remove('hidden');
       view.classList.add('tab-content');
     } else {
@@ -536,13 +538,14 @@ function switchTab(tabId) {
     }, 150);
   }
 
-  // Refresh Live Architecture Comparison Lab if opening architecture or experiments tab
-  if (tabId === 'architecture' || tabId === 'experiments') {
+  // Refresh Live Architecture Comparison Lab if opening architecture, experiments or grafana
+  if (tabId === 'architecture' || tabId === 'experiments' || tabId === 'grafana') {
     setTimeout(() => {
       if (typeof initArchitectureLab === 'function') {
         initArchitectureLab();
-      } else if (typeof renderAllLabVisualizations === 'function') {
-        renderAllLabVisualizations();
+      }
+      if (typeof initGrafanaConsole === 'function') {
+        initGrafanaConsole();
       }
     }, 150);
   }
