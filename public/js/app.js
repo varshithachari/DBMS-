@@ -536,6 +536,18 @@ function switchTab(tabId) {
     }, 150);
   }
 
+  // Refresh Architecture Lab if opening architecture tab
+  if (tabId === 'architecture') {
+    setTimeout(() => {
+      if (typeof loadCharacteristicsMatrix === 'function') loadCharacteristicsMatrix();
+      if (typeof loadHypotheses === 'function') loadHypotheses();
+      if (typeof loadHistoricalExperiments === 'function') loadHistoricalExperiments();
+      if (typeof renderRadarChart === 'function' && typeof characteristicsData !== 'undefined' && characteristicsData.length > 0) {
+        renderRadarChart(characteristicsData);
+      }
+    }, 150);
+  }
+
   // Refresh UtsavHub data when opening utsavhub tab
   if (tabId === 'utsavhub' && window.utsavHub) {
     setTimeout(() => {
@@ -1465,11 +1477,11 @@ function renderSimulationResult(result) {
 // 15. ANALYTICS & TELEMETRY CHARTS (HTML5 Canvas)
 // ============================================================================
 function drawAnalyticsCharts() {
-  const c1 = document.getElementById('chart-crowd-density');
+  const c1 = document.getElementById('analytics-canvas') || document.getElementById('chart-crowd-density');
   if (c1) {
     const ctx = c1.getContext('2d');
     const w = c1.width = c1.offsetWidth || 500;
-    const h = c1.height = 180;
+    const h = c1.height = c1.offsetHeight || 180;
     ctx.clearRect(0, 0, w, h);
 
     const points = [20, 35, 65, 85, 95, 80, 60, 45, 30, 20];
@@ -1502,6 +1514,19 @@ function drawAnalyticsCharts() {
     ctx.strokeStyle = '#F59E0B';
     ctx.lineWidth = 3;
     ctx.stroke();
+
+    // Data points & dots
+    points.forEach((p, idx) => {
+      const x = idx * step;
+      const y = h - (p / 100) * (h - 30) - 15;
+      ctx.beginPath();
+      ctx.arc(x, y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#38BDF8';
+      ctx.fill();
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    });
   }
 }
 

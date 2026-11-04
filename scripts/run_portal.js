@@ -102,19 +102,46 @@ function startKeepAlive() {
   }, 15000); // Every 15 seconds keeps TCP & NAT connection alive forever
 }
 
+function startLocalTunnel() {
+  try {
+    const localtunnel = require('localtunnel');
+    console.log('⚡ [Supervisor] Launching LocalTunnel fallback on port 3000 (HTTPS 443)...');
+    localtunnel({ port: 3000 }, (err, tunnel) => {
+      if (err) {
+        console.warn('[Supervisor] LocalTunnel error:', err.message);
+        setTimeout(startLocalTunnel, 5000);
+        return;
+      }
+      if (tunnel && tunnel.url) {
+        console.log(`[Supervisor] LocalTunnel connected: ${tunnel.url}`);
+        saveUrls(tunnel.url);
+      }
+      tunnel.on('close', () => {
+        console.warn('[Supervisor] LocalTunnel closed. Reconnecting in 3s...');
+        setTimeout(startLocalTunnel, 3000);
+      });
+      tunnel.on('error', (err) => {
+        console.warn('[Supervisor] LocalTunnel socket error:', err.message);
+      });
+    });
+  } catch (e) {
+    console.warn('[Supervisor] LocalTunnel require failed:', e.message);
+  }
+}
+
+let cfAttempts = 0;
 function startCloudflareTunnel() {
   const cfBinary = path.join(rootDir, 'cloudflared.exe');
-  if (!fs.existsSync(cfBinary)) {
-    console.error('cloudflared.exe not found at:', cfBinary);
+  if (!fs.existsSync(cfBinary) || cfAttempts >= 3) {
     return;
   }
 
-  console.log('⚡ [Supervisor] Launching Cloudflare Tunnel with HTTP/2 and auto-reconnect...');
+  cfAttempts++;
+  console.log(`⚡ [Supervisor] Launching Cloudflare Tunnel attempt ${cfAttempts}/3...`);
   
-  // Use http2 protocol to prevent aggressive UDP NAT timeout on home/host Wi-Fi
   cfProcess = spawn(cfBinary, [
     'tunnel',
-    '--url', 'http://localhost:3000',
+    '--url', 'http://127.0.0.1:3000',
     '--protocol', 'http2',
     '--no-autoupdate'
   ], {
@@ -134,12 +161,19 @@ function startCloudflareTunnel() {
   cfProcess.stderr.on('data', onData);
 
   cfProcess.on('close', (code) => {
-    console.warn(`[Supervisor] Cloudflare tunnel process exited with code ${code}. Auto-restarting in 3 seconds...`);
-    setTimeout(startCloudflareTunnel, 3000);
+    if (cfAttempts < 3) {
+      console.warn(`[Supervisor] Cloudflare tunnel exited (${code}). Retry in 4s...`);
+      setTimeout(startCloudflareTunnel, 4000);
+    } else {
+      console.log('[Supervisor] Cloudflare port 7844 unreachable; relying on LocalTunnel (HTTPS 443).');
+    }
   });
 
   startKeepAlive();
 }
 
-// Start tunnel after small delay to let server listen
-setTimeout(startCloudflareTunnel, 1000);
+// Start both tunnel providers after small delay to guarantee public reachability
+setTimeout(() => {
+  startCloudflareTunnel();
+  startLocalTunnel();
+}, 1200);

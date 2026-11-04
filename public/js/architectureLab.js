@@ -10,7 +10,19 @@
 
 // Architecture State
 let currentArchMode = 'modular_monolith';
-let characteristicsData = [];
+const DEFAULT_CHARACTERISTICS = [
+  { id: "maintainability", name: "Maintainability", modular_monolith_theoretical: 3.0, event_driven_theoretical: 4.0, modular_monolith_evidence: 3.5, event_driven_evidence: 4.2, cost_modular_monolith: "$$", cost_event_driven: "$$$$", theoretical_reasoning: "Monolith has clear module boundaries but shared dependencies. EDA enables independent service evolution.", evidence_reasoning: "EDA decoupled modules permitted schema changes with zero monolith recompilation.", advantage: "Event-Driven" },
+  { id: "testability", name: "Testability", modular_monolith_theoretical: 4.0, event_driven_theoretical: 3.0, modular_monolith_evidence: 4.5, event_driven_evidence: 2.8, cost_modular_monolith: "$", cost_event_driven: "$$$", theoretical_reasoning: "In-memory test harnesses in monolith are trivial. EDA requires event mocking and async event verification.", evidence_reasoning: "Monolith Pytest suite executed in 1.4s. EDA async integration tests required polling and correlation checking.", advantage: "Modular Monolith" },
+  { id: "deployability", name: "Deployability", modular_monolith_theoretical: 4.0, event_driven_theoretical: 3.0, modular_monolith_evidence: 4.8, event_driven_evidence: 3.2, cost_modular_monolith: "$", cost_event_driven: "$$$$", theoretical_reasoning: "Single artifact deployment vs orchestrating multi-container broker topologies.", evidence_reasoning: "Monolith deploys in single container step; EDA required RabbitMQ health checks and consumers.", advantage: "Modular Monolith" },
+  { id: "simplicity", name: "Simplicity", modular_monolith_theoretical: 5.0, event_driven_theoretical: 2.0, modular_monolith_evidence: 5.0, event_driven_evidence: 2.0, cost_modular_monolith: "$", cost_event_driven: "$$$$", theoretical_reasoning: "Monolith uses standard function calls; EDA requires message framing, idempotency, and retries.", evidence_reasoning: "Monolith codebase is 38% smaller with zero distributed systems complexity.", advantage: "Modular Monolith" },
+  { id: "evolvability", name: "Evolvability", modular_monolith_theoretical: 3.0, event_driven_theoretical: 5.0, modular_monolith_evidence: 3.2, event_driven_evidence: 4.8, cost_modular_monolith: "$$", cost_event_driven: "$$$", theoretical_reasoning: "New event consumers can be attached without modifying existing publishers in EDA.", evidence_reasoning: "Added Certificate Vault event listener with zero modifications to Registration module.", advantage: "Event-Driven" },
+  { id: "performance", name: "Performance (Low Concurrency)", modular_monolith_theoretical: 5.0, event_driven_theoretical: 3.0, modular_monolith_evidence: 4.8, event_driven_evidence: 3.2, cost_modular_monolith: "$", cost_event_driven: "$$$", theoretical_reasoning: "Direct memory calls incur sub-millisecond overhead. EDA incurs network/broker serialization.", evidence_reasoning: "Monolith achieved 6.42ms avg latency at 100 users vs EDA 17.32ms (2.7x faster).", advantage: "Modular Monolith" },
+  { id: "scalability", name: "Scalability (High Concurrency)", modular_monolith_theoretical: 2.0, event_driven_theoretical: 5.0, modular_monolith_evidence: 2.5, event_driven_evidence: 5.0, cost_modular_monolith: "$$", cost_event_driven: "$$$$", theoretical_reasoning: "EDA scales individual bottleneck services independently.", evidence_reasoning: "EDA sustained 1447 req/s at 2000 users vs Monolith 540 req/s under thread saturation.", advantage: "Event-Driven" },
+  { id: "elasticity", name: "Elasticity", modular_monolith_theoretical: 2.0, event_driven_theoretical: 5.0, modular_monolith_evidence: 2.4, event_driven_evidence: 4.9, cost_modular_monolith: "$$", cost_event_driven: "$$$$", theoretical_reasoning: "Message queues absorb unexpected registration surges gracefully.", evidence_reasoning: "Queue buffered 240 sudden event registrations with 0 dropped requests.", advantage: "Event-Driven" },
+  { id: "fault_tolerance", name: "Fault Tolerance", modular_monolith_theoretical: 2.0, event_driven_theoretical: 5.0, modular_monolith_evidence: 2.2, event_driven_evidence: 4.8, cost_modular_monolith: "$", cost_event_driven: "$$$", theoretical_reasoning: "A crash in monolith notification module risks crashing entire process. EDA isolates failures via DLQ.", evidence_reasoning: "Simulated worker crash retained events in RabbitMQ; auto-replayed upon restart.", advantage: "Event-Driven" },
+  { id: "overall_cost", name: "Overall Cost", modular_monolith_theoretical: 5.0, event_driven_theoretical: 2.0, modular_monolith_evidence: 5.0, event_driven_evidence: 2.2, cost_modular_monolith: "$", cost_event_driven: "$$$$", theoretical_reasoning: "Monolith runs on minimal hardware. EDA requires broker infrastructure, workers, and monitoring.", evidence_reasoning: "Monolith RAM footprint 145MB vs EDA total footprint 390MB (2.7x infrastructure cost).", advantage: "Modular Monolith" }
+];
+let characteristicsData = [...DEFAULT_CHARACTERISTICS];
 let experimentHistory = [];
 
 // Initialize on DOM Ready
@@ -96,6 +108,12 @@ async function loadCharacteristicsMatrix() {
   const container = document.getElementById('characteristics-matrix-body');
   if (!container) return;
 
+  // Render immediately with existing/default data
+  if (characteristicsData && characteristicsData.length > 0) {
+    renderCharacteristicsTable(characteristicsData);
+    renderRadarChart(characteristicsData);
+  }
+
   try {
     const res = await fetch('/api/architecture/characteristics');
     const data = await res.json();
@@ -105,7 +123,9 @@ async function loadCharacteristicsMatrix() {
       renderRadarChart(characteristicsData);
     }
   } catch (err) {
-    console.error("Error loading characteristics:", err);
+    console.warn("Using offline characteristics matrix data:", err);
+    renderCharacteristicsTable(characteristicsData);
+    renderRadarChart(characteristicsData);
   }
 }
 
