@@ -172,8 +172,44 @@ function startCloudflareTunnel() {
   startKeepAlive();
 }
 
-// Start both tunnel providers after small delay to guarantee public reachability
+let lhrProcess = null;
+function startLhrTunnel() {
+  console.log('⚡ [Supervisor] Launching Localhost.run Public HTTPS Tunnel for Mobile & Remote Sharing...');
+  try {
+    lhrProcess = spawn('ssh', [
+      '-o', 'StrictHostKeyChecking=no',
+      '-o', 'ServerAliveInterval=20',
+      '-o', 'ServerAliveCountMax=3',
+      '-R', '80:127.0.0.1:3000',
+      'nokey@localhost.run'
+    ], {
+      stdio: ['ignore', 'pipe', 'pipe']
+    });
+
+    const onData = (chunk) => {
+      const text = chunk.toString();
+      const match = text.match(/https:\/\/[a-zA-Z0-9-]+\.lhr\.life/);
+      if (match && (!tunnelUrl || tunnelUrl !== match[0])) {
+        console.log(`[Supervisor] 📱 Mobile-Ready Public HTTPS Tunnel: ${match[0]}`);
+        saveUrls(match[0]);
+      }
+    };
+
+    lhrProcess.stdout.on('data', onData);
+    lhrProcess.stderr.on('data', onData);
+
+    lhrProcess.on('close', (code) => {
+      console.warn(`[Supervisor] Localhost.run tunnel closed (${code}). Reconnecting in 3s...`);
+      setTimeout(startLhrTunnel, 3000);
+    });
+  } catch (e) {
+    console.warn('[Supervisor] SSH spawn failed:', e.message);
+  }
+}
+
+// Start public tunnels after small delay to guarantee public reachability on mobiles and remote devices
 setTimeout(() => {
-  startCloudflareTunnel();
+  startLhrTunnel();
   startLocalTunnel();
+  startCloudflareTunnel();
 }, 1200);
