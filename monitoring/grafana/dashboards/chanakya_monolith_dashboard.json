@@ -1,0 +1,55 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "title": "Architecture A: Modular Monolith Performance (Port 8001)",
+  "tags": ["ecs351", "monolith", "chanakya"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "panels": [
+    {
+      "id": 1,
+      "title": "Modular Monolith Request Latency (p50, p95, p99)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        { "expr": "histogram_quantile(0.50, sum(rate(modular_monolith_request_latency_seconds_bucket[1m])) by (le)) * 1000", "legendFormat": "p50 Latency (ms)" },
+        { "expr": "histogram_quantile(0.95, sum(rate(modular_monolith_request_latency_seconds_bucket[1m])) by (le)) * 1000", "legendFormat": "p95 Latency (ms)" },
+        { "expr": "histogram_quantile(0.99, sum(rate(modular_monolith_request_latency_seconds_bucket[1m])) by (le)) * 1000", "legendFormat": "p99 Latency (ms)" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms", "custom": { "lineWidth": 2 } } }
+    },
+    {
+      "id": 2,
+      "title": "Monolith Throughput (Requests / Second)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        { "expr": "sum(rate(modular_monolith_requests_total[1m]))", "legendFormat": "Throughput (RPS)" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "fillOpacity": 20 } } }
+    },
+    {
+      "id": 3,
+      "title": "CPU Usage (Process CPU Seconds)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [
+        { "expr": "rate(process_cpu_seconds_total{job='modular_monolith'}[1m]) * 100", "legendFormat": "CPU Usage (%)" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percent", "custom": { "lineWidth": 2 } } }
+    },
+    {
+      "id": 4,
+      "title": "Monolith Memory Working Set (RAM)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "targets": [
+        { "expr": "process_resident_memory_bytes{job='modular_monolith'} / 1048576", "legendFormat": "Resident RAM (MB)" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "decmbytes", "custom": { "fillOpacity": 25 } } }
+    }
+  ]
+}

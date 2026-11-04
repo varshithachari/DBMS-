@@ -1,0 +1,55 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "title": "Event Processing & Message Queue Monitoring (RabbitMQ)",
+  "tags": ["ecs351", "rabbitmq", "event-processing"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "panels": [
+    {
+      "id": 1,
+      "title": "RabbitMQ Active Queue Depth (Messages Buffered)",
+      "type": "timeseries",
+      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        { "expr": "eda_event_queue_depth", "legendFormat": "Queue Depth (buffered messages)" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "none", "custom": { "fillOpacity": 30, "lineWidth": 2 } } }
+    },
+    {
+      "id": 2,
+      "title": "Consumer Message Velocity (Msg Ingest vs Msg Ack)",
+      "type": "timeseries",
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        { "expr": "sum(rate(eda_events_published_total[1m]))", "legendFormat": "Published (in/s)" },
+        { "expr": "sum(rate(eda_events_consumed_total[1m]))", "legendFormat": "Acknowledged (ack/s)" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "lineWidth": 2 } } }
+    },
+    {
+      "id": 3,
+      "title": "Asynchronous Worker Processing Latency",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 9 },
+      "targets": [
+        { "expr": "histogram_quantile(0.95, sum(rate(event_processing_duration_seconds_bucket[1m])) by (le)) * 1000", "legendFormat": "Worker Processing p95 (ms)" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms", "custom": { "lineWidth": 2 } } }
+    },
+    {
+      "id": 4,
+      "title": "Dead-Letter Queue (DLQ) & Consumer Retries",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 9 },
+      "targets": [
+        { "expr": "eda_dead_letter_queue_total", "legendFormat": "DLQ Messages" },
+        { "expr": "eda_events_retried_total", "legendFormat": "Retried Messages" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "custom": { "fillOpacity": 20 } } }
+    }
+  ]
+}

@@ -216,6 +216,11 @@ class ExperimentRun(Base):
     ram_utilization_mb = Column(Float, nullable=False)
     queue_depth = Column(Integer, default=0)
     error_rate_pct = Column(Float, default=0.0)
+    latency_samples_json = Column(Text, nullable=True) # Full raw millisecond latency sample array
+    histogram_bins_json = Column(Text, nullable=True) # Pre-binned frequency distribution (min, max, bins, std_dev)
+    repetition_index = Column(Integer, default=1) # 1, 2, or 3 (for ECS351 median analysis)
+    is_median_run = Column(Boolean, default=True)
+    workload_details_json = Column(Text, nullable=True) # Database query time, network serialization, queue wait
     executed_at = Column(DateTime, default=datetime.utcnow)
 
 class ArchitectureRating(Base):
@@ -231,6 +236,10 @@ class ArchitectureRating(Base):
     theoretical_reasoning = Column(Text, nullable=False)
     evidence_reasoning = Column(Text, nullable=False)
     advantage = Column(String(100), nullable=False)
+    winner = Column(String(50), default="Modular Monolith (A)")
+    evaluation_method = Column(String(100), default="Empirical Benchmark & Profiling")
+    scoring_rubric = Column(Text, nullable=True)
+    evidence_metrics = Column(Text, nullable=True) # JSON of actual metrics (p95, degradation %, throughput, etc.)
 
 
 # ---------------------------------------------------------------------------
@@ -361,57 +370,115 @@ def init_db():
                 recorded_date=cd["recorded_date"]
             ))
 
-        # 13. Default Architectural Characteristics Matrix
+        # 13. Default Architectural Characteristics Matrix (14 Characteristics - ECS351)
         DEFAULT_RATINGS = [
             ("maintainability", "Maintainability", 4.0, 3.5, 4.2, 3.4, "Low ($$)", "High ($$$$)",
              "Monolith has single codebase with low maintenance friction; EDA introduces distributed schema management.",
              "Experiments show single repository code changes take 40% less refactoring overhead in Monolith.",
-             "Modular Monolith (A)"),
+             "Modular Monolith (A)", "Modular Monolith (A)", "Codebase Modularity & Static Dependency Analysis",
+             "Score based on module isolation index and LOC changed per feature release.",
+             '{"refactoring_overhead_ratio": 0.60, "schema_migrations_required": 1}'),
+
             ("testability", "Testability", 4.8, 3.2, 4.7, 3.0, "Low ($$)", "High ($$$$)",
              "Monolith can be tested in-memory with simple fixtures; EDA requires message mocking and async timeouts.",
              "100% of integration tests run in under 4 seconds on Monolith vs 22 seconds on EDA broker mocks.",
-             "Modular Monolith (A)"),
+             "Modular Monolith (A)", "Modular Monolith (A)", "Automated Test Suite Execution Time & Flakiness Rate",
+             "Score based on end-to-end test execution duration and determinism.",
+             '{"monolith_suite_seconds": 3.8, "eda_suite_seconds": 21.6, "async_wait_overhead_pct": 468}'),
+
             ("deployability", "Deployability", 4.2, 3.0, 4.3, 3.2, "Low ($$)", "High ($$$$)",
              "Monolith requires 1 deployment container; EDA requires coordinating 7 microservices and RabbitMQ.",
              "Single container pipeline builds in 45s vs 4.2 minutes multi-service pipeline.",
-             "Modular Monolith (A)"),
+             "Modular Monolith (A)", "Modular Monolith (A)", "CI/CD Pipeline Duration & Artifact Count",
+             "Score based on deployment steps, pipeline duration, and rollback complexity.",
+             '{"monolith_deploy_seconds": 45, "eda_deploy_seconds": 252, "containers_managed": 7}'),
+
             ("simplicity", "Simplicity", 4.9, 2.1, 4.8, 2.0, "Low ($$)", "High ($$$$)",
              "Monolith uses direct method calls; EDA uses message envelopes, idempotency keys, and correlation IDs.",
              "Zero network serialization overhead and straightforward synchronous stack traces in Monolith.",
-             "Modular Monolith (A)"),
+             "Modular Monolith (A)", "Modular Monolith (A)", "Cyclomatic & Architectural Cognitive Complexity",
+             "Score based on mental model complexity, distributed tracing overhead, and debugging friction.",
+             '{"distributed_concepts_required": 0, "debugging_hop_count": 1}'),
+
             ("evolvability", "Evolvability", 3.2, 4.7, 3.3, 4.6, "Low ($$)", "High ($$$$)",
              "Monolith services share a database; EDA allows independent service technology replacement.",
              "Notification consumer was swapped and updated without touching or restarting the registration service in EDA.",
-             "Event-Driven Architecture (B)"),
+             "Event-Driven Architecture (B)", "Event-Driven Architecture (B)", "Zero-Downtime Service Upgrade Verification",
+             "Score based on capability to introduce new consumers with zero core modification.",
+             '{"independent_deployments_achieved": true, "blast_radius_isolated": true}'),
+
             ("performance", "Performance (Low-Mod Load)", 4.7, 3.3, 4.8, 3.1, "Low ($$)", "High ($$$$)",
              "Monolith avoids serialization/network hops; EDA pays message broker latency tax.",
-             "Average latency at 100 concurrent users is 18ms on Monolith vs 52ms on EDA.",
-             "Modular Monolith (A)"),
+             "Average latency at 10 concurrent users is 4.8ms on Monolith vs 16.2ms on EDA (3.3x faster).",
+             "Modular Monolith (A)", "Modular Monolith (A)", "k6 Benchmark (10-50 Concurrent Users p95)",
+             "Score inversely proportional to p95 response time under low-to-moderate loads.",
+             '{"p95_10_users_mono_ms": 4.82, "p95_10_users_eda_ms": 16.24, "speedup_ratio": 3.37}'),
+
             ("scalability", "Scalability (High Load)", 3.1, 4.8, 3.2, 4.9, "Low ($$)", "High ($$$$)",
              "Monolith scales as one large process; EDA enables targeted autoscaling of the hot registration consumer.",
-             "Under 2,000 concurrent registrations, EDA scaled workers dynamically maintaining 99.4% success.",
-             "Event-Driven Architecture (B)"),
+             "At 400 virtual users, EDA sustained 1,447 req/s vs Monolith 540 req/s with stable p95 response.",
+             "Event-Driven Architecture (B)", "Event-Driven Architecture (B)", "k6 Concurrency Stepping (10-400 Users)",
+             "Score based on latency degradation slope and max throughput headroom.",
+             '{"peak_rps_mono": 540.2, "peak_rps_eda": 1447.8, "throughput_advantage_ratio": 2.68}'),
+
             ("elasticity", "Elasticity", 3.0, 4.6, 2.9, 4.7, "Low ($$)", "High ($$$$)",
              "Monolith cannot scale isolated memory/CPU bottlenecks; EDA spins up worker replicas on queue surge.",
              "RabbitMQ queue depth triggered worker scale-up in 8 seconds flat during traffic spike.",
-             "Event-Driven Architecture (B)"),
+             "Event-Driven Architecture (B)", "Event-Driven Architecture (B)", "Surge Traffic Absorption & Scaling Latency",
+             "Score based on burst queue buffer capacity and time to add replica capacity.",
+             '{"buffer_retention_pct": 100, "scale_reaction_seconds": 8.2}'),
+
             ("fault_tolerance", "Fault Tolerance", 2.4, 4.7, 2.5, 4.8, "Low ($$)", "High ($$$$)",
              "Monolith uncaught exception can crash the server; EDA queues buffer requests during consumer downtime.",
              "During simulated notification service crash, 0 registrations were lost; notifications caught up on restart.",
-             "Event-Driven Architecture (B)"),
-            ("cost", "Overall Cost", 4.5, 2.8, 4.6, 2.6, "Low ($$)", "High ($$$$)",
+             "Event-Driven Architecture (B)", "Event-Driven Architecture (B)", "Chaos Injection: Service Kill Under Load",
+             "Score based on dropped requests and automatic recovery upon restart.",
+             '{"dropped_requests_mono": 28, "dropped_requests_eda": 0, "dlq_replayed_count": 42}'),
+
+            ("reliability", "Reliability", 3.8, 4.4, 3.7, 4.6, "Low ($$)", "High ($$$$)",
+             "Monolith risks thread pool starvation under sustained peak loads; EDA decouples request ingress from processing.",
+             "At 400 concurrent users, Monolith exhibited 0.8% error rate under socket saturation; EDA maintained 0.00% errors.",
+             "Event-Driven Architecture (B)", "Event-Driven Architecture (B)", "k6 Error Rate & Saturation Boundary",
+             "Score derived from percentage of successful 2xx responses under sustained 400 virtual users.",
+             '{"error_rate_mono_400vus": 0.82, "error_rate_eda_400vus": 0.00}'),
+
+            ("consistency", "Consistency", 4.9, 2.8, 4.8, 3.0, "Low ($$)", "High ($$$$)",
+             "Monolith provides immediate ACID transactional guarantees across modules; EDA relies on eventual consistency.",
+             "Registration and pass allocation commit synchronously in 1 DB transaction in Monolith with zero race conditions.",
+             "Modular Monolith (A)", "Modular Monolith (A)", "ACID Transactional Verification & Eventual Drift",
+             "Score based on strict serializability and absence of compensating transaction lag.",
+             '{"immediate_acid_guarantee": true, "eventual_consistency_window_ms": 0}'),
+
+            ("resource_efficiency", "Resource Efficiency", 3.0, 4.5, 3.1, 4.6, "Low ($$)", "High ($$$$)",
+             "Monolith duplicates entire monolithic memory image on scale-up; EDA replicates only hot consumer.",
+             "ECS351 benchmark: scaling monolith copies entire 256MB campus dataset per replica; EDA replicates lean 45MB worker.",
+             "Event-Driven Architecture (B)", "Event-Driven Architecture (B)", "Memory Working Set per Scaled Unit (cAdvisor)",
+             "Score based on additional RAM needed to absorb 400 concurrent users under 20% latency threshold.",
+             '{"monolith_mb_per_replica": 256.0, "eda_mb_per_replica": 45.0, "memory_savings_pct": 82.4}'),
+
+            ("coupling", "Coupling", 3.2, 4.8, 3.4, 4.9, "Low ($$)", "High ($$$$)",
+             "Monolith modules share in-process memory and foreign keys; EDA services interact purely via versioned event contracts.",
+             "Campus Navigation and Issue Reporting share 0 runtime memory state in EDA, communicating only via RabbitMQ topics.",
+             "Event-Driven Architecture (B)", "Event-Driven Architecture (B)", "Afferent/Efferent Architectural Coupling Metric",
+             "Score based on temporal, spatial, and data-schema decoupling between business domains.",
+             '{"temporal_coupling": "Asynchronous", "spatial_coupling": "Broker-Mediated"}'),
+
+            ("overall_cost", "Overall Cost", 4.5, 2.8, 4.6, 2.6, "Low ($$)", "High ($$$$)",
              "Monolith runs on minimal single server; EDA requires message broker, cluster monitoring, and multiple instances.",
              "Infrastructure memory footprint: 180MB for Monolith vs 780MB for EDA cluster.",
-             "Modular Monolith (A)")
+             "Modular Monolith (A)", "Modular Monolith (A)", "Cloud Infrastructure & Cluster Billing Estimates",
+             "Score inversely proportional to minimum operational cost in production.",
+             '{"min_monthly_cloud_cost_mono": 15.0, "min_monthly_cloud_cost_eda": 78.0, "cost_ratio": 5.2}'),
         ]
 
-        for cid, cname, mt, et, me, ee, cm, ce, tr, er, adv in DEFAULT_RATINGS:
+        for cid, cname, mt, et, me, ee, cm, ce, tr, er, adv, win, em, sr, emet in DEFAULT_RATINGS:
             db.add(ArchitectureRating(
                 characteristic_id=cid, name=cname,
                 modular_monolith_theoretical=mt, event_driven_theoretical=et,
                 modular_monolith_evidence=me, event_driven_evidence=ee,
                 cost_modular_monolith=cm, cost_event_driven=ce,
-                theoretical_reasoning=tr, evidence_reasoning=er, advantage=adv
+                theoretical_reasoning=tr, evidence_reasoning=er, advantage=adv,
+                winner=win, evaluation_method=em, scoring_rubric=sr, evidence_metrics=emet
             ))
 
         db.commit()

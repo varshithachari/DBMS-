@@ -1,0 +1,58 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "title": "Architecture B: Event-Driven Performance (Port 8002)",
+  "tags": ["ecs351", "eda", "chanakya"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "panels": [
+    {
+      "id": 1,
+      "title": "Event-Driven Ingest Latency (p50, p95, p99)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        { "expr": "histogram_quantile(0.50, sum(rate(eda_request_latency_seconds_bucket[1m])) by (le)) * 1000", "legendFormat": "p50 Latency (ms)" },
+        { "expr": "histogram_quantile(0.95, sum(rate(eda_request_latency_seconds_bucket[1m])) by (le)) * 1000", "legendFormat": "p95 Latency (ms)" },
+        { "expr": "histogram_quantile(0.99, sum(rate(eda_request_latency_seconds_bucket[1m])) by (le)) * 1000", "legendFormat": "p99 Latency (ms)" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms", "custom": { "lineWidth": 2 } } }
+    },
+    {
+      "id": 2,
+      "title": "Event Bus Message Throughput (Published vs Consumed)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        { "expr": "sum(rate(eda_events_published_total[1m]))", "legendFormat": "Published msg/s" },
+        { "expr": "sum(rate(eda_events_consumed_total[1m]))", "legendFormat": "Consumed msg/s" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "lineWidth": 2 } } }
+    },
+    {
+      "id": 3,
+      "title": "Downstream Hop & Queue Processing Latency",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [
+        { "expr": "histogram_quantile(0.95, sum(rate(downstream_call_duration_seconds_bucket[1m])) by (le)) * 1000", "legendFormat": "Hop Latency p95 (ms)" },
+        { "expr": "histogram_quantile(0.95, sum(rate(event_processing_duration_seconds_bucket[1m])) by (le)) * 1000", "legendFormat": "Worker Processing p95 (ms)" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms", "custom": { "lineWidth": 2 } } }
+    },
+    {
+      "id": 4,
+      "title": "Dead-Letter Queue (DLQ) & Error Rate",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "targets": [
+        { "expr": "eda_dead_letter_queue_total", "legendFormat": "DLQ Total Messages" },
+        { "expr": "sum(rate(http_errors_total{job='event_driven_architecture'}[1m]))", "legendFormat": "Error Rate (req/s)" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "custom": { "fillOpacity": 15 } } }
+    }
+  ]
+}

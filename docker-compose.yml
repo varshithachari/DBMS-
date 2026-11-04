@@ -128,13 +128,51 @@ services:
     restart: unless-stopped
     environment:
       GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_SECURITY_ALLOW_EMBEDDING: "true"
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Viewer"
     ports:
       - "3001:3000"
     volumes:
       - grafana_data:/var/lib/grafana
-      - ./monitoring/grafana:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
     depends_on:
       - prometheus
+
+  # -------------------------------------------------------------
+  # 8. CONTAINER MONITORING: cAdvisor for Container CPU & RAM (Port 8088)
+  # -------------------------------------------------------------
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.47.0
+    container_name: chanakya_cadvisor
+    restart: unless-stopped
+    ports:
+      - "8088:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    privileged: true
+
+  # -------------------------------------------------------------
+  # 9. LOAD TESTING: k6 Automated Workload Generator (ECS351)
+  # -------------------------------------------------------------
+  k6:
+    image: grafana/k6:latest
+    container_name: chanakya_k6
+    profiles: ["loadtest"]
+    volumes:
+      - ./experiments/workloads:/scripts
+      - ./experiments/results:/results
+    entrypoint: ["k6", "run", "/scripts/k6_campus_benchmark.js"]
+    environment:
+      - MONOLITH_URL=http://backend-monolith:8001
+      - EVENT_DRIVEN_URL=http://backend-event-driven:8002
+      - TARGET_ARCH=${TARGET_ARCH:-monolith}
+      - USERS_STEP=${USERS_STEP:-10}
 
 volumes:
   pgdata:

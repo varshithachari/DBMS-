@@ -1,0 +1,53 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "title": "Infrastructure & Container Telemetry (cAdvisor - Port 8088)",
+  "tags": ["ecs351", "cadvisor", "infrastructure"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "panels": [
+    {
+      "id": 1,
+      "title": "Container CPU Usage (Cores)",
+      "type": "timeseries",
+      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        { "expr": "sum(rate(container_cpu_usage_seconds_total{name=~'chanakya.*'}[1m])) by (name)", "legendFormat": "{{name}} CPU" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "none", "custom": { "lineWidth": 2 } } }
+    },
+    {
+      "id": 2,
+      "title": "Container Memory Working Set Bytes",
+      "type": "timeseries",
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        { "expr": "sum(container_memory_working_set_bytes{name=~'chanakya.*'}) by (name) / 1048576", "legendFormat": "{{name}} RAM (MB)" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "decmbytes", "custom": { "lineWidth": 2 } } }
+    },
+    {
+      "id": 3,
+      "title": "Container Network Receive Throughput",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 9 },
+      "targets": [
+        { "expr": "sum(rate(container_network_receive_bytes_total{name=~'chanakya.*'}[1m])) by (name)", "legendFormat": "{{name}} Ingress (B/s)" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "Bps", "custom": { "lineWidth": 1 } } }
+    },
+    {
+      "id": 4,
+      "title": "Container Network Transmit Throughput",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 9 },
+      "targets": [
+        { "expr": "sum(rate(container_network_transmit_bytes_total{name=~'chanakya.*'}[1m])) by (name)", "legendFormat": "{{name}} Egress (B/s)" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "Bps", "custom": { "lineWidth": 1 } } }
+    }
+  ]
+}

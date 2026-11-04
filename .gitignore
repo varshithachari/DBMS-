@@ -3,6 +3,9 @@ node_modules/
 .DS_Store
 cloudflared.exe
 *.log
-
-
 ACTIVE_URL.txt
+__pycache__/
+*.pyc
+hist.db
+step_914_data.txt
+step_914_full.sql

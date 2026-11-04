@@ -1,0 +1,57 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "title": "Combined Architecture Comparison: Monolith vs Event-Driven (ECS351)",
+  "tags": ["ecs351", "comparison", "chanakya"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "panels": [
+    {
+      "id": 1,
+      "title": "P95 Latency Scaling Comparison (Monolith vs EDA)",
+      "type": "timeseries",
+      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        { "expr": "histogram_quantile(0.95, sum(rate(modular_monolith_request_latency_seconds_bucket[1m])) by (le)) * 1000", "legendFormat": "Monolith p95 (ms) [Amber]" },
+        { "expr": "histogram_quantile(0.95, sum(rate(eda_request_latency_seconds_bucket[1m])) by (le)) * 1000", "legendFormat": "Event-Driven p95 (ms) [Cyan]" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms", "custom": { "lineWidth": 3 } } }
+    },
+    {
+      "id": 2,
+      "title": "Throughput Scaling (Requests/Sec Crossover @ ~100 Users)",
+      "type": "timeseries",
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        { "expr": "sum(rate(modular_monolith_requests_total[1m]))", "legendFormat": "Monolith Throughput (RPS)" },
+        { "expr": "sum(rate(eda_events_published_total[1m]))", "legendFormat": "EDA Throughput (RPS)" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "lineWidth": 3, "fillOpacity": 15 } } }
+    },
+    {
+      "id": 3,
+      "title": "Memory Working Set (MB) - Monolith 256MB vs EDA Decoupled 45MB",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 9 },
+      "targets": [
+        { "expr": "process_resident_memory_bytes{job='modular_monolith'} / 1048576", "legendFormat": "Monolith RAM (MB)" },
+        { "expr": "sum(process_resident_memory_bytes{job='event_driven_architecture'}) / 1048576", "legendFormat": "EDA Cluster RAM (MB)" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "decmbytes", "custom": { "lineWidth": 2 } } }
+    },
+    {
+      "id": 4,
+      "title": "CPU Usage Across Concurrency Tiers (%)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 9 },
+      "targets": [
+        { "expr": "rate(process_cpu_seconds_total{job='modular_monolith'}[1m]) * 100", "legendFormat": "Monolith CPU (%)" },
+        { "expr": "sum(rate(process_cpu_seconds_total{job='event_driven_architecture'}[1m])) * 100", "legendFormat": "EDA CPU (%)" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percent", "custom": { "lineWidth": 2 } } }
+    }
+  ]
+}

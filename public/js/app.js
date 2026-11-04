@@ -536,14 +536,13 @@ function switchTab(tabId) {
     }, 150);
   }
 
-  // Refresh Architecture Lab if opening architecture tab
-  if (tabId === 'architecture') {
+  // Refresh Live Architecture Comparison Lab if opening architecture or experiments tab
+  if (tabId === 'architecture' || tabId === 'experiments') {
     setTimeout(() => {
-      if (typeof loadCharacteristicsMatrix === 'function') loadCharacteristicsMatrix();
-      if (typeof loadHypotheses === 'function') loadHypotheses();
-      if (typeof loadHistoricalExperiments === 'function') loadHistoricalExperiments();
-      if (typeof renderRadarChart === 'function' && typeof characteristicsData !== 'undefined' && characteristicsData.length > 0) {
-        renderRadarChart(characteristicsData);
+      if (typeof initArchitectureLab === 'function') {
+        initArchitectureLab();
+      } else if (typeof renderAllLabVisualizations === 'function') {
+        renderAllLabVisualizations();
       }
     }, 150);
   }
