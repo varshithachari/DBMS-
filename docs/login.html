@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In & Register • Chanakya Campus Connect & UtsavHub</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #070d17;
+      color: #f8fafc;
+      overflow-x: hidden;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(13, 22, 38, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glow-amber {
+      box-shadow: 0 0 40px -10px rgba(245, 158, 11, 0.25);
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.05));
+      border-color: rgba(245, 158, 11, 0.5);
+      color: #fbbf24;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between relative selection:bg-amber-500 selection:text-slate-950">
+
+  <!-- Dynamic Animated Background Canvas -->
+  <canvas id="bg-canvas" class="fixed inset-0 pointer-events-none z-0 opacity-40"></canvas>
+
+  <!-- Ambient Decorative Light Blobs -->
+  <div class="fixed top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="fixed bottom-1/4 right-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+  <!-- Header -->
+  <header class="relative z-10 flex items-center justify-between px-6 py-4 max-w-7xl mx-auto w-full">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center font-black text-slate-950 text-xl shadow-lg shadow-amber-500/20">
+        CU
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="text-sm font-black tracking-tight text-white">CHANAKYA CAMPUS CONNECT</h1>
+          <span class="text-[9px] px-2 py-0.5 rounded-full font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">v2.4 SECURE</span>
+        </div>
+        <p class="text-[10px] text-slate-400 font-medium">Centre of Excellence for Knowledge & Character • Bangalore</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <div id="db-status-badge" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900 border border-slate-700 text-[11px] font-mono text-emerald-400">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="db-status-text">Checking Database...</span>
+      </div>
+      <a href="/dashboard" class="text-xs text-slate-400 hover:text-amber-400 transition flex items-center gap-1.5 font-semibold">
+        <span>Enter as Guest</span>
+        <span>&rarr;</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Login & Register Card Container -->
+  <main class="relative z-10 flex-1 flex items-center justify-center p-4 my-6">
+    <div class="w-full max-w-xl glass-card rounded-3xl p-6 sm:p-8 border border-slate-700/60 shadow-2xl space-y-6 glow-amber">
+      
+      <!-- Card Header -->
+      <div class="text-center space-y-2">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-400 text-xs font-mono">
+          <span>🔒</span>
+          <span>Unified Supabase & PostgreSQL Auth</span>
+        </div>
+        <h2 id="modal-heading" class="text-2xl font-black text-white tracking-tight">Sign In to Campus Connect</h2>
+        <p class="text-xs text-slate-400 max-w-sm mx-auto">
+          Access your personal event tickets, live leaderboards, academic roster, and UtsavHub conclaves.
+        </p>
+      </div>
+
+      <!-- Auth Mode Tabs (Sign In vs Register) -->
+      <div class="grid grid-cols-2 p-1 rounded-2xl bg-slate-900/90 border border-slate-800 text-xs font-bold text-center">
+        <button id="tab-signin" onclick="switchAuthTab('signin')" class="tab-btn active py-2.5 rounded-xl transition">
+          Sign In
+        </button>
+        <button id="tab-register" onclick="switchAuthTab('register')" class="tab-btn py-2.5 rounded-xl text-slate-400 hover:text-white transition">
+          Create Account
+        </button>
+      </div>
+
+      <!-- SIGN IN FORM -->
+      <form id="login-form" onsubmit="handleFormLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1.5">University Email</label>
+          <div class="relative">
+            <input 
+              id="login-email" 
+              type="email" 
+              required
+              placeholder="e.g. student@chanakya.edu" 
+              value="student@chanakya.edu"
+              class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition pl-10"
+            >
+            <span class="absolute left-3.5 top-3.5 text-slate-500 text-sm">✉️</span>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="block text-xs font-bold text-slate-300">Password</label>
+            <span class="text-[11px] text-amber-400/80 hover:text-amber-300 cursor-pointer" onclick="fillQuickCreds('student')">Default: student123</span>
+          </div>
+          <div class="relative">
+            <input 
+              id="login-password" 
+              type="password" 
+              required
+              placeholder="••••••••" 
+              value="student123"
+              class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition pl-10 pr-10"
+            >
+            <span class="absolute left-3.5 top-3.5 text-slate-500 text-sm">🔑</span>
+            <button type="button" onclick="togglePasswordVisibility('login-password')" class="absolute right-3.5 top-3.5 text-slate-500 hover:text-white text-xs">👁️</button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-slate-400">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="remember-me" checked class="rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-0">
+            <span>Keep me signed in</span>
+          </label>
+          <span class="text-slate-500 font-mono text-[11px]">Bcrypt + JWT Secured</span>
+        </div>
+
+        <button 
+          type="submit" 
+          id="btn-login-submit"
+          class="w-full py-3.5 px-4 rounded-xl font-black text-sm bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 shadow-xl shadow-amber-500/20 hover:shadow-amber-500/30 transition duration-200 transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
+        >
+          <span>Sign In to Campus Connect</span>
+          <span>&rarr;</span>
+        </button>
+      </form>
+
+      <!-- REGISTRATION FORM (HIDDEN INITIALLY) -->
+      <form id="register-form" onsubmit="handleFormRegister(event)" class="space-y-3.5 hidden">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Full Name</label>
+          <input 
+            id="reg-name" 
+            type="text" 
+            required 
+            placeholder="e.g. Varshitha Chari"
+            class="w-full px-4 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition"
+          >
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">College Email</label>
+            <input 
+              id="reg-email" 
+              type="email" 
+              required 
+              placeholder="name@chanakya.edu"
+              class="w-full px-4 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition"
+            >
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Roll / ID Number</label>
+            <input 
+              id="reg-roll" 
+              type="text" 
+              placeholder="e.g. 25UG00738"
+              class="w-full px-4 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition font-mono"
+            >
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Account Role</label>
+            <select id="reg-role" class="w-full px-4 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700 text-sm text-white focus:outline-none focus:border-amber-400 transition">
+              <option value="student">Student</option>
+              <option value="faculty">Faculty Member</option>
+              <option value="staff">Staff / Operations</option>
+              <option value="visitor">Visitor / Delegate</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Password (min 6 chars)</label>
+            <div class="relative">
+              <input 
+                id="reg-password" 
+                type="password" 
+                required 
+                minlength="6"
+                placeholder="••••••••"
+                class="w-full px-4 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition pr-10"
+              >
+              <button type="button" onclick="togglePasswordVisibility('reg-password')" class="absolute right-3.5 top-3 text-slate-500 hover:text-white text-xs">👁️</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- School & Department Selection (Dynamically Loaded) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">School</label>
+            <select id="reg-school" onchange="onSchoolChange()" class="w-full px-3 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700 text-xs text-white focus:outline-none focus:border-amber-400 transition truncate">
+              <option value="1">School of Engineering</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Department</label>
+            <select id="reg-department" class="w-full px-3 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700 text-xs text-white focus:outline-none focus:border-amber-400 transition truncate">
+              <option value="1">Computer Science</option>
+            </select>
+          </div>
+        </div>
+
+        <button 
+          type="submit" 
+          id="btn-register-submit"
+          class="w-full py-3.5 px-4 rounded-xl font-black text-sm bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/30 transition duration-200 transform hover:-translate-y-0.5 flex items-center justify-center gap-2 mt-4"
+        >
+          <span>Complete Registration & Enter</span>
+          <span>&rarr;</span>
+        </button>
+      </form>
+
+      <!-- Quick 1-Click Role Accounts (Always Available for Evaluation) -->
+      <div id="quick-roles-container">
+        <div class="relative my-4">
+          <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-800"></div></div>
+          <div class="relative flex justify-center text-[10px] uppercase font-mono tracking-widest text-slate-500">
+            <span class="px-3 bg-[#0d1626]">Or 1-Click Authenticate As</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2 text-left">
+          <button onclick="fillAndLogin('student')" class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-amber-400/60 hover:bg-slate-800/60 transition flex flex-col gap-1 group">
+            <div class="flex items-center justify-between w-full">
+              <span class="text-base group-hover:scale-110 transition">🎓</span>
+              <span class="text-[9px] text-amber-400 font-mono font-bold">STUDENT</span>
+            </div>
+            <span class="text-xs font-bold text-white leading-tight">Rahul Sharma</span>
+            <span class="text-[9px] text-slate-400 truncate">CS & AI (Yr 3)</span>
+          </button>
+
+          <button onclick="fillAndLogin('new_student')" class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-emerald-400/60 hover:bg-slate-800/60 transition flex flex-col gap-1 group">
+            <div class="flex items-center justify-between w-full">
+              <span class="text-base group-hover:scale-110 transition">🧭</span>
+              <span class="text-[9px] text-emerald-400 font-mono font-bold">FRESHER</span>
+            </div>
+            <span class="text-xs font-bold text-white leading-tight">Ananya Iyer</span>
+            <span class="text-[9px] text-slate-400 truncate">Batch '26</span>
+          </button>
+
+          <button onclick="fillAndLogin('faculty')" class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-purple-400/60 hover:bg-slate-800/60 transition flex flex-col gap-1 group">
+            <div class="flex items-center justify-between w-full">
+              <span class="text-base group-hover:scale-110 transition">👨‍🏫</span>
+              <span class="text-[9px] text-purple-400 font-mono font-bold">FACULTY</span>
+            </div>
+            <span class="text-xs font-bold text-white leading-tight">Dr. Radhakrishnan</span>
+            <span class="text-[9px] text-slate-400 truncate">School of AI</span>
+          </button>
+
+          <button onclick="fillAndLogin('staff')" class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-cyan-400/60 hover:bg-slate-800/60 transition flex flex-col gap-1 group">
+            <div class="flex items-center justify-between w-full">
+              <span class="text-base group-hover:scale-110 transition">🛠️</span>
+              <span class="text-[9px] text-cyan-400 font-mono font-bold">STAFF</span>
+            </div>
+            <span class="text-xs font-bold text-white leading-tight">Vikram Patil</span>
+            <span class="text-[9px] text-slate-400 truncate">Facilities & Ops</span>
+          </button>
+
+          <button onclick="fillAndLogin('admin')" class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-rose-400/60 hover:bg-slate-800/60 transition flex flex-col gap-1 group">
+            <div class="flex items-center justify-between w-full">
+              <span class="text-base group-hover:scale-110 transition">👑</span>
+              <span class="text-[9px] text-rose-400 font-mono font-bold">ADMIN</span>
+            </div>
+            <span class="text-xs font-bold text-white leading-tight">Dean's Office</span>
+            <span class="text-[9px] text-slate-400 truncate">Executive Sanction</span>
+          </button>
+
+          <button onclick="fillAndLogin('visitor')" class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-blue-400/60 hover:bg-slate-800/60 transition flex flex-col gap-1 group">
+            <div class="flex items-center justify-between w-full">
+              <span class="text-base group-hover:scale-110 transition">🚶</span>
+              <span class="text-[9px] text-blue-400 font-mono font-bold">VISITOR</span>
+            </div>
+            <span class="text-xs font-bold text-white leading-tight">Priya Nair</span>
+            <span class="text-[9px] text-slate-400 truncate">Conclave Guest</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="relative z-10 text-center py-4 border-t border-slate-800/60 text-xs text-slate-500 font-mono">
+    Chanakya University • Secure Campus Portal v2.4 • Bangalore 562129
+  </footer>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Real Authentication Script -->
+  <script>
+    let allSchools = [];
+    let allDepts = [];
+
+    // Switch Tabs
+    function switchAuthTab(tab) {
+      const isSignIn = tab === 'signin';
+      document.getElementById('tab-signin').className = isSignIn ? 'tab-btn active py-2.5 rounded-xl transition' : 'tab-btn py-2.5 rounded-xl text-slate-400 hover:text-white transition';
+      document.getElementById('tab-register').className = !isSignIn ? 'tab-btn active py-2.5 rounded-xl transition' : 'tab-btn py-2.5 rounded-xl text-slate-400 hover:text-white transition';
+
+      document.getElementById('login-form').classList.toggle('hidden', !isSignIn);
+      document.getElementById('register-form').classList.toggle('hidden', isSignIn);
+      document.getElementById('quick-roles-container').classList.toggle('hidden', !isSignIn);
+      document.getElementById('modal-heading').innerText = isSignIn ? 'Sign In to Campus Connect' : 'Register New Student Account';
+
+      if (!isSignIn && allSchools.length === 0) {
+        loadSchoolsAndDepts();
+      }
+    }
+
+    async function loadSchoolsAndDepts() {
+      try {
+        const [scRes, dpRes] = await Promise.all([
+          fetch('/api/schools').then(r => r.json()),
+          fetch('/api/departments').then(r => r.json())
+        ]);
+        allSchools = scRes.schools || [];
+        allDepts = dpRes.departments || [];
+
+        const scSelect = document.getElementById('reg-school');
+        scSelect.innerHTML = allSchools.map(s => `<option value="${s.school_id}">${s.name}</option>`).join('');
+        onSchoolChange();
+      } catch (e) {
+        console.error("Could not load schools:", e);
+      }
+    }
+
+    function onSchoolChange() {
+      const selectedSchoolId = Number(document.getElementById('reg-school').value);
+      const filteredDepts = allDepts.filter(d => d.school_id === selectedSchoolId);
+      const dpSelect = document.getElementById('reg-department');
+      dpSelect.innerHTML = filteredDepts.map(d => `<option value="${d.department_id}">${d.name}</option>`).join('');
+    }
+
+    function togglePasswordVisibility(fieldId) {
+      const p = document.getElementById(fieldId);
+      p.type = p.type === 'password' ? 'text' : 'password';
+    }
+
+    function showToast(msg, type = 'info') {
+      const tc = document.getElementById('toast-container');
+      const t = document.createElement('div');
+      t.className = "px-4 py-2.5 rounded-xl text-xs font-bold shadow-2xl transition-all duration-300 flex items-center gap-2 " + 
+        (type === 'success' ? 'bg-emerald-500 text-slate-950' : type === 'alert' ? 'bg-rose-500 text-white' : 'bg-amber-500 text-slate-950');
+      t.innerHTML = "<span>" + (type === 'success' ? '✓' : type === 'alert' ? '⚠' : 'ℹ') + "</span><span>" + msg + "</span>";
+      tc.appendChild(t);
+      setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3000);
+    }
+
+    function saveSessionAndRedirect(data) {
+      if (data.token) localStorage.setItem('chanakya_token', data.token);
+      if (data.user) {
+        localStorage.setItem('chanakya_user', JSON.stringify(data.user));
+        localStorage.setItem('chanakya_role', data.user.role);
+        sessionStorage.setItem('user', JSON.stringify(data.user));
+      }
+      showToast(`Welcome back, ${data.user.name} (${data.user.role.toUpperCase()})`, "success");
+      setTimeout(() => {
+        window.location.href = '/dashboard?role=' + data.user.role;
+      }, 600);
+    }
+
+    // Real API Login
+    async function handleFormLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const btn = document.getElementById('btn-login-submit');
+
+      btn.disabled = true;
+      btn.innerHTML = `<span class="animate-spin">⏳</span> Authenticating with Database...`;
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (data.success && data.user) {
+          saveSessionAndRedirect(data);
+        } else {
+          showToast(data.error || "Authentication failed. Check your password.", "alert");
+        }
+      } catch (err) {
+        showToast("Network error: " + err.message, "alert");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<span>Sign In to Campus Connect</span><span>&rarr;</span>`;
+      }
+    }
+
+    // Real API Registration
+    async function handleFormRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('reg-name').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const roll_number = document.getElementById('reg-roll').value.trim();
+      const role = document.getElementById('reg-role').value;
+      const password = document.getElementById('reg-password').value;
+      const school_id = document.getElementById('reg-school').value;
+      const department_id = document.getElementById('reg-department').value;
+      const btn = document.getElementById('btn-register-submit');
+
+      btn.disabled = true;
+      btn.innerHTML = `<span class="animate-spin">⏳</span> Registering Account in Database...`;
+
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name, email, password, roll_number, role, school_id, department_id
+          })
+        });
+        const data = await res.json();
+
+        if (data.success && data.user) {
+          showToast("Account created successfully in database!", "success");
+          saveSessionAndRedirect(data);
+        } else {
+          showToast(data.error || "Registration failed.", "alert");
+        }
+      } catch (err) {
+        showToast("Registration error: " + err.message, "alert");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<span>Complete Registration & Enter</span><span>&rarr;</span>`;
+      }
+    }
+
+    // Quick 1-Click Role Login via API
+    async function fillAndLogin(roleKey) {
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ role: roleKey })
+        });
+        const data = await res.json();
+        if (data.success) {
+          saveSessionAndRedirect(data);
+        } else {
+          showToast(data.error || "Could not log in with role", "alert");
+        }
+      } catch (err) {
+        showToast("Connection failed", "alert");
+      }
+    }
+
+    function fillQuickCreds(roleKey) {
+      const demoMap = {
+        student: { email: 'student@chanakya.edu', pass: 'student123' },
+        faculty: { email: 'faculty@chanakya.edu', pass: 'faculty123' },
+        staff: { email: 'staff@chanakya.edu', pass: 'staff123' },
+        admin: { email: 'admin@chanakya.edu', pass: 'admin123' }
+      };
+      const d = demoMap[roleKey];
+      if (d) {
+        document.getElementById('login-email').value = d.email;
+        document.getElementById('login-password').value = d.pass;
+      }
+    }
+
+    // Check Database Status
+    fetch('/api/database/status')
+      .then(r => r.json())
+      .then(d => {
+        const badge = document.getElementById('db-status-badge');
+        const text = document.getElementById('db-status-text');
+        badge.classList.remove('hidden');
+        if (d.mode === 'supabase') {
+          badge.className = badge.className.replace('text-emerald-400', 'text-cyan-400');
+          text.innerText = "🌐 Supabase Cloud Connected";
+        } else {
+          badge.className = badge.className.replace('text-emerald-400', 'text-amber-400');
+          text.innerText = "⚡ Relational DB Engine Active";
+        }
+      })
+      .catch(() => {});
+
+    // Logout handling
+    if (window.location.search.includes('logged_out=1')) {
+      localStorage.removeItem('chanakya_user');
+      localStorage.removeItem('chanakya_role');
+      localStorage.removeItem('chanakya_token');
+      sessionStorage.removeItem('user');
+      setTimeout(() => showToast("You have been securely logged out.", "info"), 200);
+    }
+
+    // Canvas Particles
+    (function initParticles() {
+      const c = document.getElementById('bg-canvas');
+      if (!c) return;
+      const ctx = c.getContext('2d');
+      let w = c.width = window.innerWidth;
+      let h = c.height = window.innerHeight;
+      window.addEventListener('resize', () => { w = c.width = window.innerWidth; h = c.height = window.innerHeight; });
+
+      const pts = Array.from({ length: 30 }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        r: Math.random() * 2 + 1
+      }));
+
+      function draw() {
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = 'rgba(245, 158, 11, 0.4)';
+        ctx.strokeStyle = 'rgba(245, 158, 11, 0.08)';
+        ctx.lineWidth = 1;
+
+        for (let i = 0; i < pts.length; i++) {
+          const p = pts[i];
+          p.x += p.vx; p.y += p.vy;
+          if (p.x < 0 || p.x > w) p.vx *= -1;
+          if (p.y < 0 || p.y > h) p.vy *= -1;
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fill();
+
+          for (let j = i + 1; j < pts.length; j++) {
+            const p2 = pts[j];
+            const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+            if (dist < 120) {
+              ctx.beginPath();
+              ctx.moveTo(p.x, p.y);
+              ctx.lineTo(p2.x, p2.y);
+              ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+  </script>
+</body>
+</html>

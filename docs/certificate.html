@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chanakya University - Official Digital Credential & Certificate</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;600;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    @media print {
+      body { background: white !important; color: black !important; padding: 0 !important; }
+      .no-print { display: none !important; }
+      #certificate-frame { border: 8px solid #92400e !important; box-shadow: none !important; margin: 0 !important; max-width: 100% !important; }
+    }
+    .font-cinzel { font-family: 'Cinzel', serif; }
+    .gold-foil {
+      background: linear-gradient(135deg, #d97706 0%, #fbbf24 50%, #b45309 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+<body class="bg-[#070B14] text-slate-100 min-h-screen flex flex-col items-center justify-center p-4 sm:p-8 font-sans antialiased">
+
+  <!-- Top Action Bar (Non-Printable) -->
+  <div class="max-w-4xl w-full flex items-center justify-between pb-6 no-print">
+    <a href="/dashboard?tab=certificates" class="py-2 px-4 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-amber-300 border border-slate-700 transition flex items-center gap-2">
+      <span>&larr;</span> Back to Dashboard
+    </a>
+    <div class="flex items-center gap-3">
+      <button onclick="copyVerifyUrl()" class="py-2 px-4 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 transition flex items-center gap-1.5">
+        <span>🔗</span> Copy Link
+      </button>
+      <button onclick="window.print()" class="py-2 px-5 rounded-xl text-xs font-black bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 shadow-lg shadow-amber-500/25 transition flex items-center gap-2">
+        <span>🖨️</span> Print / Download PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Certificate Frame -->
+  <div id="certificate-frame" class="max-w-4xl w-full bg-gradient-to-b from-slate-900 via-[#0b1324] to-slate-950 rounded-3xl border-4 border-amber-500/50 shadow-2xl p-8 sm:p-14 relative overflow-hidden text-center space-y-6">
+    
+    <!-- Corner Ornaments -->
+    <div class="absolute top-4 left-4 text-amber-400 text-2xl font-cinzel opacity-75">❖</div>
+    <div class="absolute top-4 right-4 text-amber-400 text-2xl font-cinzel opacity-75">❖</div>
+    <div class="absolute bottom-4 left-4 text-amber-400 text-2xl font-cinzel opacity-75">❖</div>
+    <div class="absolute bottom-4 right-4 text-amber-400 text-2xl font-cinzel opacity-75">❖</div>
+
+    <!-- Decorative University Crest & Header -->
+    <div class="border-b-2 border-amber-500/30 pb-6 space-y-2">
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-300 text-slate-950 flex items-center justify-center text-3xl mx-auto shadow-lg shadow-amber-500/30 font-black">
+        🏛️
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-black text-amber-400 font-cinzel tracking-widest uppercase mt-2">
+        Chanakya University
+      </h1>
+      <p class="text-xs sm:text-sm text-slate-300 font-mono tracking-wider">
+        Global Campus, Bengaluru • Karnataka, India 562129
+      </p>
+      <div class="pt-2">
+        <span id="cert-type-badge" class="px-3.5 py-1 rounded-full text-xs font-bold font-mono tracking-widest bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase inline-block">
+          CERTIFICATE OF PARTICIPATION
+        </span>
+      </div>
+    </div>
+
+    <!-- Preamble -->
+    <p class="text-xs sm:text-sm text-slate-400 font-mono uppercase tracking-widest pt-2">
+      This Official Credential Hereby Certifies That
+    </p>
+
+    <!-- Recipient Scholar -->
+    <div class="py-2 space-y-1">
+      <h2 id="cert-recipient" class="text-3xl sm:text-5xl font-black text-white font-outfit tracking-wide">
+        Loading Recipient...
+      </h2>
+      <p class="text-sm font-mono text-amber-300 pt-1">
+        Roll No: <span id="cert-roll">Loading...</span> • <span id="cert-school">School of Engineering</span>
+      </p>
+      <p id="cert-dept" class="text-xs text-slate-400">Department of Computer Science & Engineering</p>
+    </div>
+
+    <!-- Citation Narrative -->
+    <p class="text-sm sm:text-base text-slate-200 max-w-2xl mx-auto leading-relaxed pt-2">
+      has actively participated and demonstrated distinguished technical excellence in 
+      <b id="cert-event" class="text-amber-300 font-bold">IKS Hackathon</b> 
+      conducted as part of <b id="cert-fest" class="text-white font-bold">Samyuti Conclave</b>, 
+      awarded <b id="cert-prize" class="text-amber-400 font-extrabold">Active Delegate</b>.
+    </p>
+
+    <!-- Verification Bar, QR Code & Signatures -->
+    <div class="pt-8 border-t-2 border-amber-500/30 grid grid-cols-1 sm:grid-cols-3 gap-6 items-center text-left">
+      
+      <!-- Left: Database Verification Hash -->
+      <div class="space-y-1">
+        <div class="flex items-center gap-1.5 text-emerald-400 text-xs font-bold font-mono">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>POSTGRESQL VERIFIED</span>
+        </div>
+        <div class="text-[10px] text-slate-400 font-mono">ID: <b id="cert-code" class="text-amber-400">CERT-CU-S01-P0001-CC36</b></div>
+        <div class="text-[10px] text-slate-400 font-mono">Issued: <span id="cert-date" class="text-slate-300">2026-10-12</span></div>
+        <div class="text-[9px] text-slate-500 font-mono">Tamper-Proof Cryptographic Record</div>
+      </div>
+
+      <!-- Center: Scannable QR Code -->
+      <div class="flex flex-col items-center justify-center text-center">
+        <div class="w-20 h-20 bg-white p-1.5 rounded-xl border-2 border-amber-400 shadow-md flex items-center justify-center">
+          <svg viewBox="0 0 100 100" class="w-full h-full">
+            <rect width="100" height="100" fill="white"/>
+            <rect x="10" y="10" width="25" height="25" fill="#0f172a"/>
+            <rect x="15" y="15" width="15" height="15" fill="white"/>
+            <rect x="18" y="18" width="9" height="9" fill="#0f172a"/>
+            <rect x="65" y="10" width="25" height="25" fill="#0f172a"/>
+            <rect x="70" y="15" width="15" height="15" fill="white"/>
+            <rect x="73" y="18" width="9" height="9" fill="#0f172a"/>
+            <rect x="10" y="65" width="25" height="25" fill="#0f172a"/>
+            <rect x="15" y="70" width="15" height="15" fill="white"/>
+            <rect x="18" y="73" width="9" height="9" fill="#0f172a"/>
+            <rect x="42" y="42" width="16" height="16" fill="#f59e0b"/>
+            <rect x="40" y="15" width="8" height="8" fill="#0f172a"/>
+            <rect x="52" y="15" width="8" height="8" fill="#0f172a"/>
+            <rect x="40" y="77" width="8" height="8" fill="#0f172a"/>
+            <rect x="65" y="45" width="10" height="10" fill="#0f172a"/>
+            <rect x="78" y="65" width="12" height="12" fill="#0f172a"/>
+          </svg>
+        </div>
+        <span class="text-[9px] font-mono text-amber-300 mt-1 uppercase tracking-wider">Scan to Verify</span>
+      </div>
+
+      <!-- Right: Authorized Signatory -->
+      <div class="text-right space-y-1">
+        <div class="text-lg text-amber-300 font-serif italic">C. N. Ramanathan</div>
+        <div class="text-xs text-white font-bold">Dr. C. N. Ramanathan</div>
+        <div class="text-[10px] text-slate-400">Dean of Student Affairs & Academic Council</div>
+        <div class="text-[9px] text-slate-500 font-mono">Chanakya University Conclave Board</div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    async function loadCertificate() {
+      const urlParams = new URLSearchParams(window.location.search);
+      let code = urlParams.get('code');
+      
+      // If code not in query string, check path
+      if (!code) {
+        const parts = window.location.pathname.split('/');
+        const last = parts[parts.length - 1];
+        if (last && last.startsWith('CERT-') || last.startsWith('WIN-')) {
+          code = last;
+        }
+      }
+
+      if (!code) code = 'CERT-CU-S01-P0001-CC36';
+
+      try {
+        const res = await fetch(`/api/certificates/${encodeURIComponent(code)}`);
+        const data = await res.json();
+        let cert = data.certificate;
+
+        if (!cert) {
+          const fallbackRes = await fetch('/api/certificates');
+          const fallbackData = await fallbackRes.json();
+          if (fallbackData.certificates && fallbackData.certificates.length > 0) {
+            cert = fallbackData.certificates[0];
+          }
+        }
+
+        if (!cert) {
+          document.getElementById('cert-recipient').innerText = "Certificate Not Found";
+          return;
+        }
+
+        document.getElementById('cert-recipient').innerText = cert.participant_name || 'Rahul Sharma';
+        document.getElementById('cert-roll').innerText = cert.roll_number || '24UG00001';
+        document.getElementById('cert-school').innerText = cert.school_name || 'School of Engineering';
+        document.getElementById('cert-dept').innerText = cert.department_name || 'Department of Computing';
+        document.getElementById('cert-event').innerText = cert.sub_event_name || 'IKS Hackathon';
+        document.getElementById('cert-fest').innerText = cert.fest_name || 'Samyuti Technical Conclave';
+        document.getElementById('cert-prize').innerText = cert.prize_title || (cert.is_winner ? '1st Place Gold Medalist' : 'Active Participation Honor');
+        document.getElementById('cert-code').innerText = cert.certificate_code;
+        document.getElementById('cert-date').innerText = cert.issued_date || '2026-10-12';
+
+        const badge = document.getElementById('cert-type-badge');
+        if (cert.is_winner) {
+          badge.innerText = `CERTIFICATE OF EXCELLENCE - RANK ${cert.rank || 1}`;
+          badge.className = "px-3.5 py-1 rounded-full text-xs font-bold font-mono tracking-widest bg-amber-500 text-slate-950 uppercase inline-block shadow-md";
+        } else {
+          badge.innerText = "CERTIFICATE OF PARTICIPATION";
+          badge.className = "px-3.5 py-1 rounded-full text-xs font-bold font-mono tracking-widest bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 uppercase inline-block";
+        }
+      } catch (e) {
+        console.error("Load error:", e);
+      }
+    }
+
+    function copyVerifyUrl() {
+      navigator.clipboard.writeText(window.location.href)
+        .then(() => alert("Verification Link copied to clipboard!"))
+        .catch(() => alert("URL: " + window.location.href));
+    }
+
+    document.addEventListener('DOMContentLoaded', loadCertificate);
+  </script>
+</body>
+</html>

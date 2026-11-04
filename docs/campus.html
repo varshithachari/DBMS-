@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chanakya Campus Connect - Intelligent Digital Campus & Event Hub</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  
+  <!-- Socket.io Client -->
+  <script src="/socket.io/socket.io.js"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="/css/styles.css">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            chanakya: {
+              gold: '#F59E0B',
+              goldLight: '#FBBF24',
+              navy: '#080D1A',
+              card: '#0F172A',
+              border: 'rgba(255, 255, 255, 0.08)',
+              cyan: '#06B6D4',
+              purple: '#8B5CF6'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#080D1A] text-slate-100 min-h-screen flex flex-col font-['Inter'] antialiased selection:bg-amber-500 selection:text-black overflow-x-hidden">
+
+  <!-- Background Animated Particle Canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- ======================================================================== -->
+  <!-- TOP UNIVERSAL NAVIGATION BAR -->
+  <!-- ======================================================================== -->
+  <header class="sticky top-0 z-40 glass-panel border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      
+      <!-- Brand & University Logo -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 via-amber-400 to-amber-200 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-amber-500/25 animate-pulse-slow">
+          🏛️
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            
+            <span class="text-[9px] bg-amber-500/15 text-amber-300 px-1.5 py-0.5 rounded font-mono border border-amber-500/30">CHANAKYA GLOBAL CAMPUS</span>
+          </div>
+          <h1 class="text-sm sm:text-base font-extrabold text-white tracking-wide font-['Outfit'] leading-none">
+            CAMPUS CONNECT <span class="text-[10px] text-cyan-400 font-mono font-normal">v2.5 AI-HUB</span>
+          </h1>
+        </div>
+      </div>
+
+      <!-- Real-Time Telemetry Tickers (Center) -->
+      <div class="hidden lg:flex items-center gap-4 px-4 py-1.5 rounded-2xl bg-slate-900/80 border border-slate-800">
+        <div class="flex items-center gap-2">
+          <span id="socket-status-dot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="socket-status-text" class="text-[10px] font-bold text-emerald-400 font-mono tracking-wider">LIVE STREAM ACTIVE</span>
+        </div>
+        <div class="h-3 w-px bg-slate-800"></div>
+        <div class="flex items-center gap-1.5 text-xs">
+          <span class="text-slate-400">Campus Pop:</span>
+          <span id="telemetry-pop-count" class="font-mono font-bold text-amber-400">4,280</span>
+        </div>
+        <div class="h-3 w-px bg-slate-800"></div>
+        <div class="flex items-center gap-1.5 text-xs">
+          <span class="text-slate-400">Gate Flow:</span>
+          <span id="telemetry-throughput" class="font-mono font-bold text-cyan-400">154/m</span>
+        </div>
+      </div>
+
+      <!-- User Role Selector & Controls (Right) -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        
+        <!-- Role Switching Quick Pills -->
+        <div class="hidden xl:flex items-center gap-1 bg-slate-900/90 p-1 rounded-2xl border border-slate-800">
+          <button data-role="student" onclick="switchRole('student')" class="role-select-btn px-2.5 py-1 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 shadow-md">
+            🎓 Student
+          </button>
+          <button data-role="new_student" onclick="switchRole('new_student')" class="role-select-btn px-2.5 py-1 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">
+            🧭 Fresher
+          </button>
+          <button data-role="faculty" onclick="switchRole('faculty')" class="role-select-btn px-2.5 py-1 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">
+            👨‍🏫 Faculty
+          </button>
+          <button data-role="staff" onclick="switchRole('staff')" class="role-select-btn px-2.5 py-1 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">
+            🛠️ Staff
+          </button>
+          <button data-role="visitor" onclick="switchRole('visitor')" class="role-select-btn px-2.5 py-1 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">
+            🚶 Guest
+          </button>
+          <button data-role="admin" onclick="switchRole('admin')" class="role-select-btn px-2.5 py-1 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">
+            👑 Admin
+          </button>
+        </div>
+
+        <!-- Sound FX Toggle Button -->
+        <button onclick="sfx.toggle(); this.classList.toggle('text-amber-400'); sfx.play('click');" class="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white transition" title="Toggle Futuristic Audio FX">
+          🔊
+        </button>
+
+        <!-- Live Clock -->
+        <div class="hidden sm:flex items-center px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 font-mono text-xs text-amber-400 font-bold">
+          <span id="live-clock">15:45:00</span>
+        </div>
+
+        <!-- Login / User Persona Button -->
+        <button onclick="openLoginModal()" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-xs font-semibold transition">
+          <span class="role-indicator-avatar">🎓</span>
+          <span class="role-indicator-name hidden md:inline">Rahul Sharma</span>
+          <span class="text-[10px] text-amber-400">▾</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ======================================================================== -->
+  <!-- MAIN APP CONTAINER: SIDEBAR + DASHBOARD CONTENT -->
+  <!-- ======================================================================== -->
+  <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row gap-6 relative z-10">
+
+    <!-- SIDEBAR NAVIGATION DOCK -->
+    <aside class="w-full md:w-64 shrink-0 space-y-4">
+      
+      <!-- Persona Card Summary -->
+      <div class="glass-card rounded-2xl p-4 border border-slate-800 space-y-3">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-2xl role-indicator-avatar">
+            🎓
+          </div>
+          <div class="overflow-hidden">
+            <h3 class="text-xs font-extrabold text-white truncate role-indicator-name">Rahul Sharma</h3>
+            <span class="text-[10px] font-mono text-amber-400 block role-indicator-label">Student</span>
+            <span class="text-[9px] text-slate-400 block truncate role-indicator-dept">Computer Science & AI</span>
+          </div>
+        </div>
+
+        <button onclick="openLoginModal()" class="w-full py-1.5 rounded-xl text-[11px] font-bold bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition">
+          Switch User / Login
+        </button>
+      </div>
+
+      <!-- Navigation Links matching the 10 Services in Architecture -->
+      <nav class="glass-panel rounded-2xl p-2.5 space-y-1">
+        <div class="px-3 py-1.5 text-[9px] font-mono font-bold tracking-widest text-slate-400 uppercase">
+          APPLICATION LAYER
+        </div>
+
+        <button data-tab="overview" onclick="switchTab('overview')" class="nav-tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-500/20 to-amber-500/10 text-amber-400 border border-amber-500/30 shadow-lg shadow-amber-500/10 transition">
+          <span>🏠</span> Overview & Telemetry
+        </button>
+
+        <button data-tab="map" onclick="switchTab('map')" class="nav-tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition">
+          <span>🗺️</span> Map & Navigation
+        </button>
+
+        <button data-tab="events" onclick="switchTab('events')" class="nav-tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition">
+          <span>📅</span> Events Service
+        </button>
+
+        <button data-tab="facilities" onclick="switchTab('facilities')" class="nav-tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition">
+          <span>🏛️</span> Facilities & Booking
+        </button>
+
+        <button data-tab="foodsports" onclick="switchTab('foodsports')" class="nav-tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition">
+          <span>🍽️</span> Food & Sports Hub
+        </button>
+
+        <button data-tab="issues" onclick="switchTab('issues')" class="nav-tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition">
+          <span>⚠️</span> Issue Management
+        </button>
+
+        <button data-tab="notifications" onclick="switchTab('notifications')" class="nav-tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition">
+          <span>🔔</span> Notifications Stream
+        </button>
+
+        <button data-tab="users" onclick="switchTab('users')" class="nav-tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition">
+          <span>👥</span> User & Role Matrix
+        </button>
+
+        <button data-tab="analytics" onclick="switchTab('analytics')" class="nav-tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition">
+          <span>📊</span> Crowd Analytics
+        </button>
+
+        <button data-tab="simulation" onclick="switchTab('simulation')" class="nav-tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition">
+          <span>🧪</span> What-If Simulation
+        </button>
+      </nav>
+
+      <!-- Quick AI Guide Button on Sidebar -->
+      <div class="glass-card rounded-2xl p-4 border border-cyan-500/30 text-center space-y-2">
+        <div class="w-8 h-8 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center mx-auto text-base">
+          🤖
+        </div>
+        <h4 class="text-xs font-bold text-white">AI Campus Guide</h4>
+        <p class="text-[11px] text-slate-400">Ask questions or feed custom campus data.</p>
+        <button onclick="toggleAIChat()" class="w-full py-1.5 rounded-xl text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-slate-950 transition">
+          Open Assistant
+        </button>
+      </div>
+
+    </aside>
+
+    <!-- MAIN TAB CONTENTS CONTAINER -->
+    <main class="flex-1 space-y-6">
+
+      <!-- Dynamic Role Welcome Banner -->
+      <div id="role-welcome-banner" class="glass-panel rounded-3xl p-6 border border-slate-800">
+        <!-- Injected via JavaScript based on role -->
+      </div>
+
+      <!-- ================================================================== -->
+      <!-- TAB 1: OVERVIEW & TELEMETRY -->
+      <!-- ================================================================== -->
+      <section id="tab-overview" class="tab-view-container space-y-6">
+        
+        <!-- Real-Time Metrics Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="glass-card rounded-2xl p-4 border border-slate-700/60">
+            <span class="text-[10px] font-mono uppercase text-slate-400">Active Campus Crowd</span>
+            <p class="text-2xl font-black text-amber-400 mt-1">4,280</p>
+            <span class="text-[10px] text-emerald-400 flex items-center gap-1 mt-1">▲ Normal Density (48%)</span>
+          </div>
+          <div class="glass-card rounded-2xl p-4 border border-slate-700/60">
+            <span class="text-[10px] font-mono uppercase text-slate-400">ANPR Gate Throughput</span>
+            <p class="text-2xl font-black text-cyan-400 mt-1">154/min</p>
+            <span class="text-[10px] text-slate-400 mt-1">Gate 1 & 2 Active</span>
+          </div>
+          <div class="glass-card rounded-2xl p-4 border border-slate-700/60">
+            <span class="text-[10px] font-mono uppercase text-slate-400">Canteen Queue Wait</span>
+            <p class="text-2xl font-black text-purple-400 mt-1">11 mins</p>
+            <span class="text-[10px] text-emerald-400 mt-1">Annapurna Pavilion</span>
+          </div>
+          <div class="glass-card rounded-2xl p-4 border border-slate-700/60">
+            <span class="text-[10px] font-mono uppercase text-slate-400">IoT Sensor Health</span>
+            <p class="text-2xl font-black text-emerald-400 mt-1">48 / 48</p>
+            <span class="text-[10px] text-emerald-400 mt-1">100% Operational</span>
+          </div>
+        </div>
+
+        <!-- Role Custom Section: Fresher / New Student Guide -->
+        <div id="role-section-newstudent" class="hidden glass-card rounded-3xl p-6 border border-emerald-500/40 space-y-4">
+          <div class="flex items-center gap-3">
+            <span class="text-3xl">🧭</span>
+            <div>
+              <h3 class="text-base font-extrabold text-white">Fresher 2026 Orientation Checklist</h3>
+              <p class="text-xs text-slate-300">Welcome to your new academic home! Follow these key milestones:</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+            <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-1">
+              <span class="text-xs font-bold text-emerald-400">1. Administrative Verification</span>
+              <p class="text-[11px] text-slate-300">Sandstone Admin Block, Room 104. Collect your physical Smart ID.</p>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-1">
+              <span class="text-xs font-bold text-emerald-400">2. Central Digital Library</span>
+              <p class="text-[11px] text-slate-300">Activate biometric turnstile access & Wi-Fi device credential.</p>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-1">
+              <span class="text-xs font-bold text-emerald-400">3. Hostels & Dining Pass</span>
+              <p class="text-[11px] text-slate-300">Nalanda Hostel Block B & Annapurna Food token registration.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Featured Highlights & Quick Action Deck -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Flagship Fest Banner Card -->
+          <div class="lg:col-span-2 glass-card rounded-3xl overflow-hidden border border-slate-700/60 relative group">
+            <div class="h-64 relative overflow-hidden bg-slate-950">
+              <img src="/assets/images/chanakya_campus.png" alt="Chanakya Campus" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent"></div>
+              <div class="absolute bottom-5 left-5 right-5 space-y-2">
+                <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500 text-slate-950">
+                  FLAGSHIP TECH FEST • SEPT 15-17
+                </span>
+                <h3 class="text-xl font-black text-white">Chanakya TechSangam 2026</h3>
+                <p class="text-xs text-slate-300 max-w-xl">
+                  ByteCraft 48-Hour AI Hackathon, Robowars, and keynotes by DeepMind & Garuda Aerospace at Grand Auditorium.
+                </p>
+                <div class="flex items-center gap-3 pt-1">
+                  <button onclick="switchTab('events')" class="py-2 px-4 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition">
+                    Explore Events & Passes &rarr;
+                  </button>
+                  <button onclick="switchTab('map'); calculateRouteTo('grand_auditorium');" class="py-2 px-4 rounded-xl text-xs font-bold bg-slate-800/80 hover:bg-slate-700 text-white border border-slate-700 transition">
+                    View Venue on Map
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions & Emergency Panel -->
+          <div class="glass-card rounded-3xl p-6 border border-slate-700/60 flex flex-col justify-between space-y-4">
+            <div>
+              <h3 class="text-sm font-extrabold text-white flex items-center gap-2">
+                <span>⚡</span> Rapid Campus Services
+              </h3>
+              <p class="text-xs text-slate-400 mt-1">One-click actions mapped to the architecture layer.</p>
+            </div>
+
+            <div class="space-y-2">
+              <button onclick="switchTab('map'); triggerEmergencyEvacuation();" class="w-full py-2.5 px-3 rounded-xl text-xs font-bold bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 transition flex items-center justify-between">
+                <span class="flex items-center gap-2">🚨 Emergency Evacuation</span>
+                <span>&rarr;</span>
+              </button>
+              <button onclick="switchTab('foodsports')" class="w-full py-2.5 px-3 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 transition flex items-center justify-between">
+                <span class="flex items-center gap-2">🍽️ Food Token & Menus</span>
+                <span>&rarr;</span>
+              </button>
+              <button onclick="switchTab('facilities')" class="w-full py-2.5 px-3 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 transition flex items-center justify-between">
+                <span class="flex items-center gap-2">📚 Reserve Library Study Pod</span>
+                <span>&rarr;</span>
+              </button>
+              <button onclick="switchTab('issues')" class="w-full py-2.5 px-3 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 transition flex items-center justify-between">
+                <span class="flex items-center gap-2">⚠️ Report Maintenance Ticket</span>
+                <span>&rarr;</span>
+              </button>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-[11px] text-slate-400">
+              📞 24/7 Campus SOS Hotline: <b class="text-white font-mono">+91 80 2999 4500</b>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ================================================================== -->
+      <!-- TAB 2: MAP & NAVIGATION SERVICE -->
+      <!-- ================================================================== -->
+      <section id="tab-map" class="tab-view-container hidden space-y-4">
+        
+        <!-- Map Action Bar -->
+        <div class="glass-card rounded-2xl p-4 border border-slate-700/60 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🗺️</span>
+            <div>
+              <h3 class="text-sm font-extrabold text-white">Chanakya Campus Intelligent Map</h3>
+              <p class="text-[11px] text-slate-400">OpenStreetMap Centered at [13.2185, 77.7591] • Devanahalli Campus Bounds</p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="calculateRouteTo('grand_auditorium')" class="py-1.5 px-3 rounded-xl text-xs font-bold bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/30 transition">
+              🚶 Walk to Auditorium
+            </button>
+            <button onclick="triggerEmergencyEvacuation()" class="py-1.5 px-3 rounded-xl text-xs font-bold bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 transition">
+              🚨 Evacuation Path
+            </button>
+            <button onclick="togglePathObstacle()" class="py-1.5 px-3 rounded-xl text-xs font-bold bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 transition">
+              🚧 Simulate Blockade
+            </button>
+            <button onclick="openCustomMapModal()" class="py-1.5 px-3 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 shadow-md transition">
+              ➕ Feed Map Data / Pin
+            </button>
+          </div>
+        </div>
+
+        <!-- Leaflet Map Container -->
+        <div class="w-full h-[520px] rounded-3xl overflow-hidden border border-slate-700/60 shadow-2xl relative">
+          <div id="campus-map" class="w-full h-full"></div>
+        </div>
+
+      </section>
+
+      <!-- ================================================================== -->
+      <!-- TAB 3: EVENTS SERVICE -->
+      <!-- ================================================================== -->
+      <section id="tab-events" class="tab-view-container hidden space-y-6">
+        
+        <!-- Search & Category Filters -->
+        <div class="glass-card rounded-2xl p-4 border border-slate-700/60 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-1.5 overflow-x-auto">
+            <button onclick="renderEvents('all')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 text-slate-950">All Events</button>
+            <button onclick="renderEvents('Tech')" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Tech & AI</button>
+            <button onclick="renderEvents('Cultural')" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Cultural & Arts</button>
+            <button onclick="renderEvents('Academic')" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Conclaves</button>
+            <button onclick="renderEvents('Sports')" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Sports League</button>
+          </div>
+
+          <div class="text-xs text-slate-400">
+            Powered by <b>Events Service</b> & Automatic QR Generator
+          </div>
+        </div>
+
+        <!-- Events Grid -->
+        <div id="events-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Populated by JavaScript -->
+        </div>
+
+      </section>
+
+      <!-- ================================================================== -->
+      <!-- TAB 4: FACILITIES SERVICE -->
+      <!-- ================================================================== -->
+      <section id="tab-facilities" class="tab-view-container hidden space-y-6">
+        
+        <div class="glass-card rounded-2xl p-4 border border-slate-700/60 flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-extrabold text-white">Smart Facilities & Study Hub</h3>
+            <p class="text-xs text-slate-400">Live seat occupancy, lab availability & instant booking.</p>
+          </div>
+          <span class="text-xs text-emerald-400 font-mono font-bold">12 Facilities Synced</span>
+        </div>
+
+        <div id="facilities-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Populated by JavaScript -->
+        </div>
+
+      </section>
+
+      <!-- ================================================================== -->
+      <!-- TAB 5: FOOD & SPORTS SERVICE -->
+      <!-- ================================================================== -->
+      <section id="tab-foodsports" class="tab-view-container hidden space-y-6">
+        
+        <!-- Dining Outlets -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-base font-extrabold text-white flex items-center gap-2">
+              <span>🍽️</span> Food Outlets & Canteens
+            </h3>
+            <span class="text-xs text-slate-400 font-mono">Real-time Digital Queue</span>
+          </div>
+          <div id="food-outlets-list" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Sports Grounds -->
+        <div class="space-y-3 pt-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-base font-extrabold text-white flex items-center gap-2">
+              <span>⚽</span> Sports Arenas & Court Booking
+            </h3>
+            <span class="text-xs text-slate-400 font-mono">Chanakya Olympic Arena</span>
+          </div>
+          <div id="sports-courts-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ================================================================== -->
+      <!-- TAB 6: ISSUE MANAGEMENT SERVICE -->
+      <!-- ================================================================== -->
+      <section id="tab-issues" class="tab-view-container hidden space-y-6">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Report Issue Form Card -->
+          <div class="glass-card rounded-3xl p-6 border border-slate-700/60 space-y-4">
+            <div>
+              <span class="text-[10px] font-mono uppercase text-amber-400">INCIDENT REPORT DESK</span>
+              <h3 class="text-base font-extrabold text-white">Log Campus Maintenance Issue</h3>
+              <p class="text-xs text-slate-400 mt-1">AI auto-classifies the category and assigns urgency priority.</p>
+            </div>
+
+            <div class="space-y-3">
+              <div>
+                <label class="text-[11px] font-bold text-slate-300 block mb-1">Issue Title</label>
+                <input id="issue-title" type="text" placeholder="e.g. Wi-Fi outage at Library 2nd Floor" class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-amber-500">
+              </div>
+
+              <div>
+                <label class="text-[11px] font-bold text-slate-300 block mb-1">Campus Location</label>
+                <select id="issue-location" class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-amber-500">
+                  <option value="Central Library">Central Library</option>
+                  <option value="Kalam Tech Park">Dr. APJ Abdul Kalam Tech Park</option>
+                  <option value="Annapurna Food Pavilion">Annapurna Food Pavilion</option>
+                  <option value="Grand Auditorium">Grand Auditorium</option>
+                  <option value="Nalanda Hostels">Nalanda Hostels</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="text-[11px] font-bold text-slate-300 block mb-1">Preliminary Category</label>
+                <select id="issue-cat" class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-amber-500">
+                  <option value="Network & IT">Network & IT / Wi-Fi</option>
+                  <option value="Electrical">Electrical & Lighting</option>
+                  <option value="Plumbing">Plumbing & Water</option>
+                  <option value="HVAC & AC">HVAC & Air Conditioning</option>
+                  <option value="Physical Safety">Physical Safety & Doors</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="text-[11px] font-bold text-slate-300 block mb-1">Detailed Description</label>
+                <textarea id="issue-desc" rows="3" placeholder="Describe the fault or hazard..." class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-amber-500"></textarea>
+              </div>
+
+              <button onclick="submitIssueForm()" class="w-full py-2.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-md transition">
+                Submit Ticket & Route via AI
+              </button>
+            </div>
+          </div>
+
+          <!-- Existing Active Issues List -->
+          <div class="lg:col-span-2 space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-base font-extrabold text-white">Active Campus Tickets</h3>
+              <span class="text-xs text-slate-400 font-mono">Live Sync</span>
+            </div>
+            <div id="issues-list" class="space-y-3">
+              <!-- Populated by JavaScript -->
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ================================================================== -->
+      <!-- TAB 7: NOTIFICATIONS SERVICE -->
+      <!-- ================================================================== -->
+      <section id="tab-notifications" class="tab-view-container hidden space-y-4">
+        
+        <div class="glass-card rounded-2xl p-4 border border-slate-700/60 flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-extrabold text-white">Live Notification & Alert Dispatch</h3>
+            <p class="text-xs text-slate-400">Real-time alerts broadcasted via WebSockets to campus portals.</p>
+          </div>
+          <button onclick="broadcastAlertModal()" class="py-1.5 px-3 rounded-xl text-xs font-bold bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 transition">
+            📢 Broadcast Alert (Admin)
+          </button>
+        </div>
+
+        <div id="notifications-list" class="space-y-3">
+          <!-- Populated by JavaScript -->
+        </div>
+
+      </section>
+
+      <!-- ================================================================== -->
+      <!-- TAB 8: USER & ROLE MANAGEMENT (RBAC MATRIX) -->
+      <!-- ================================================================== -->
+      <section id="tab-users" class="tab-view-container hidden space-y-6">
+        
+        <div class="glass-card rounded-2xl p-4 border border-slate-700/60">
+          <h3 class="text-sm font-extrabold text-white">Role-Based Access Control (RBAC) Architecture Matrix</h3>
+          <p class="text-xs text-slate-400">Directly mapping the 6 user personas from the system architecture.</p>
+        </div>
+
+        <div class="glass-card rounded-3xl overflow-hidden border border-slate-700/60">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-900/90 text-slate-400 font-mono text-[10px] uppercase border-b border-slate-800">
+                <tr>
+                  <th class="p-4">Persona</th>
+                  <th class="p-4">Assigned Role</th>
+                  <th class="p-4">Permitted Services & Features</th>
+                  <th class="p-4">Simulate</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800 text-slate-300">
+                <tr class="hover:bg-slate-800/40 transition">
+                  <td class="p-4 font-bold text-white flex items-center gap-2"><span>🎓</span> Rahul Sharma</td>
+                  <td class="p-4 font-mono text-blue-400">student</td>
+                  <td class="p-4">Navigation, Events, Food, Sports, Facilities, Notifications</td>
+                  <td class="p-4">
+                    <button onclick="switchRole('student')" class="px-2.5 py-1 rounded-lg bg-blue-500/20 text-blue-300 border border-blue-500/30 hover:bg-blue-500/30 font-bold text-[10px]">Switch</button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-800/40 transition">
+                  <td class="p-4 font-bold text-white flex items-center gap-2"><span>🧭</span> Ananya Iyer</td>
+                  <td class="p-4 font-mono text-emerald-400">new_student</td>
+                  <td class="p-4">Guided campus tour, Important locations, Orientation hub</td>
+                  <td class="p-4">
+                    <button onclick="switchRole('new_student')" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 font-bold text-[10px]">Switch</button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-800/40 transition">
+                  <td class="p-4 font-bold text-white flex items-center gap-2"><span>👨‍🏫</span> Dr. S. Radhakrishnan</td>
+                  <td class="p-4 font-mono text-purple-400">faculty</td>
+                  <td class="p-4">Classes, Meetings, Facilities, Event Proposals & Endorsements</td>
+                  <td class="p-4">
+                    <button onclick="switchRole('faculty')" class="px-2.5 py-1 rounded-lg bg-purple-500/20 text-purple-300 border border-purple-500/30 hover:bg-purple-500/30 font-bold text-[10px]">Switch</button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-800/40 transition">
+                  <td class="p-4 font-bold text-white flex items-center gap-2"><span>🛠️</span> Vikram Patil</td>
+                  <td class="p-4 font-mono text-amber-400">staff</td>
+                  <td class="p-4">Issue management, Facility maintenance, Physical tasks</td>
+                  <td class="p-4">
+                    <button onclick="switchRole('staff')" class="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30 font-bold text-[10px]">Switch</button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-800/40 transition">
+                  <td class="p-4 font-bold text-white flex items-center gap-2"><span>🚶</span> Priya Nair</td>
+                  <td class="p-4 font-mono text-cyan-400">visitor</td>
+                  <td class="p-4">Search locations, Turn-by-turn navigation, Visitor passes</td>
+                  <td class="p-4">
+                    <button onclick="switchRole('visitor')" class="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/30 font-bold text-[10px]">Switch</button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-800/40 transition">
+                  <td class="p-4 font-bold text-white flex items-center gap-2"><span>👑</span> Prof. M. K. Chanakya</td>
+                  <td class="p-4 font-mono text-rose-400">admin</td>
+                  <td class="p-4">Management, Analytics, Crowd simulation, Emergency broadcast</td>
+                  <td class="p-4">
+                    <button onclick="switchRole('admin')" class="px-2.5 py-1 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/30 hover:bg-rose-500/30 font-bold text-[10px]">Switch</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ================================================================== -->
+      <!-- TAB 9: ANALYTICS & REPORTING SERVICE -->
+      <!-- ================================================================== -->
+      <section id="tab-analytics" class="tab-view-container hidden space-y-6">
+        
+        <div class="glass-card rounded-2xl p-4 border border-slate-700/60 flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-extrabold text-white">Campus Crowd Analytics & Utilization Curves</h3>
+            <p class="text-xs text-slate-400">Live telemetry powered by 48 distributed optical and Wi-Fi presence sensors.</p>
+          </div>
+          <span class="text-xs text-cyan-400 font-mono font-bold">Chanakya Global Campus</span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          <!-- Curve Chart -->
+          <div class="glass-card rounded-3xl p-6 border border-slate-700/60 space-y-3">
+            <h4 class="text-xs font-bold text-white uppercase tracking-wider">Hourly Campus Crowd Profile</h4>
+            <canvas id="chart-crowd-density" class="w-full h-44"></canvas>
+            <div class="flex items-center justify-between text-[10px] text-slate-400 font-mono">
+              <span>08:00</span>
+              <span>10:00</span>
+              <span>12:00 (Peak)</span>
+              <span>14:00</span>
+              <span>16:00</span>
+              <span>18:00</span>
+              <span>20:00</span>
+            </div>
+          </div>
+
+          <!-- Zone Utilization Breakdown -->
+          <div class="glass-card rounded-3xl p-6 border border-slate-700/60 space-y-4">
+            <h4 class="text-xs font-bold text-white uppercase tracking-wider">Zone Density Index</h4>
+            
+            <div class="space-y-3 text-xs">
+              <div>
+                <div class="flex justify-between text-slate-300 mb-1">
+                  <span>Annapurna Food Pavilion</span>
+                  <span class="font-bold text-rose-400">88% (Heavy)</span>
+                </div>
+                <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                  <div class="h-full bg-rose-500 rounded-full" style="width: 88%"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-slate-300 mb-1">
+                  <span>Kalam Tech Park Computer Labs</span>
+                  <span class="font-bold text-amber-400">74% (Moderate)</span>
+                </div>
+                <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                  <div class="h-full bg-amber-500 rounded-full" style="width: 74%"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-slate-300 mb-1">
+                  <span>Sports Arena & Courts</span>
+                  <span class="font-bold text-emerald-400">55% (Normal)</span>
+                </div>
+                <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                  <div class="h-full bg-emerald-500 rounded-full" style="width: 55%"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-slate-300 mb-1">
+                  <span>Central Digital Library</span>
+                  <span class="font-bold text-emerald-400">32% (Calm)</span>
+                </div>
+                <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                  <div class="h-full bg-emerald-400 rounded-full" style="width: 32%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ================================================================== -->
+      <!-- TAB 10: SIMULATION & WHAT-IF SERVICE -->
+      <!-- ================================================================== -->
+      <section id="tab-simulation" class="tab-view-container hidden space-y-6">
+        
+        <div class="glass-card rounded-2xl p-4 border border-slate-700/60">
+          <h3 class="text-sm font-extrabold text-white">Simulation & What-If Impact Engine</h3>
+          <p class="text-xs text-slate-400">Test hypothetical disruptions, venue relocations, and crowd spikes before they happen.</p>
+        </div>
+
+        <!-- Scenario Selector Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="glass-card rounded-2xl p-5 border border-slate-700/60 flex flex-col justify-between space-y-3">
+            <div>
+              <span class="text-[10px] font-mono text-rose-400 uppercase font-bold">SCENARIO #1</span>
+              <h4 class="text-sm font-bold text-white mt-1">Main Gate 1 Security Closure</h4>
+              <p class="text-xs text-slate-400 mt-1">Reroute all incoming traffic through East Gate 2. Models bottleneck delays.</p>
+            </div>
+            <button onclick="runSimulation('gate_1_closed')" class="w-full py-2 rounded-xl text-xs font-bold bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 transition">
+              Run Gate 1 Closure Sim
+            </button>
+          </div>
+
+          <div class="glass-card rounded-2xl p-5 border border-slate-700/60 flex flex-col justify-between space-y-3">
+            <div>
+              <span class="text-[10px] font-mono text-amber-400 uppercase font-bold">SCENARIO #2</span>
+              <h4 class="text-sm font-bold text-white mt-1">TechSangam Fest Surge (+40%)</h4>
+              <p class="text-xs text-slate-400 mt-1">Simulates 8,500 delegates converging on Grand Auditorium & Tech Park.</p>
+            </div>
+            <button onclick="runSimulation('fest_surge_40')" class="w-full py-2 rounded-xl text-xs font-bold bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 transition">
+              Run +40% Surge Sim
+            </button>
+          </div>
+
+          <div class="glass-card rounded-2xl p-5 border border-slate-700/60 flex flex-col justify-between space-y-3">
+            <div>
+              <span class="text-[10px] font-mono text-cyan-400 uppercase font-bold">SCENARIO #3</span>
+              <h4 class="text-sm font-bold text-white mt-1">Heavy Monsoon Downpour</h4>
+              <p class="text-xs text-slate-400 mt-1">Simulates closure of outdoor walking tracks and shift to covered walkways.</p>
+            </div>
+            <button onclick="runSimulation('monsoon_rain')" class="w-full py-2 rounded-xl text-xs font-bold bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/30 transition">
+              Run Monsoon Weather Sim
+            </button>
+          </div>
+        </div>
+
+        <!-- Simulation Results Injection -->
+        <div id="simulation-results-container">
+          <!-- Filled dynamically by JavaScript -->
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- ======================================================================== -->
+  <!-- FLOATING AI CAMPUS GUIDE DRAWER & CHAT TERMINAL -->
+  <!-- ======================================================================== -->
+  <div id="ai-chat-drawer" class="hidden fixed bottom-24 right-6 w-96 max-w-[92vw] h-[540px] glass-panel rounded-3xl border border-cyan-500/40 shadow-2xl flex flex-col overflow-hidden z-50 tab-content">
+    
+    <!-- Chat Header -->
+    <div class="p-4 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-lg animate-pulse">
+          🤖
+        </div>
+        <div>
+          <h4 class="text-xs font-bold text-white">Chanakya AI Campus Guide</h4>
+          <span class="text-[10px] text-emerald-400 font-mono">Ready • Custom Ingestion Active</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="openFeedDataModal()" class="px-2 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-[10px] font-bold border border-amber-500/30" title="Feed Custom Data to AI">
+          📥 Feed Data
+        </button>
+        <button onclick="toggleAIChat()" class="text-slate-400 hover:text-white text-sm">✕</button>
+      </div>
+    </div>
+
+    <!-- Suggested Query Chips -->
+    <div class="px-4 py-2 bg-slate-900/40 border-b border-slate-800/80 flex gap-1.5 overflow-x-auto text-[10px]">
+      <button onclick="sendAIMessage('What events are happening this week?')" class="px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 shrink-0">TechSangam 2026?</button>
+      <button onclick="sendAIMessage('Show me route to Central Library')" class="px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 shrink-0">Route to Library</button>
+      <button onclick="sendAIMessage('What is today menu at Annapurna Food Court?')" class="px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 shrink-0">Canteen Menu</button>
+    </div>
+
+    <!-- Messages Log -->
+    <div id="ai-chat-messages" class="flex-1 p-4 overflow-y-auto space-y-3">
+      <div class="flex justify-start">
+        <div class="chat-bubble-ai max-w-[85%] p-3 rounded-2xl text-xs leading-relaxed shadow-md">
+          Namaste! I am your <b>Chanakya Campus AI Assistant</b>. You can ask me anything about events, navigation around campus, facilities, or dining. You can also feed me custom notes or data using the <b>Feed Data</b> button above!
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Bar -->
+    <div class="p-3 bg-slate-900/90 border-t border-slate-800 flex items-center gap-2">
+      <input id="ai-chat-input" type="text" placeholder="Type campus question..." onkeydown="if(event.key==='Enter') sendAIMessage()" class="flex-1 px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-400">
+      <button onclick="sendAIMessage()" class="w-9 h-9 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold flex items-center justify-center transition">
+        ➔
+      </button>
+    </div>
+
+  </div>
+
+  <!-- FLOATING TRIGGER BUTTON FOR AI GUIDE -->
+  <button onclick="toggleAIChat()" class="fixed bottom-6 right-6 z-40 px-4 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 via-amber-400 to-amber-500 text-slate-950 font-extrabold text-xs shadow-2xl shadow-cyan-500/30 hover:scale-105 transition flex items-center gap-2.5 group">
+    <span class="text-lg group-hover:rotate-12 transition">🤖</span>
+    <span>AI Campus Guide</span>
+  </button>
+
+  <!-- ======================================================================== -->
+  <!-- MODAL: AI KNOWLEDGE BASE / DATA FEED (READY AS USER REQUESTED) -->
+  <!-- ======================================================================== -->
+  <div id="ai-feed-data-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="glass-card rounded-3xl max-w-lg w-full p-6 border border-cyan-500/40 space-y-4 shadow-2xl tab-content">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">📥</span>
+          <div>
+            <h3 class="text-base font-extrabold text-white">Feed AI Guide Knowledge</h3>
+            <p class="text-xs text-slate-400">Paste your campus notes, FAQs, or rules here for immediate AI learning.</p>
+          </div>
+        </div>
+        <button onclick="closeFeedDataModal()" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="text-[11px] font-bold text-slate-300 block mb-1">Knowledge Title</label>
+          <input id="feed-doc-title" type="text" placeholder="e.g. 2026 Computer Science Syllabus & Lab Rules" class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-400">
+        </div>
+
+        <div>
+          <label class="text-[11px] font-bold text-slate-300 block mb-1">Category</label>
+          <select id="feed-doc-category" class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-400">
+            <option value="Academic">Academic Notes & Syllabus</option>
+            <option value="Orientation">Orientation & Student Guide</option>
+            <option value="Hostel & Housing">Hostel & Living</option>
+            <option value="Transport & Bus">Bus Timings & Routes</option>
+            <option value="Exam & Calendar">Examination Calendar</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-[11px] font-bold text-slate-300 block mb-1">Raw Content / Text / JSON</label>
+          <textarea id="feed-doc-content" rows="4" placeholder="Paste information here..." class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-400"></textarea>
+        </div>
+
+        <button onclick="submitCustomKnowledgeFeed()" class="w-full py-2.5 rounded-xl text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold transition">
+          Ingest Knowledge into AI Guide
+        </button>
+      </div>
+
+      <div class="pt-2 border-t border-slate-800 space-y-2">
+        <span class="text-[10px] font-mono text-slate-400 uppercase">Already Fed Knowledge Items:</span>
+        <div id="fed-documents-list" class="max-h-28 overflow-y-auto space-y-1.5">
+          <!-- Loaded dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================== -->
+  <!-- MODAL: CUSTOM MAP PIN IMPORTER (READY AS USER REQUESTED) -->
+  <!-- ======================================================================== -->
+  <div id="custom-map-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="glass-card rounded-3xl max-w-md w-full p-6 border border-amber-500/40 space-y-4 shadow-2xl tab-content">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">📍</span>
+          <div>
+            <h3 class="text-base font-extrabold text-white">Plot Custom Campus Pin</h3>
+            <p class="text-xs text-slate-400">Add any coordinate from OpenStreetMap onto the live map.</p>
+          </div>
+        </div>
+        <button onclick="closeCustomMapModal()" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="text-[11px] font-bold text-slate-300 block mb-1">Pin / Building Name</label>
+          <input id="custom-map-node-name" type="text" placeholder="e.g. East Lake Promenade" class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-amber-500">
+        </div>
+
+        <div>
+          <label class="text-[11px] font-bold text-slate-300 block mb-1">Category</label>
+          <select id="custom-map-node-cat" class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-amber-500">
+            <option value="Academic">Academic</option>
+            <option value="Entrance">Gate / Entrance</option>
+            <option value="Sports">Sports Ground</option>
+            <option value="Dining">Dining</option>
+            <option value="Bus Stop">Bus Stop</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-[11px] font-bold text-slate-300 block mb-1">Latitude</label>
+            <input id="custom-map-node-lat" type="number" step="0.00001" value="13.21850" class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-amber-500">
+          </div>
+          <div>
+            <label class="text-[11px] font-bold text-slate-300 block mb-1">Longitude</label>
+            <input id="custom-map-node-lng" type="number" step="0.00001" value="77.75910" class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-amber-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[11px] font-bold text-slate-300 block mb-1">Description</label>
+          <input id="custom-map-node-desc" type="text" placeholder="Short description..." class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-amber-500">
+        </div>
+
+        <button onclick="submitCustomMapNode()" class="w-full py-2.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition">
+          Plot Pin on Live Campus Map
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================== -->
+  <!-- MODAL: FULL-SCREEN INTEGRATED LOGIN VIEW & ROLE PICKER -->
+  <!-- ======================================================================== -->
+  <div id="login-modal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-xl flex items-center justify-center p-4">
+    <div class="glass-card rounded-3xl max-w-lg w-full p-8 border border-amber-500/40 space-y-6 shadow-2xl tab-content">
+      
+      <div class="text-center space-y-2">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-300 text-slate-950 flex items-center justify-center text-3xl mx-auto shadow-xl shadow-amber-500/20">
+          🏛️
+        </div>
+        <h2 class="text-xl font-extrabold text-white">Campus Connect Unified Auth</h2>
+        <p class="text-xs text-slate-400">Select any role from the Architecture diagram to test its tailored dashboard view:</p>
+      </div>
+
+      <!-- Quick 1-Click Role Login Deck -->
+      <div class="grid grid-cols-2 gap-2.5">
+        <button onclick="switchRole('student'); closeLoginModal();" class="p-3 rounded-2xl bg-slate-900/90 hover:bg-blue-950/50 border border-slate-800 hover:border-blue-500/40 text-left space-y-1 transition group">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🎓</span>
+            <span class="text-xs font-bold text-white group-hover:text-blue-400">Student</span>
+          </div>
+          <span class="text-[10px] text-slate-400 block">Rahul Sharma (CS 3rd Year)</span>
+        </button>
+
+        <button onclick="switchRole('new_student'); closeLoginModal();" class="p-3 rounded-2xl bg-slate-900/90 hover:bg-emerald-950/50 border border-slate-800 hover:border-emerald-500/40 text-left space-y-1 transition group">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🧭</span>
+            <span class="text-xs font-bold text-white group-hover:text-emerald-400">Fresher</span>
+          </div>
+          <span class="text-[10px] text-slate-400 block">Ananya Iyer (Orientation)</span>
+        </button>
+
+        <button onclick="switchRole('faculty'); closeLoginModal();" class="p-3 rounded-2xl bg-slate-900/90 hover:bg-purple-950/50 border border-slate-800 hover:border-purple-500/40 text-left space-y-1 transition group">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">👨‍🏫</span>
+            <span class="text-xs font-bold text-white group-hover:text-purple-400">Faculty</span>
+          </div>
+          <span class="text-[10px] text-slate-400 block">Dr. S. Radhakrishnan</span>
+        </button>
+
+        <button onclick="switchRole('staff'); closeLoginModal();" class="p-3 rounded-2xl bg-slate-900/90 hover:bg-amber-950/50 border border-slate-800 hover:border-amber-500/40 text-left space-y-1 transition group">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🛠️</span>
+            <span class="text-xs font-bold text-white group-hover:text-amber-400">Staff</span>
+          </div>
+          <span class="text-[10px] text-slate-400 block">Vikram Patil (Operations)</span>
+        </button>
+
+        <button onclick="switchRole('visitor'); closeLoginModal();" class="p-3 rounded-2xl bg-slate-900/90 hover:bg-cyan-950/50 border border-slate-800 hover:border-cyan-500/40 text-left space-y-1 transition group">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🚶</span>
+            <span class="text-xs font-bold text-white group-hover:text-cyan-400">Visitor</span>
+          </div>
+          <span class="text-[10px] text-slate-400 block">Priya Nair (Delegate)</span>
+        </button>
+
+        <button onclick="switchRole('admin'); closeLoginModal();" class="p-3 rounded-2xl bg-slate-900/90 hover:bg-rose-950/50 border border-slate-800 hover:border-rose-500/40 text-left space-y-1 transition group">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">👑</span>
+            <span class="text-xs font-bold text-white group-hover:text-rose-400">Administrator</span>
+          </div>
+          <span class="text-[10px] text-slate-400 block">Prof. M. K. Chanakya</span>
+        </button>
+      </div>
+
+      <button onclick="closeLoginModal()" class="w-full py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
+        Cancel / Close
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ======================================================================== -->
+  <!-- MODAL: EVENT REGISTRATION -->
+  <!-- ======================================================================== -->
+  <div id="event-reg-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="glass-card rounded-3xl max-w-md w-full p-6 border border-amber-500/40 space-y-4 shadow-2xl tab-content">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-extrabold text-white">Event Registration Pass</h3>
+        <button onclick="closeRegisterModal()" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+      <p id="reg-event-title" class="text-xs font-bold text-amber-400 font-mono"></p>
+      <input type="hidden" id="reg-event-id">
+
+      <div class="space-y-3">
+        <div>
+          <label class="text-[11px] font-bold text-slate-300 block mb-1">Delegate Name</label>
+          <input id="reg-user-name" type="text" class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-amber-500">
+        </div>
+        <div>
+          <label class="text-[11px] font-bold text-slate-300 block mb-1">University Email</label>
+          <input id="reg-user-email" type="email" class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-amber-500">
+        </div>
+        <button onclick="submitEventRegistration()" class="w-full py-2.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition">
+          Generate Digital QR Pass
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================== -->
+  <!-- MODAL: DIGITAL QR PASS PREVIEW -->
+  <!-- ======================================================================== -->
+  <div id="digital-pass-modal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-xl flex items-center justify-center p-4">
+    <div class="glass-card rounded-3xl max-w-sm w-full p-6 border border-amber-500/50 space-y-5 shadow-2xl text-center tab-content relative overflow-hidden">
+      <div class="absolute -top-12 -right-12 w-32 h-32 bg-amber-500/20 rounded-full blur-2xl"></div>
+      
+      <div class="space-y-1">
+        <span class="text-[10px] font-mono text-amber-400 tracking-widest uppercase">OFFICIAL EVENT CREDENTIAL</span>
+        <h3 id="pass-event-title" class="text-base font-extrabold text-white">Chanakya TechSangam 2026</h3>
+      </div>
+
+      <!-- Simulated QR Block -->
+      <div class="w-44 h-44 mx-auto p-3 bg-white rounded-2xl shadow-xl flex flex-col items-center justify-center space-y-1">
+        <div class="text-5xl">📱</div>
+        <div id="pass-qr-text" class="font-mono text-[9px] text-slate-900 font-bold break-all">CU-TS26-REG-AI</div>
+        <div class="w-full h-1 bg-slate-200 rounded"></div>
+      </div>
+
+      <div class="space-y-1 text-xs">
+        <p class="text-slate-300">Holder: <b id="pass-user-name" class="text-white">Rahul Sharma</b></p>
+        <p class="text-slate-400 font-mono text-[11px]">Ticket ID: <span id="pass-ticket-id" class="text-amber-400">REG-1004</span> • Seat: <span id="pass-seat" class="text-white font-bold">AUD-B12</span></p>
+      </div>
+
+      <button onclick="closeDigitalPassModal()" class="w-full py-2 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 transition">
+        Done / Save to Wallet
+      </button>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div id="toast-container"></div>
+
+  <!-- APPLICATION JAVASCRIPT -->
+  <script src="/js/app.js"></script>
+
+  <script>
+    function openLoginModal() {
+      sfx.play('click');
+      document.getElementById('login-modal').classList.remove('hidden');
+    }
+    function closeLoginModal() {
+      document.getElementById('login-modal').classList.add('hidden');
+    }
+  </script>
+
+</body>
+</html>
