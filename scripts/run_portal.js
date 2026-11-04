@@ -106,7 +106,7 @@ function startLocalTunnel() {
   try {
     const localtunnel = require('localtunnel');
     console.log('⚡ [Supervisor] Launching LocalTunnel fallback on port 3000 (HTTPS 443)...');
-    localtunnel({ port: 3000 }, (err, tunnel) => {
+    localtunnel({ port: 3000, local_host: '127.0.0.1' }, (err, tunnel) => {
       if (err) {
         console.warn('[Supervisor] LocalTunnel error:', err.message);
         setTimeout(startLocalTunnel, 5000);
