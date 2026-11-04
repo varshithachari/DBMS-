@@ -1678,8 +1678,8 @@
             </div>
           </div>
 
-          <!-- Interactive Concurrency & Workload Controller (What if users increase?) -->
-          <div class="p-4 rounded-xl bg-[#181b1f] border border-[#2c3235] space-y-3">
+                    <!-- Interactive Concurrency & Workload Controller (What if users increase?) -->
+          <div class="p-4 rounded-xl bg-[#181b1f] border border-[#2c3235] space-y-3.5">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div class="flex items-center gap-2">
                 <span class="text-sm font-bold text-white font-mono flex items-center gap-1.5">
@@ -1694,27 +1694,55 @@
                 </span>
               </div>
               <span class="text-[11px] text-slate-400 font-mono">
-                Click a preset or drag slider to observe graph fluctuations
+                Supports unlimited load up to Lakhs of concurrent users
               </span>
             </div>
 
-            <!-- Virtual User Stepper Buttons -->
-            <div class="flex flex-wrap items-center gap-1.5">
-              <span class="text-[11px] font-mono text-slate-400 mr-1">Quick Presets:</span>
-              <button onclick="setGrafanaUsers(10)" class="grafana-vu-btn px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition bg-[#111217] hover:bg-[#22252b] text-slate-300 border border-[#2c3235]" data-vu="10">10 Users</button>
-              <button onclick="setGrafanaUsers(50)" class="grafana-vu-btn px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition bg-[#111217] hover:bg-[#22252b] text-slate-300 border border-[#2c3235]" data-vu="50">50 Users</button>
-              <button onclick="setGrafanaUsers(100)" class="grafana-vu-btn px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition bg-cyan-500 text-slate-950 font-black border border-cyan-400 shadow-md shadow-cyan-500/20" data-vu="100">100 Users (Cross)</button>
-              <button onclick="setGrafanaUsers(200)" class="grafana-vu-btn px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition bg-[#111217] hover:bg-[#22252b] text-slate-300 border border-[#2c3235]" data-vu="200">200 Users</button>
-              <button onclick="setGrafanaUsers(400)" class="grafana-vu-btn px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition bg-[#111217] hover:bg-[#22252b] text-slate-300 border border-[#2c3235]" data-vu="400">400 Users (ECS351)</button>
-              <button onclick="setGrafanaUsers(1000)" class="grafana-vu-btn px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition bg-[#111217] hover:bg-[#22252b] text-slate-300 border border-[#2c3235]" data-vu="1000">1,000 Users</button>
-              <button onclick="setGrafanaUsers(2000)" class="grafana-vu-btn px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition bg-[#111217] hover:bg-[#22252b] text-slate-300 border border-[#2c3235]" data-vu="2000">2,000 Users (Stress)</button>
+            <!-- Virtual User Stepper Buttons (Standard to Lakhs) -->
+            <div class="space-y-1.5">
+              <div class="flex flex-wrap items-center gap-1.5">
+                <span class="text-[10px] font-mono text-slate-400 mr-1 uppercase">Standard:</span>
+                <button onclick="setGrafanaUsers(10)" class="grafana-vu-btn px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition bg-[#111217] hover:bg-[#22252b] text-slate-300 border border-[#2c3235]" data-vu="10">10</button>
+                <button onclick="setGrafanaUsers(50)" class="grafana-vu-btn px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition bg-[#111217] hover:bg-[#22252b] text-slate-300 border border-[#2c3235]" data-vu="50">50</button>
+                <button onclick="setGrafanaUsers(100)" class="grafana-vu-btn px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition bg-cyan-500 text-slate-950 font-black border border-cyan-400 shadow-md shadow-cyan-500/20" data-vu="100">100 (Cross)</button>
+                <button onclick="setGrafanaUsers(200)" class="grafana-vu-btn px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition bg-[#111217] hover:bg-[#22252b] text-slate-300 border border-[#2c3235]" data-vu="200">200</button>
+                <button onclick="setGrafanaUsers(400)" class="grafana-vu-btn px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition bg-[#111217] hover:bg-[#22252b] text-slate-300 border border-[#2c3235]" data-vu="400">400 (ECS351)</button>
+                <button onclick="setGrafanaUsers(1000)" class="grafana-vu-btn px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition bg-[#111217] hover:bg-[#22252b] text-slate-300 border border-[#2c3235]" data-vu="1000">1,000</button>
+                <button onclick="setGrafanaUsers(5000)" class="grafana-vu-btn px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition bg-[#111217] hover:bg-[#22252b] text-slate-300 border border-[#2c3235]" data-vu="5000">5,000</button>
+              </div>
+
+              <!-- Lakhs Scale Presets -->
+              <div class="flex flex-wrap items-center gap-1.5 pt-1 border-t border-[#22252b]">
+                <span class="text-[10px] font-mono text-amber-400 mr-1 uppercase font-bold">Lakhs Scale:</span>
+                <button onclick="setGrafanaUsers(10000)" class="grafana-vu-btn px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition bg-[#111217] hover:bg-[#22252b] text-amber-300 border border-amber-500/30" data-vu="10000">10,000 (10k)</button>
+                <button onclick="setGrafanaUsers(50000)" class="grafana-vu-btn px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition bg-[#111217] hover:bg-[#22252b] text-amber-300 border border-amber-500/30" data-vu="50000">50,000 (50k)</button>
+                <button onclick="setGrafanaUsers(100000)" class="grafana-vu-btn px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition bg-[#111217] hover:bg-[#22252b] text-amber-300 border border-amber-500/30" data-vu="100000">1,00,000 (1 Lakh)</button>
+                <button onclick="setGrafanaUsers(500000)" class="grafana-vu-btn px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition bg-[#111217] hover:bg-[#22252b] text-amber-300 border border-amber-500/30" data-vu="500000">5,00,000 (5 Lakhs)</button>
+                <button onclick="setGrafanaUsers(1000000)" class="grafana-vu-btn px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition bg-[#111217] hover:bg-[#22252b] text-rose-300 border border-rose-500/30" data-vu="1000000">10,00,000 (10 Lakhs)</button>
+              </div>
             </div>
 
-            <!-- Continuous Range Slider -->
+            <!-- Custom User Input (Enter ANY number of users without limit) -->
+            <div class="flex flex-wrap items-center gap-3 pt-2 border-t border-[#22252b]">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-white font-mono flex items-center gap-1">
+                  <span>✍️</span> Enter Exact Virtual Users:
+                </span>
+                <input id="grafana-custom-user-input" type="number" min="1" max="10000000" placeholder="e.g. 75000 or 250000" class="w-44 bg-[#111217] border border-cyan-500/50 rounded-lg px-3 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-cyan-400">
+                <button onclick="applyCustomGrafanaUsers()" class="px-3.5 py-1.5 rounded-lg text-xs font-mono font-black bg-cyan-500 hover:bg-cyan-400 text-slate-950 shadow-md shadow-cyan-500/20 transition btn-tactile">
+                  Apply Load & Observe Variations
+                </button>
+              </div>
+              <span class="text-[10px] text-slate-400 font-mono italic">
+                Observe how Monolith thread locks while Event-Driven queues absorb the surge
+              </span>
+            </div>
+
+            <!-- Continuous Range Slider (Logarithmic scaling 10 to 1,000,000) -->
             <div class="flex items-center gap-3 pt-1">
               <span class="text-[10px] font-mono text-slate-500">10 VU</span>
-              <input id="grafana-vu-slider" type="range" min="10" max="2000" step="10" value="100" oninput="onGrafanaSliderChange(this.value)" class="flex-1 accent-cyan-400 bg-slate-800 rounded-lg h-2 cursor-pointer">
-              <span class="text-[10px] font-mono text-slate-500">2000 VU</span>
+              <input id="grafana-vu-slider" type="range" min="1" max="100" step="1" value="20" oninput="onGrafanaLogSliderChange(this.value)" class="flex-1 accent-cyan-400 bg-slate-800 rounded-lg h-2 cursor-pointer">
+              <span class="text-[10px] font-mono text-slate-500">10 Lakhs VU</span>
             </div>
           </div>
 
@@ -2235,6 +2263,47 @@
         </div>
 
         <!-- ================================================================== -->
+                <!-- ================================================================== -->
+        <!-- ARCHITECTURAL CHARACTERISTIC HANDLING SHOWCASE (Interactive Deep-Dive) -->
+        <!-- ================================================================== -->
+        <div class="bento-card p-5 border-amber-500/40 bg-gradient-to-br from-slate-900 via-[#131722] to-slate-950 space-y-4 shadow-xl">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-white/[0.08]">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono">
+                  ARCHITECTURAL CHARACTERISTICS MECHANICS
+                </span>
+                <span id="char-handling-current-vu-badge" class="px-2 py-0.5 rounded text-[10px] font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold">
+                  Evaluating at 100 Virtual Users
+                </span>
+              </div>
+              <h4 class="text-base sm:text-lg font-black text-white font-outfit flex items-center gap-2">
+                <span>⭐</span> How Modular Monolith vs Event-Driven Handles Each Characteristic
+              </h4>
+              <p class="text-xs text-slate-300">
+                Direct evidence analysis of runtime handling mechanics. Select any architectural characteristic to see how both architectures behave under controlled workloads and how they handle high concurrency up to Lakhs of users.
+              </p>
+            </div>
+
+            <!-- Quick Characteristic Pills -->
+            <div class="flex flex-wrap items-center gap-1.5 flex-shrink-0">
+              <button onclick="selectCharacteristicShowcase('scalability')" class="char-pill-btn px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition bg-amber-500 text-slate-950 border border-amber-400" data-char="scalability">🚀 Scalability</button>
+              <button onclick="selectCharacteristicShowcase('performance')" class="char-pill-btn px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700" data-char="performance">⚡ Performance</button>
+              <button onclick="selectCharacteristicShowcase('fault_tolerance')" class="char-pill-btn px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700" data-char="fault_tolerance">🛡️ Fault Tolerance</button>
+              <button onclick="selectCharacteristicShowcase('elasticity')" class="char-pill-btn px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700" data-char="elasticity">🔄 Elasticity</button>
+              <button onclick="selectCharacteristicShowcase('consistency')" class="char-pill-btn px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700" data-char="consistency">🔒 Consistency</button>
+              <button onclick="selectCharacteristicShowcase('maintainability')" class="char-pill-btn px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700" data-char="maintainability">🛠️ Maintainability</button>
+              <button onclick="selectCharacteristicShowcase('overall_cost')" class="char-pill-btn px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700" data-char="overall_cost">💰 Overall Cost</button>
+            </div>
+          </div>
+
+          <!-- Dynamic Deep-Dive Container -->
+          <div id="char-deepdive-container" class="space-y-4">
+            <!-- Dynamically populated via architectureLab.js -->
+          </div>
+        </div>
+
+
         <!-- 14-CHARACTERISTIC EVIDENCE-BASED STAR RATING MATRIX -->
         <!-- ================================================================== -->
         <div class="bento-card p-5 border-slate-800 space-y-4">
