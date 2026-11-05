@@ -1,0 +1,5391 @@
+{
+  "lab_metadata": {
+    "title": "ECS351 Scalability Lab: Modular Monolith vs Event-Driven Architecture",
+    "course": "Software Architecture and Design Patterns (ECS351)",
+    "concurrency_steps": [
+      10,
+      50,
+      100,
+      200,
+      400
+    ],
+    "workloads": [
+      "events_registration",
+      "campus_navigation",
+      "mixed_campus"
+    ],
+    "repetitions": 3,
+    "generated_at": "2026-11-04T07:14:40.587804",
+    "hardware_baseline": {
+      "cpu_cores": 12,
+      "ram_gb": 16.0,
+      "os": "win32",
+      "docker_cpu_limit": "1 core per app container",
+      "methodology": "3 repetitions per configuration, median run extraction, stable window sampling"
+    }
+  },
+  "tradeoff_table": [
+    {
+      "characteristic": "Performance",
+      "metric": "p95 at 10 users (ms)",
+      "monolith": "7.29 ms",
+      "event_driven": "22.17 ms",
+      "better": "Modular Monolith",
+      "difference": "14.88 ms faster"
+    },
+    {
+      "characteristic": "Scalability",
+      "metric": "Latency degradation at 400 users (1 replica)",
+      "monolith": "+2395.1%",
+      "event_driven": "+81.6%",
+      "better": "Event-Driven",
+      "difference": "Stays well within 20% SLA per replica"
+    },
+    {
+      "characteristic": "Scalability",
+      "metric": "Replicas needed to stay under 20% @ 400 users",
+      "monolith": "4 Monoliths",
+      "event_driven": "2 Order Workers",
+      "better": "Event-Driven",
+      "difference": "Only hot worker scaled"
+    },
+    {
+      "characteristic": "Capacity",
+      "metric": "Throughput at 400 users (requests/s)",
+      "monolith": "90.4 rps",
+      "event_driven": "1480.0 rps",
+      "better": "Event-Driven",
+      "difference": "16.37x capacity advantage"
+    },
+    {
+      "characteristic": "Cost / RAM",
+      "metric": "TOTAL app memory at threshold (MB)",
+      "monolith": "1,024 MB (4x256MB)",
+      "event_driven": "370 MB (2x45MB + base)",
+      "better": "Event-Driven",
+      "difference": "64% memory reduction"
+    },
+    {
+      "characteristic": "Cost / CPU",
+      "metric": "CPU cores used at 400 users",
+      "monolith": "3.6 cores",
+      "event_driven": "2.5 cores",
+      "better": "Event-Driven",
+      "difference": "Worker concurrency efficiency"
+    },
+    {
+      "characteristic": "Reliability",
+      "metric": "Error rate at 400 users (%)",
+      "monolith": "3.58%",
+      "event_driven": "0.0%",
+      "better": "Event-Driven",
+      "difference": "Zero dropped requests"
+    },
+    {
+      "characteristic": "Fault Tolerance",
+      "metric": "Survives worker/service crash?",
+      "monolith": "No (takes down portal)",
+      "event_driven": "Yes (queue buffers events)",
+      "better": "Event-Driven",
+      "difference": "Blast radius contained"
+    },
+    {
+      "characteristic": "Consistency",
+      "metric": "Data correctness / ACID serializability",
+      "monolith": "Strict Immediate ACID",
+      "event_driven": "Eventual Consistency",
+      "better": "Modular Monolith",
+      "difference": "Zero dual-write drift"
+    },
+    {
+      "characteristic": "Coupling",
+      "metric": "Architectural dependency analysis",
+      "monolith": "In-process direct calls",
+      "event_driven": "Pub/Sub Message Contract",
+      "better": "Event-Driven",
+      "difference": "Independent deployability"
+    }
+  ],
+  "median_runs": [
+    {
+      "experiment_id": "EXP-MODU-EVE-U10-R3-6480",
+      "architecture": "modular_monolith",
+      "workload_type": "events_registration",
+      "concurrent_users": 10,
+      "total_requests": 150,
+      "avg_latency_ms": 5.52,
+      "p50_latency_ms": 5.17,
+      "p95_latency_ms": 7.56,
+      "p99_latency_ms": 8.44,
+      "throughput_rps": 86.3,
+      "cpu_utilization_pct": 14.1,
+      "ram_utilization_mb": 169.1,
+      "queue_depth": 0,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 3.12,
+            "bin_end": 4.48,
+            "bin_center": 3.8,
+            "count": 40
+          },
+          {
+            "bin_start": 4.48,
+            "bin_end": 5.84,
+            "bin_center": 5.16,
+            "count": 63
+          },
+          {
+            "bin_start": 5.84,
+            "bin_end": 7.19,
+            "bin_center": 6.51,
+            "count": 35
+          },
+          {
+            "bin_start": 7.19,
+            "bin_end": 8.55,
+            "bin_center": 7.87,
+            "count": 11
+          },
+          {
+            "bin_start": 8.55,
+            "bin_end": 9.91,
+            "bin_center": 9.23,
+            "count": 0
+          },
+          {
+            "bin_start": 9.91,
+            "bin_end": 11.27,
+            "bin_center": 10.59,
+            "count": 0
+          },
+          {
+            "bin_start": 11.27,
+            "bin_end": 12.62,
+            "bin_center": 11.94,
+            "count": 0
+          },
+          {
+            "bin_start": 12.62,
+            "bin_end": 13.98,
+            "bin_center": 13.3,
+            "count": 0
+          },
+          {
+            "bin_start": 13.98,
+            "bin_end": 15.34,
+            "bin_center": 14.66,
+            "count": 0
+          },
+          {
+            "bin_start": 15.34,
+            "bin_end": 16.7,
+            "bin_center": 16.02,
+            "count": 0
+          },
+          {
+            "bin_start": 16.7,
+            "bin_end": 18.05,
+            "bin_center": 17.37,
+            "count": 0
+          },
+          {
+            "bin_start": 18.05,
+            "bin_end": 19.41,
+            "bin_center": 18.73,
+            "count": 0
+          },
+          {
+            "bin_start": 19.41,
+            "bin_end": 20.77,
+            "bin_center": 20.09,
+            "count": 0
+          },
+          {
+            "bin_start": 20.77,
+            "bin_end": 22.13,
+            "bin_center": 21.45,
+            "count": 0
+          },
+          {
+            "bin_start": 22.13,
+            "bin_end": 23.48,
+            "bin_center": 22.81,
+            "count": 0
+          },
+          {
+            "bin_start": 23.48,
+            "bin_end": 24.84,
+            "bin_center": 24.16,
+            "count": 0
+          },
+          {
+            "bin_start": 24.84,
+            "bin_end": 26.2,
+            "bin_center": 25.52,
+            "count": 0
+          },
+          {
+            "bin_start": 26.2,
+            "bin_end": 27.56,
+            "bin_center": 26.88,
+            "count": 0
+          },
+          {
+            "bin_start": 27.56,
+            "bin_end": 28.91,
+            "bin_center": 28.24,
+            "count": 0
+          },
+          {
+            "bin_start": 28.91,
+            "bin_end": 30.27,
+            "bin_center": 29.59,
+            "count": 0
+          },
+          {
+            "bin_start": 30.27,
+            "bin_end": 31.63,
+            "bin_center": 30.95,
+            "count": 0
+          },
+          {
+            "bin_start": 31.63,
+            "bin_end": 32.99,
+            "bin_center": 32.31,
+            "count": 0
+          },
+          {
+            "bin_start": 32.99,
+            "bin_end": 34.34,
+            "bin_center": 33.67,
+            "count": 0
+          },
+          {
+            "bin_start": 34.34,
+            "bin_end": 35.7,
+            "bin_center": 35.02,
+            "count": 0
+          },
+          {
+            "bin_start": 35.7,
+            "bin_end": 37.06,
+            "bin_center": 36.38,
+            "count": 1
+          }
+        ],
+        "mean": 5.52,
+        "median": 5.17,
+        "std": 2.83,
+        "min": 3.12,
+        "max": 37.06,
+        "sample_count": 150
+      }
+    },
+    {
+      "experiment_id": "EXP-EVEN-EVE-U10-R2-6480",
+      "architecture": "event_driven",
+      "workload_type": "events_registration",
+      "concurrent_users": 10,
+      "total_requests": 150,
+      "avg_latency_ms": 17.24,
+      "p50_latency_ms": 16.86,
+      "p95_latency_ms": 22.56,
+      "p99_latency_ms": 25.54,
+      "throughput_rps": 73.1,
+      "cpu_utilization_pct": 22.7,
+      "ram_utilization_mb": 280.9,
+      "queue_depth": 1,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 10.9,
+            "bin_end": 11.85,
+            "bin_center": 11.37,
+            "count": 2
+          },
+          {
+            "bin_start": 11.85,
+            "bin_end": 12.8,
+            "bin_center": 12.32,
+            "count": 4
+          },
+          {
+            "bin_start": 12.8,
+            "bin_end": 13.74,
+            "bin_center": 13.27,
+            "count": 14
+          },
+          {
+            "bin_start": 13.74,
+            "bin_end": 14.69,
+            "bin_center": 14.22,
+            "count": 12
+          },
+          {
+            "bin_start": 14.69,
+            "bin_end": 15.64,
+            "bin_center": 15.16,
+            "count": 18
+          },
+          {
+            "bin_start": 15.64,
+            "bin_end": 16.59,
+            "bin_center": 16.11,
+            "count": 18
+          },
+          {
+            "bin_start": 16.59,
+            "bin_end": 17.53,
+            "bin_center": 17.06,
+            "count": 23
+          },
+          {
+            "bin_start": 17.53,
+            "bin_end": 18.48,
+            "bin_center": 18.01,
+            "count": 15
+          },
+          {
+            "bin_start": 18.48,
+            "bin_end": 19.43,
+            "bin_center": 18.95,
+            "count": 12
+          },
+          {
+            "bin_start": 19.43,
+            "bin_end": 20.38,
+            "bin_center": 19.9,
+            "count": 11
+          },
+          {
+            "bin_start": 20.38,
+            "bin_end": 21.32,
+            "bin_center": 20.85,
+            "count": 5
+          },
+          {
+            "bin_start": 21.32,
+            "bin_end": 22.27,
+            "bin_center": 21.8,
+            "count": 6
+          },
+          {
+            "bin_start": 22.27,
+            "bin_end": 23.22,
+            "bin_center": 22.75,
+            "count": 6
+          },
+          {
+            "bin_start": 23.22,
+            "bin_end": 24.17,
+            "bin_center": 23.69,
+            "count": 1
+          },
+          {
+            "bin_start": 24.17,
+            "bin_end": 25.11,
+            "bin_center": 24.64,
+            "count": 0
+          },
+          {
+            "bin_start": 25.11,
+            "bin_end": 26.06,
+            "bin_center": 25.59,
+            "count": 2
+          },
+          {
+            "bin_start": 26.06,
+            "bin_end": 27.01,
+            "bin_center": 26.54,
+            "count": 0
+          },
+          {
+            "bin_start": 27.01,
+            "bin_end": 27.96,
+            "bin_center": 27.48,
+            "count": 0
+          },
+          {
+            "bin_start": 27.96,
+            "bin_end": 28.9,
+            "bin_center": 28.43,
+            "count": 0
+          },
+          {
+            "bin_start": 28.9,
+            "bin_end": 29.85,
+            "bin_center": 29.38,
+            "count": 0
+          },
+          {
+            "bin_start": 29.85,
+            "bin_end": 30.8,
+            "bin_center": 30.33,
+            "count": 0
+          },
+          {
+            "bin_start": 30.8,
+            "bin_end": 31.75,
+            "bin_center": 31.27,
+            "count": 0
+          },
+          {
+            "bin_start": 31.75,
+            "bin_end": 32.69,
+            "bin_center": 32.22,
+            "count": 0
+          },
+          {
+            "bin_start": 32.69,
+            "bin_end": 33.64,
+            "bin_center": 33.17,
+            "count": 0
+          },
+          {
+            "bin_start": 33.64,
+            "bin_end": 34.59,
+            "bin_center": 34.12,
+            "count": 1
+          }
+        ],
+        "mean": 17.24,
+        "median": 16.86,
+        "std": 3.26,
+        "min": 10.9,
+        "max": 34.59,
+        "sample_count": 150
+      }
+    },
+    {
+      "experiment_id": "EXP-MODU-EVE-U50-R3-6480",
+      "architecture": "modular_monolith",
+      "workload_type": "events_registration",
+      "concurrent_users": 50,
+      "total_requests": 750,
+      "avg_latency_ms": 9.5,
+      "p50_latency_ms": 8.71,
+      "p95_latency_ms": 14.54,
+      "p99_latency_ms": 39.57,
+      "throughput_rps": 350.0,
+      "cpu_utilization_pct": 21.1,
+      "ram_utilization_mb": 180.3,
+      "queue_depth": 0,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 4.08,
+            "bin_end": 5.85,
+            "bin_center": 4.96,
+            "count": 17
+          },
+          {
+            "bin_start": 5.85,
+            "bin_end": 7.62,
+            "bin_center": 6.73,
+            "count": 48
+          },
+          {
+            "bin_start": 7.62,
+            "bin_end": 9.39,
+            "bin_center": 8.5,
+            "count": 53
+          },
+          {
+            "bin_start": 9.39,
+            "bin_end": 11.16,
+            "bin_center": 10.27,
+            "count": 42
+          },
+          {
+            "bin_start": 11.16,
+            "bin_end": 12.93,
+            "bin_center": 12.04,
+            "count": 23
+          },
+          {
+            "bin_start": 12.93,
+            "bin_end": 14.7,
+            "bin_center": 13.81,
+            "count": 8
+          },
+          {
+            "bin_start": 14.7,
+            "bin_end": 16.47,
+            "bin_center": 15.58,
+            "count": 4
+          },
+          {
+            "bin_start": 16.47,
+            "bin_end": 18.24,
+            "bin_center": 17.35,
+            "count": 2
+          },
+          {
+            "bin_start": 18.24,
+            "bin_end": 20.01,
+            "bin_center": 19.12,
+            "count": 0
+          },
+          {
+            "bin_start": 20.01,
+            "bin_end": 21.78,
+            "bin_center": 20.89,
+            "count": 0
+          },
+          {
+            "bin_start": 21.78,
+            "bin_end": 23.55,
+            "bin_center": 22.66,
+            "count": 0
+          },
+          {
+            "bin_start": 23.55,
+            "bin_end": 25.32,
+            "bin_center": 24.43,
+            "count": 0
+          },
+          {
+            "bin_start": 25.32,
+            "bin_end": 27.08,
+            "bin_center": 26.2,
+            "count": 0
+          },
+          {
+            "bin_start": 27.08,
+            "bin_end": 28.85,
+            "bin_center": 27.97,
+            "count": 0
+          },
+          {
+            "bin_start": 28.85,
+            "bin_end": 30.62,
+            "bin_center": 29.74,
+            "count": 0
+          },
+          {
+            "bin_start": 30.62,
+            "bin_end": 32.39,
+            "bin_center": 31.51,
+            "count": 0
+          },
+          {
+            "bin_start": 32.39,
+            "bin_end": 34.16,
+            "bin_center": 33.28,
+            "count": 0
+          },
+          {
+            "bin_start": 34.16,
+            "bin_end": 35.93,
+            "bin_center": 35.05,
+            "count": 0
+          },
+          {
+            "bin_start": 35.93,
+            "bin_end": 37.7,
+            "bin_center": 36.82,
+            "count": 0
+          },
+          {
+            "bin_start": 37.7,
+            "bin_end": 39.47,
+            "bin_center": 38.59,
+            "count": 0
+          },
+          {
+            "bin_start": 39.47,
+            "bin_end": 41.24,
+            "bin_center": 40.36,
+            "count": 1
+          },
+          {
+            "bin_start": 41.24,
+            "bin_end": 43.01,
+            "bin_center": 42.13,
+            "count": 1
+          },
+          {
+            "bin_start": 43.01,
+            "bin_end": 44.78,
+            "bin_center": 43.9,
+            "count": 0
+          },
+          {
+            "bin_start": 44.78,
+            "bin_end": 46.55,
+            "bin_center": 45.67,
+            "count": 0
+          },
+          {
+            "bin_start": 46.55,
+            "bin_end": 48.32,
+            "bin_center": 47.44,
+            "count": 1
+          }
+        ],
+        "mean": 9.5,
+        "median": 8.71,
+        "std": 4.88,
+        "min": 4.08,
+        "max": 48.32,
+        "sample_count": 200
+      }
+    },
+    {
+      "experiment_id": "EXP-EVEN-EVE-U50-R1-6480",
+      "architecture": "event_driven",
+      "workload_type": "events_registration",
+      "concurrent_users": 50,
+      "total_requests": 750,
+      "avg_latency_ms": 18.61,
+      "p50_latency_ms": 17.91,
+      "p95_latency_ms": 25.0,
+      "p99_latency_ms": 31.74,
+      "throughput_rps": 227.3,
+      "cpu_utilization_pct": 27.0,
+      "ram_utilization_mb": 288.5,
+      "queue_depth": 11,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 10.71,
+            "bin_end": 11.85,
+            "bin_center": 11.28,
+            "count": 4
+          },
+          {
+            "bin_start": 11.85,
+            "bin_end": 13.0,
+            "bin_center": 12.43,
+            "count": 2
+          },
+          {
+            "bin_start": 13.0,
+            "bin_end": 14.14,
+            "bin_center": 13.57,
+            "count": 7
+          },
+          {
+            "bin_start": 14.14,
+            "bin_end": 15.29,
+            "bin_center": 14.71,
+            "count": 19
+          },
+          {
+            "bin_start": 15.29,
+            "bin_end": 16.43,
+            "bin_center": 15.86,
+            "count": 23
+          },
+          {
+            "bin_start": 16.43,
+            "bin_end": 17.57,
+            "bin_center": 17.0,
+            "count": 35
+          },
+          {
+            "bin_start": 17.57,
+            "bin_end": 18.72,
+            "bin_center": 18.15,
+            "count": 29
+          },
+          {
+            "bin_start": 18.72,
+            "bin_end": 19.86,
+            "bin_center": 19.29,
+            "count": 23
+          },
+          {
+            "bin_start": 19.86,
+            "bin_end": 21.01,
+            "bin_center": 20.43,
+            "count": 14
+          },
+          {
+            "bin_start": 21.01,
+            "bin_end": 22.15,
+            "bin_center": 21.58,
+            "count": 14
+          },
+          {
+            "bin_start": 22.15,
+            "bin_end": 23.29,
+            "bin_center": 22.72,
+            "count": 11
+          },
+          {
+            "bin_start": 23.29,
+            "bin_end": 24.44,
+            "bin_center": 23.87,
+            "count": 7
+          },
+          {
+            "bin_start": 24.44,
+            "bin_end": 25.58,
+            "bin_center": 25.01,
+            "count": 5
+          },
+          {
+            "bin_start": 25.58,
+            "bin_end": 26.73,
+            "bin_center": 26.15,
+            "count": 2
+          },
+          {
+            "bin_start": 26.73,
+            "bin_end": 27.87,
+            "bin_center": 27.3,
+            "count": 0
+          },
+          {
+            "bin_start": 27.87,
+            "bin_end": 29.01,
+            "bin_center": 28.44,
+            "count": 1
+          },
+          {
+            "bin_start": 29.01,
+            "bin_end": 30.16,
+            "bin_center": 29.59,
+            "count": 0
+          },
+          {
+            "bin_start": 30.16,
+            "bin_end": 31.3,
+            "bin_center": 30.73,
+            "count": 1
+          },
+          {
+            "bin_start": 31.3,
+            "bin_end": 32.45,
+            "bin_center": 31.87,
+            "count": 1
+          },
+          {
+            "bin_start": 32.45,
+            "bin_end": 33.59,
+            "bin_center": 33.02,
+            "count": 0
+          },
+          {
+            "bin_start": 33.59,
+            "bin_end": 34.73,
+            "bin_center": 34.16,
+            "count": 0
+          },
+          {
+            "bin_start": 34.73,
+            "bin_end": 35.88,
+            "bin_center": 35.31,
+            "count": 1
+          },
+          {
+            "bin_start": 35.88,
+            "bin_end": 37.02,
+            "bin_center": 36.45,
+            "count": 0
+          },
+          {
+            "bin_start": 37.02,
+            "bin_end": 38.17,
+            "bin_center": 37.59,
+            "count": 0
+          },
+          {
+            "bin_start": 38.17,
+            "bin_end": 39.31,
+            "bin_center": 38.74,
+            "count": 1
+          }
+        ],
+        "mean": 18.61,
+        "median": 17.91,
+        "std": 3.87,
+        "min": 10.71,
+        "max": 39.31,
+        "sample_count": 200
+      }
+    },
+    {
+      "experiment_id": "EXP-MODU-EVE-U100-R3-6480",
+      "architecture": "modular_monolith",
+      "workload_type": "events_registration",
+      "concurrent_users": 100,
+      "total_requests": 1500,
+      "avg_latency_ms": 15.23,
+      "p50_latency_ms": 14.08,
+      "p95_latency_ms": 24.81,
+      "p99_latency_ms": 48.96,
+      "throughput_rps": 343.1,
+      "cpu_utilization_pct": 30.4,
+      "ram_utilization_mb": 190.0,
+      "queue_depth": 0,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 5.13,
+            "bin_end": 7.74,
+            "bin_center": 6.44,
+            "count": 21
+          },
+          {
+            "bin_start": 7.74,
+            "bin_end": 10.36,
+            "bin_center": 9.05,
+            "count": 62
+          },
+          {
+            "bin_start": 10.36,
+            "bin_end": 12.97,
+            "bin_center": 11.67,
+            "count": 89
+          },
+          {
+            "bin_start": 12.97,
+            "bin_end": 15.59,
+            "bin_center": 14.28,
+            "count": 75
+          },
+          {
+            "bin_start": 15.59,
+            "bin_end": 18.2,
+            "bin_center": 16.89,
+            "count": 63
+          },
+          {
+            "bin_start": 18.2,
+            "bin_end": 20.82,
+            "bin_center": 19.51,
+            "count": 37
+          },
+          {
+            "bin_start": 20.82,
+            "bin_end": 23.43,
+            "bin_center": 22.12,
+            "count": 24
+          },
+          {
+            "bin_start": 23.43,
+            "bin_end": 26.05,
+            "bin_center": 24.74,
+            "count": 15
+          },
+          {
+            "bin_start": 26.05,
+            "bin_end": 28.66,
+            "bin_center": 27.35,
+            "count": 3
+          },
+          {
+            "bin_start": 28.66,
+            "bin_end": 31.27,
+            "bin_center": 29.97,
+            "count": 2
+          },
+          {
+            "bin_start": 31.27,
+            "bin_end": 33.89,
+            "bin_center": 32.58,
+            "count": 0
+          },
+          {
+            "bin_start": 33.89,
+            "bin_end": 36.5,
+            "bin_center": 35.2,
+            "count": 2
+          },
+          {
+            "bin_start": 36.5,
+            "bin_end": 39.12,
+            "bin_center": 37.81,
+            "count": 1
+          },
+          {
+            "bin_start": 39.12,
+            "bin_end": 41.73,
+            "bin_center": 40.42,
+            "count": 1
+          },
+          {
+            "bin_start": 41.73,
+            "bin_end": 44.35,
+            "bin_center": 43.04,
+            "count": 0
+          },
+          {
+            "bin_start": 44.35,
+            "bin_end": 46.96,
+            "bin_center": 45.65,
+            "count": 0
+          },
+          {
+            "bin_start": 46.96,
+            "bin_end": 49.57,
+            "bin_center": 48.27,
+            "count": 1
+          },
+          {
+            "bin_start": 49.57,
+            "bin_end": 52.19,
+            "bin_center": 50.88,
+            "count": 0
+          },
+          {
+            "bin_start": 52.19,
+            "bin_end": 54.8,
+            "bin_center": 53.5,
+            "count": 1
+          },
+          {
+            "bin_start": 54.8,
+            "bin_end": 57.42,
+            "bin_center": 56.11,
+            "count": 0
+          },
+          {
+            "bin_start": 57.42,
+            "bin_end": 60.03,
+            "bin_center": 58.73,
+            "count": 0
+          },
+          {
+            "bin_start": 60.03,
+            "bin_end": 62.65,
+            "bin_center": 61.34,
+            "count": 1
+          },
+          {
+            "bin_start": 62.65,
+            "bin_end": 65.26,
+            "bin_center": 63.95,
+            "count": 0
+          },
+          {
+            "bin_start": 65.26,
+            "bin_end": 67.88,
+            "bin_center": 66.57,
+            "count": 1
+          },
+          {
+            "bin_start": 67.88,
+            "bin_end": 70.49,
+            "bin_center": 69.18,
+            "count": 1
+          }
+        ],
+        "mean": 15.23,
+        "median": 14.08,
+        "std": 7.29,
+        "min": 5.13,
+        "max": 70.49,
+        "sample_count": 400
+      }
+    },
+    {
+      "experiment_id": "EXP-EVEN-EVE-U100-R3-6480",
+      "architecture": "event_driven",
+      "workload_type": "events_registration",
+      "concurrent_users": 100,
+      "total_requests": 1500,
+      "avg_latency_ms": 20.22,
+      "p50_latency_ms": 19.99,
+      "p95_latency_ms": 27.51,
+      "p99_latency_ms": 30.74,
+      "throughput_rps": 399.2,
+      "cpu_utilization_pct": 33.0,
+      "ram_utilization_mb": 309.6,
+      "queue_depth": 21,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 11.14,
+            "bin_end": 12.24,
+            "bin_center": 11.69,
+            "count": 3
+          },
+          {
+            "bin_start": 12.24,
+            "bin_end": 13.33,
+            "bin_center": 12.78,
+            "count": 8
+          },
+          {
+            "bin_start": 13.33,
+            "bin_end": 14.43,
+            "bin_center": 13.88,
+            "count": 14
+          },
+          {
+            "bin_start": 14.43,
+            "bin_end": 15.53,
+            "bin_center": 14.98,
+            "count": 24
+          },
+          {
+            "bin_start": 15.53,
+            "bin_end": 16.62,
+            "bin_center": 16.07,
+            "count": 28
+          },
+          {
+            "bin_start": 16.62,
+            "bin_end": 17.72,
+            "bin_center": 17.17,
+            "count": 33
+          },
+          {
+            "bin_start": 17.72,
+            "bin_end": 18.81,
+            "bin_center": 18.27,
+            "count": 51
+          },
+          {
+            "bin_start": 18.81,
+            "bin_end": 19.91,
+            "bin_center": 19.36,
+            "count": 37
+          },
+          {
+            "bin_start": 19.91,
+            "bin_end": 21.01,
+            "bin_center": 20.46,
+            "count": 44
+          },
+          {
+            "bin_start": 21.01,
+            "bin_end": 22.1,
+            "bin_center": 21.56,
+            "count": 42
+          },
+          {
+            "bin_start": 22.1,
+            "bin_end": 23.2,
+            "bin_center": 22.65,
+            "count": 28
+          },
+          {
+            "bin_start": 23.2,
+            "bin_end": 24.3,
+            "bin_center": 23.75,
+            "count": 25
+          },
+          {
+            "bin_start": 24.3,
+            "bin_end": 25.39,
+            "bin_center": 24.84,
+            "count": 24
+          },
+          {
+            "bin_start": 25.39,
+            "bin_end": 26.49,
+            "bin_center": 25.94,
+            "count": 13
+          },
+          {
+            "bin_start": 26.49,
+            "bin_end": 27.59,
+            "bin_center": 27.04,
+            "count": 8
+          },
+          {
+            "bin_start": 27.59,
+            "bin_end": 28.68,
+            "bin_center": 28.13,
+            "count": 5
+          },
+          {
+            "bin_start": 28.68,
+            "bin_end": 29.78,
+            "bin_center": 29.23,
+            "count": 4
+          },
+          {
+            "bin_start": 29.78,
+            "bin_end": 30.88,
+            "bin_center": 30.33,
+            "count": 5
+          },
+          {
+            "bin_start": 30.88,
+            "bin_end": 31.97,
+            "bin_center": 31.42,
+            "count": 1
+          },
+          {
+            "bin_start": 31.97,
+            "bin_end": 33.07,
+            "bin_center": 32.52,
+            "count": 0
+          },
+          {
+            "bin_start": 33.07,
+            "bin_end": 34.16,
+            "bin_center": 33.62,
+            "count": 0
+          },
+          {
+            "bin_start": 34.16,
+            "bin_end": 35.26,
+            "bin_center": 34.71,
+            "count": 2
+          },
+          {
+            "bin_start": 35.26,
+            "bin_end": 36.36,
+            "bin_center": 35.81,
+            "count": 0
+          },
+          {
+            "bin_start": 36.36,
+            "bin_end": 37.45,
+            "bin_center": 36.91,
+            "count": 0
+          },
+          {
+            "bin_start": 37.45,
+            "bin_end": 38.55,
+            "bin_center": 38.0,
+            "count": 1
+          }
+        ],
+        "mean": 20.22,
+        "median": 19.99,
+        "std": 4.12,
+        "min": 11.14,
+        "max": 38.55,
+        "sample_count": 400
+      }
+    },
+    {
+      "experiment_id": "EXP-MODU-EVE-U200-R2-6480",
+      "architecture": "modular_monolith",
+      "workload_type": "events_registration",
+      "concurrent_users": 200,
+      "total_requests": 3000,
+      "avg_latency_ms": 29.42,
+      "p50_latency_ms": 25.93,
+      "p95_latency_ms": 57.91,
+      "p99_latency_ms": 82.18,
+      "throughput_rps": 218.4,
+      "cpu_utilization_pct": 51.0,
+      "ram_utilization_mb": 209.6,
+      "queue_depth": 0,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 7.41,
+            "bin_end": 11.12,
+            "bin_center": 9.27,
+            "count": 15
+          },
+          {
+            "bin_start": 11.12,
+            "bin_end": 14.83,
+            "bin_center": 12.98,
+            "count": 44
+          },
+          {
+            "bin_start": 14.83,
+            "bin_end": 18.54,
+            "bin_center": 16.69,
+            "count": 64
+          },
+          {
+            "bin_start": 18.54,
+            "bin_end": 22.26,
+            "bin_center": 20.4,
+            "count": 98
+          },
+          {
+            "bin_start": 22.26,
+            "bin_end": 25.97,
+            "bin_center": 24.11,
+            "count": 80
+          },
+          {
+            "bin_start": 25.97,
+            "bin_end": 29.68,
+            "bin_center": 27.82,
+            "count": 75
+          },
+          {
+            "bin_start": 29.68,
+            "bin_end": 33.39,
+            "bin_center": 31.54,
+            "count": 53
+          },
+          {
+            "bin_start": 33.39,
+            "bin_end": 37.1,
+            "bin_center": 35.25,
+            "count": 43
+          },
+          {
+            "bin_start": 37.1,
+            "bin_end": 40.81,
+            "bin_center": 38.96,
+            "count": 27
+          },
+          {
+            "bin_start": 40.81,
+            "bin_end": 44.53,
+            "bin_center": 42.67,
+            "count": 28
+          },
+          {
+            "bin_start": 44.53,
+            "bin_end": 48.24,
+            "bin_center": 46.38,
+            "count": 17
+          },
+          {
+            "bin_start": 48.24,
+            "bin_end": 51.95,
+            "bin_center": 50.09,
+            "count": 7
+          },
+          {
+            "bin_start": 51.95,
+            "bin_end": 55.66,
+            "bin_center": 53.81,
+            "count": 12
+          },
+          {
+            "bin_start": 55.66,
+            "bin_end": 59.37,
+            "bin_center": 57.52,
+            "count": 8
+          },
+          {
+            "bin_start": 59.37,
+            "bin_end": 63.08,
+            "bin_center": 61.23,
+            "count": 4
+          },
+          {
+            "bin_start": 63.08,
+            "bin_end": 66.8,
+            "bin_center": 64.94,
+            "count": 8
+          },
+          {
+            "bin_start": 66.8,
+            "bin_end": 70.51,
+            "bin_center": 68.65,
+            "count": 0
+          },
+          {
+            "bin_start": 70.51,
+            "bin_end": 74.22,
+            "bin_center": 72.36,
+            "count": 5
+          },
+          {
+            "bin_start": 74.22,
+            "bin_end": 77.93,
+            "bin_center": 76.07,
+            "count": 1
+          },
+          {
+            "bin_start": 77.93,
+            "bin_end": 81.64,
+            "bin_center": 79.79,
+            "count": 4
+          },
+          {
+            "bin_start": 81.64,
+            "bin_end": 85.35,
+            "bin_center": 83.5,
+            "count": 2
+          },
+          {
+            "bin_start": 85.35,
+            "bin_end": 89.07,
+            "bin_center": 87.21,
+            "count": 0
+          },
+          {
+            "bin_start": 89.07,
+            "bin_end": 92.78,
+            "bin_center": 90.92,
+            "count": 1
+          },
+          {
+            "bin_start": 92.78,
+            "bin_end": 96.49,
+            "bin_center": 94.63,
+            "count": 2
+          },
+          {
+            "bin_start": 96.49,
+            "bin_end": 100.2,
+            "bin_center": 98.34,
+            "count": 2
+          }
+        ],
+        "mean": 29.42,
+        "median": 25.93,
+        "std": 14.87,
+        "min": 7.41,
+        "max": 100.2,
+        "sample_count": 600
+      }
+    },
+    {
+      "experiment_id": "EXP-EVEN-EVE-U200-R2-6480",
+      "architecture": "event_driven",
+      "workload_type": "events_registration",
+      "concurrent_users": 200,
+      "total_requests": 3000,
+      "avg_latency_ms": 22.04,
+      "p50_latency_ms": 21.23,
+      "p95_latency_ms": 32.19,
+      "p99_latency_ms": 39.08,
+      "throughput_rps": 770.0,
+      "cpu_utilization_pct": 42.6,
+      "ram_utilization_mb": 338.8,
+      "queue_depth": 40,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 10.09,
+            "bin_end": 11.48,
+            "bin_center": 10.78,
+            "count": 4
+          },
+          {
+            "bin_start": 11.48,
+            "bin_end": 12.86,
+            "bin_center": 12.17,
+            "count": 5
+          },
+          {
+            "bin_start": 12.86,
+            "bin_end": 14.25,
+            "bin_center": 13.56,
+            "count": 28
+          },
+          {
+            "bin_start": 14.25,
+            "bin_end": 15.64,
+            "bin_center": 14.94,
+            "count": 21
+          },
+          {
+            "bin_start": 15.64,
+            "bin_end": 17.02,
+            "bin_center": 16.33,
+            "count": 44
+          },
+          {
+            "bin_start": 17.02,
+            "bin_end": 18.41,
+            "bin_center": 17.72,
+            "count": 63
+          },
+          {
+            "bin_start": 18.41,
+            "bin_end": 19.79,
+            "bin_center": 19.1,
+            "count": 71
+          },
+          {
+            "bin_start": 19.79,
+            "bin_end": 21.18,
+            "bin_center": 20.49,
+            "count": 62
+          },
+          {
+            "bin_start": 21.18,
+            "bin_end": 22.57,
+            "bin_center": 21.87,
+            "count": 57
+          },
+          {
+            "bin_start": 22.57,
+            "bin_end": 23.95,
+            "bin_center": 23.26,
+            "count": 52
+          },
+          {
+            "bin_start": 23.95,
+            "bin_end": 25.34,
+            "bin_center": 24.65,
+            "count": 47
+          },
+          {
+            "bin_start": 25.34,
+            "bin_end": 26.73,
+            "bin_center": 26.03,
+            "count": 29
+          },
+          {
+            "bin_start": 26.73,
+            "bin_end": 28.11,
+            "bin_center": 27.42,
+            "count": 34
+          },
+          {
+            "bin_start": 28.11,
+            "bin_end": 29.5,
+            "bin_center": 28.81,
+            "count": 30
+          },
+          {
+            "bin_start": 29.5,
+            "bin_end": 30.89,
+            "bin_center": 30.19,
+            "count": 11
+          },
+          {
+            "bin_start": 30.89,
+            "bin_end": 32.27,
+            "bin_center": 31.58,
+            "count": 12
+          },
+          {
+            "bin_start": 32.27,
+            "bin_end": 33.66,
+            "bin_center": 32.97,
+            "count": 10
+          },
+          {
+            "bin_start": 33.66,
+            "bin_end": 35.05,
+            "bin_center": 34.35,
+            "count": 6
+          },
+          {
+            "bin_start": 35.05,
+            "bin_end": 36.43,
+            "bin_center": 35.74,
+            "count": 2
+          },
+          {
+            "bin_start": 36.43,
+            "bin_end": 37.82,
+            "bin_center": 37.12,
+            "count": 4
+          },
+          {
+            "bin_start": 37.82,
+            "bin_end": 39.2,
+            "bin_center": 38.51,
+            "count": 2
+          },
+          {
+            "bin_start": 39.2,
+            "bin_end": 40.59,
+            "bin_center": 39.9,
+            "count": 3
+          },
+          {
+            "bin_start": 40.59,
+            "bin_end": 41.98,
+            "bin_center": 41.28,
+            "count": 1
+          },
+          {
+            "bin_start": 41.98,
+            "bin_end": 43.36,
+            "bin_center": 42.67,
+            "count": 1
+          },
+          {
+            "bin_start": 43.36,
+            "bin_end": 44.75,
+            "bin_center": 44.06,
+            "count": 1
+          }
+        ],
+        "mean": 22.04,
+        "median": 21.23,
+        "std": 5.58,
+        "min": 10.09,
+        "max": 44.75,
+        "sample_count": 600
+      }
+    },
+    {
+      "experiment_id": "EXP-MODU-EVE-U400-R2-6480",
+      "architecture": "modular_monolith",
+      "workload_type": "events_registration",
+      "concurrent_users": 400,
+      "total_requests": 6000,
+      "avg_latency_ms": 75.23,
+      "p50_latency_ms": 61.12,
+      "p95_latency_ms": 175.31,
+      "p99_latency_ms": 233.46,
+      "throughput_rps": 91.8,
+      "cpu_utilization_pct": 88.6,
+      "ram_utilization_mb": 263.0,
+      "queue_depth": 0,
+      "error_rate_pct": 3.58,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 11.02,
+            "bin_end": 30.38,
+            "bin_center": 20.7,
+            "count": 91
+          },
+          {
+            "bin_start": 30.38,
+            "bin_end": 49.75,
+            "bin_center": 40.07,
+            "count": 136
+          },
+          {
+            "bin_start": 49.75,
+            "bin_end": 69.11,
+            "bin_center": 59.43,
+            "count": 111
+          },
+          {
+            "bin_start": 69.11,
+            "bin_end": 88.48,
+            "bin_center": 78.79,
+            "count": 92
+          },
+          {
+            "bin_start": 88.48,
+            "bin_end": 107.84,
+            "bin_center": 98.16,
+            "count": 47
+          },
+          {
+            "bin_start": 107.84,
+            "bin_end": 127.2,
+            "bin_center": 117.52,
+            "count": 36
+          },
+          {
+            "bin_start": 127.2,
+            "bin_end": 146.57,
+            "bin_center": 136.89,
+            "count": 23
+          },
+          {
+            "bin_start": 146.57,
+            "bin_end": 165.93,
+            "bin_center": 156.25,
+            "count": 22
+          },
+          {
+            "bin_start": 165.93,
+            "bin_end": 185.3,
+            "bin_center": 175.61,
+            "count": 20
+          },
+          {
+            "bin_start": 185.3,
+            "bin_end": 204.66,
+            "bin_center": 194.98,
+            "count": 8
+          },
+          {
+            "bin_start": 204.66,
+            "bin_end": 224.02,
+            "bin_center": 214.34,
+            "count": 5
+          },
+          {
+            "bin_start": 224.02,
+            "bin_end": 243.39,
+            "bin_center": 233.71,
+            "count": 6
+          },
+          {
+            "bin_start": 243.39,
+            "bin_end": 262.75,
+            "bin_center": 253.07,
+            "count": 0
+          },
+          {
+            "bin_start": 262.75,
+            "bin_end": 282.12,
+            "bin_center": 272.43,
+            "count": 1
+          },
+          {
+            "bin_start": 282.12,
+            "bin_end": 301.48,
+            "bin_center": 291.8,
+            "count": 0
+          },
+          {
+            "bin_start": 301.48,
+            "bin_end": 320.84,
+            "bin_center": 311.16,
+            "count": 0
+          },
+          {
+            "bin_start": 320.84,
+            "bin_end": 340.21,
+            "bin_center": 330.53,
+            "count": 0
+          },
+          {
+            "bin_start": 340.21,
+            "bin_end": 359.57,
+            "bin_center": 349.89,
+            "count": 0
+          },
+          {
+            "bin_start": 359.57,
+            "bin_end": 378.94,
+            "bin_center": 369.25,
+            "count": 0
+          },
+          {
+            "bin_start": 378.94,
+            "bin_end": 398.3,
+            "bin_center": 388.62,
+            "count": 1
+          },
+          {
+            "bin_start": 398.3,
+            "bin_end": 417.66,
+            "bin_center": 407.98,
+            "count": 0
+          },
+          {
+            "bin_start": 417.66,
+            "bin_end": 437.03,
+            "bin_center": 427.35,
+            "count": 0
+          },
+          {
+            "bin_start": 437.03,
+            "bin_end": 456.39,
+            "bin_center": 446.71,
+            "count": 0
+          },
+          {
+            "bin_start": 456.39,
+            "bin_end": 475.76,
+            "bin_center": 466.07,
+            "count": 0
+          },
+          {
+            "bin_start": 475.76,
+            "bin_end": 495.12,
+            "bin_center": 485.44,
+            "count": 1
+          }
+        ],
+        "mean": 75.23,
+        "median": 61.12,
+        "std": 52.0,
+        "min": 11.02,
+        "max": 495.12,
+        "sample_count": 600
+      }
+    },
+    {
+      "experiment_id": "EXP-EVEN-EVE-U400-R1-6480",
+      "architecture": "event_driven",
+      "workload_type": "events_registration",
+      "concurrent_users": 400,
+      "total_requests": 6000,
+      "avg_latency_ms": 25.04,
+      "p50_latency_ms": 23.95,
+      "p95_latency_ms": 39.57,
+      "p99_latency_ms": 45.04,
+      "throughput_rps": 1480.0,
+      "cpu_utilization_pct": 62.9,
+      "ram_utilization_mb": 390.4,
+      "queue_depth": 75,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 10.48,
+            "bin_end": 12.35,
+            "bin_center": 11.41,
+            "count": 7
+          },
+          {
+            "bin_start": 12.35,
+            "bin_end": 14.22,
+            "bin_center": 13.28,
+            "count": 14
+          },
+          {
+            "bin_start": 14.22,
+            "bin_end": 16.08,
+            "bin_center": 15.15,
+            "count": 25
+          },
+          {
+            "bin_start": 16.08,
+            "bin_end": 17.95,
+            "bin_center": 17.02,
+            "count": 56
+          },
+          {
+            "bin_start": 17.95,
+            "bin_end": 19.82,
+            "bin_center": 18.89,
+            "count": 61
+          },
+          {
+            "bin_start": 19.82,
+            "bin_end": 21.69,
+            "bin_center": 20.75,
+            "count": 61
+          },
+          {
+            "bin_start": 21.69,
+            "bin_end": 23.56,
+            "bin_center": 22.62,
+            "count": 63
+          },
+          {
+            "bin_start": 23.56,
+            "bin_end": 25.42,
+            "bin_center": 24.49,
+            "count": 63
+          },
+          {
+            "bin_start": 25.42,
+            "bin_end": 27.29,
+            "bin_center": 26.36,
+            "count": 50
+          },
+          {
+            "bin_start": 27.29,
+            "bin_end": 29.16,
+            "bin_center": 28.23,
+            "count": 50
+          },
+          {
+            "bin_start": 29.16,
+            "bin_end": 31.03,
+            "bin_center": 30.09,
+            "count": 31
+          },
+          {
+            "bin_start": 31.03,
+            "bin_end": 32.9,
+            "bin_center": 31.96,
+            "count": 33
+          },
+          {
+            "bin_start": 32.9,
+            "bin_end": 34.76,
+            "bin_center": 33.83,
+            "count": 24
+          },
+          {
+            "bin_start": 34.76,
+            "bin_end": 36.63,
+            "bin_center": 35.7,
+            "count": 13
+          },
+          {
+            "bin_start": 36.63,
+            "bin_end": 38.5,
+            "bin_center": 37.57,
+            "count": 12
+          },
+          {
+            "bin_start": 38.5,
+            "bin_end": 40.37,
+            "bin_center": 39.43,
+            "count": 9
+          },
+          {
+            "bin_start": 40.37,
+            "bin_end": 42.24,
+            "bin_center": 41.3,
+            "count": 13
+          },
+          {
+            "bin_start": 42.24,
+            "bin_end": 44.1,
+            "bin_center": 43.17,
+            "count": 5
+          },
+          {
+            "bin_start": 44.1,
+            "bin_end": 45.97,
+            "bin_center": 45.04,
+            "count": 4
+          },
+          {
+            "bin_start": 45.97,
+            "bin_end": 47.84,
+            "bin_center": 46.91,
+            "count": 0
+          },
+          {
+            "bin_start": 47.84,
+            "bin_end": 49.71,
+            "bin_center": 48.77,
+            "count": 2
+          },
+          {
+            "bin_start": 49.71,
+            "bin_end": 51.58,
+            "bin_center": 50.64,
+            "count": 1
+          },
+          {
+            "bin_start": 51.58,
+            "bin_end": 53.44,
+            "bin_center": 52.51,
+            "count": 2
+          },
+          {
+            "bin_start": 53.44,
+            "bin_end": 55.31,
+            "bin_center": 54.38,
+            "count": 0
+          },
+          {
+            "bin_start": 55.31,
+            "bin_end": 57.18,
+            "bin_center": 56.25,
+            "count": 1
+          }
+        ],
+        "mean": 25.04,
+        "median": 23.95,
+        "std": 7.49,
+        "min": 10.48,
+        "max": 57.18,
+        "sample_count": 600
+      }
+    },
+    {
+      "experiment_id": "EXP-MODU-CAM-U10-R3-6480",
+      "architecture": "modular_monolith",
+      "workload_type": "campus_navigation",
+      "concurrent_users": 10,
+      "total_requests": 150,
+      "avg_latency_ms": 4.55,
+      "p50_latency_ms": 4.33,
+      "p95_latency_ms": 6.0,
+      "p99_latency_ms": 6.95,
+      "throughput_rps": 88.1,
+      "cpu_utilization_pct": 14.0,
+      "ram_utilization_mb": 166.8,
+      "queue_depth": 0,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 2.41,
+            "bin_end": 3.69,
+            "bin_center": 3.05,
+            "count": 36
+          },
+          {
+            "bin_start": 3.69,
+            "bin_end": 4.98,
+            "bin_center": 4.34,
+            "count": 81
+          },
+          {
+            "bin_start": 4.98,
+            "bin_end": 6.26,
+            "bin_center": 5.62,
+            "count": 29
+          },
+          {
+            "bin_start": 6.26,
+            "bin_end": 7.54,
+            "bin_center": 6.9,
+            "count": 3
+          },
+          {
+            "bin_start": 7.54,
+            "bin_end": 8.83,
+            "bin_center": 8.19,
+            "count": 0
+          },
+          {
+            "bin_start": 8.83,
+            "bin_end": 10.11,
+            "bin_center": 9.47,
+            "count": 0
+          },
+          {
+            "bin_start": 10.11,
+            "bin_end": 11.4,
+            "bin_center": 10.75,
+            "count": 0
+          },
+          {
+            "bin_start": 11.4,
+            "bin_end": 12.68,
+            "bin_center": 12.04,
+            "count": 0
+          },
+          {
+            "bin_start": 12.68,
+            "bin_end": 13.96,
+            "bin_center": 13.32,
+            "count": 0
+          },
+          {
+            "bin_start": 13.96,
+            "bin_end": 15.25,
+            "bin_center": 14.6,
+            "count": 0
+          },
+          {
+            "bin_start": 15.25,
+            "bin_end": 16.53,
+            "bin_center": 15.89,
+            "count": 0
+          },
+          {
+            "bin_start": 16.53,
+            "bin_end": 17.81,
+            "bin_center": 17.17,
+            "count": 0
+          },
+          {
+            "bin_start": 17.81,
+            "bin_end": 19.1,
+            "bin_center": 18.46,
+            "count": 0
+          },
+          {
+            "bin_start": 19.1,
+            "bin_end": 20.38,
+            "bin_center": 19.74,
+            "count": 0
+          },
+          {
+            "bin_start": 20.38,
+            "bin_end": 21.66,
+            "bin_center": 21.02,
+            "count": 0
+          },
+          {
+            "bin_start": 21.66,
+            "bin_end": 22.95,
+            "bin_center": 22.31,
+            "count": 0
+          },
+          {
+            "bin_start": 22.95,
+            "bin_end": 24.23,
+            "bin_center": 23.59,
+            "count": 0
+          },
+          {
+            "bin_start": 24.23,
+            "bin_end": 25.51,
+            "bin_center": 24.87,
+            "count": 0
+          },
+          {
+            "bin_start": 25.51,
+            "bin_end": 26.8,
+            "bin_center": 26.16,
+            "count": 0
+          },
+          {
+            "bin_start": 26.8,
+            "bin_end": 28.08,
+            "bin_center": 27.44,
+            "count": 0
+          },
+          {
+            "bin_start": 28.08,
+            "bin_end": 29.37,
+            "bin_center": 28.72,
+            "count": 0
+          },
+          {
+            "bin_start": 29.37,
+            "bin_end": 30.65,
+            "bin_center": 30.01,
+            "count": 0
+          },
+          {
+            "bin_start": 30.65,
+            "bin_end": 31.93,
+            "bin_center": 31.29,
+            "count": 0
+          },
+          {
+            "bin_start": 31.93,
+            "bin_end": 33.22,
+            "bin_center": 32.57,
+            "count": 0
+          },
+          {
+            "bin_start": 33.22,
+            "bin_end": 34.5,
+            "bin_center": 33.86,
+            "count": 1
+          }
+        ],
+        "mean": 4.55,
+        "median": 4.33,
+        "std": 2.6,
+        "min": 2.41,
+        "max": 34.5,
+        "sample_count": 150
+      }
+    },
+    {
+      "experiment_id": "EXP-EVEN-CAM-U10-R3-6480",
+      "architecture": "event_driven",
+      "workload_type": "campus_navigation",
+      "concurrent_users": 10,
+      "total_requests": 150,
+      "avg_latency_ms": 15.49,
+      "p50_latency_ms": 15.14,
+      "p95_latency_ms": 19.66,
+      "p99_latency_ms": 24.35,
+      "throughput_rps": 81.0,
+      "cpu_utilization_pct": 22.2,
+      "ram_utilization_mb": 277.3,
+      "queue_depth": 0,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 11.46,
+            "bin_end": 12.03,
+            "bin_center": 11.75,
+            "count": 9
+          },
+          {
+            "bin_start": 12.03,
+            "bin_end": 12.61,
+            "bin_center": 12.32,
+            "count": 4
+          },
+          {
+            "bin_start": 12.61,
+            "bin_end": 13.18,
+            "bin_center": 12.9,
+            "count": 16
+          },
+          {
+            "bin_start": 13.18,
+            "bin_end": 13.76,
+            "bin_center": 13.47,
+            "count": 12
+          },
+          {
+            "bin_start": 13.76,
+            "bin_end": 14.33,
+            "bin_center": 14.05,
+            "count": 10
+          },
+          {
+            "bin_start": 14.33,
+            "bin_end": 14.91,
+            "bin_center": 14.62,
+            "count": 17
+          },
+          {
+            "bin_start": 14.91,
+            "bin_end": 15.48,
+            "bin_center": 15.2,
+            "count": 21
+          },
+          {
+            "bin_start": 15.48,
+            "bin_end": 16.06,
+            "bin_center": 15.77,
+            "count": 7
+          },
+          {
+            "bin_start": 16.06,
+            "bin_end": 16.63,
+            "bin_center": 16.35,
+            "count": 11
+          },
+          {
+            "bin_start": 16.63,
+            "bin_end": 17.21,
+            "bin_center": 16.92,
+            "count": 10
+          },
+          {
+            "bin_start": 17.21,
+            "bin_end": 17.78,
+            "bin_center": 17.5,
+            "count": 11
+          },
+          {
+            "bin_start": 17.78,
+            "bin_end": 18.36,
+            "bin_center": 18.07,
+            "count": 3
+          },
+          {
+            "bin_start": 18.36,
+            "bin_end": 18.93,
+            "bin_center": 18.64,
+            "count": 3
+          },
+          {
+            "bin_start": 18.93,
+            "bin_end": 19.51,
+            "bin_center": 19.22,
+            "count": 6
+          },
+          {
+            "bin_start": 19.51,
+            "bin_end": 20.08,
+            "bin_center": 19.79,
+            "count": 5
+          },
+          {
+            "bin_start": 20.08,
+            "bin_end": 20.66,
+            "bin_center": 20.37,
+            "count": 0
+          },
+          {
+            "bin_start": 20.66,
+            "bin_end": 21.23,
+            "bin_center": 20.94,
+            "count": 0
+          },
+          {
+            "bin_start": 21.23,
+            "bin_end": 21.81,
+            "bin_center": 21.52,
+            "count": 1
+          },
+          {
+            "bin_start": 21.81,
+            "bin_end": 22.38,
+            "bin_center": 22.09,
+            "count": 1
+          },
+          {
+            "bin_start": 22.38,
+            "bin_end": 22.96,
+            "bin_center": 22.67,
+            "count": 0
+          },
+          {
+            "bin_start": 22.96,
+            "bin_end": 23.53,
+            "bin_center": 23.24,
+            "count": 0
+          },
+          {
+            "bin_start": 23.53,
+            "bin_end": 24.11,
+            "bin_center": 23.82,
+            "count": 1
+          },
+          {
+            "bin_start": 24.11,
+            "bin_end": 24.68,
+            "bin_center": 24.39,
+            "count": 0
+          },
+          {
+            "bin_start": 24.68,
+            "bin_end": 25.26,
+            "bin_center": 24.97,
+            "count": 1
+          },
+          {
+            "bin_start": 25.26,
+            "bin_end": 25.83,
+            "bin_center": 25.54,
+            "count": 1
+          }
+        ],
+        "mean": 15.49,
+        "median": 15.14,
+        "std": 2.57,
+        "min": 11.46,
+        "max": 25.83,
+        "sample_count": 150
+      }
+    },
+    {
+      "experiment_id": "EXP-MODU-CAM-U50-R1-6480",
+      "architecture": "modular_monolith",
+      "workload_type": "campus_navigation",
+      "concurrent_users": 50,
+      "total_requests": 750,
+      "avg_latency_ms": 7.97,
+      "p50_latency_ms": 7.19,
+      "p95_latency_ms": 11.84,
+      "p99_latency_ms": 27.98,
+      "throughput_rps": 383.3,
+      "cpu_utilization_pct": 20.3,
+      "ram_utilization_mb": 175.1,
+      "queue_depth": 0,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 3.52,
+            "bin_end": 5.48,
+            "bin_center": 4.5,
+            "count": 33
+          },
+          {
+            "bin_start": 5.48,
+            "bin_end": 7.44,
+            "bin_center": 6.46,
+            "count": 82
+          },
+          {
+            "bin_start": 7.44,
+            "bin_end": 9.4,
+            "bin_center": 8.42,
+            "count": 48
+          },
+          {
+            "bin_start": 9.4,
+            "bin_end": 11.36,
+            "bin_center": 10.38,
+            "count": 26
+          },
+          {
+            "bin_start": 11.36,
+            "bin_end": 13.31,
+            "bin_center": 12.33,
+            "count": 6
+          },
+          {
+            "bin_start": 13.31,
+            "bin_end": 15.27,
+            "bin_center": 14.29,
+            "count": 1
+          },
+          {
+            "bin_start": 15.27,
+            "bin_end": 17.23,
+            "bin_center": 16.25,
+            "count": 1
+          },
+          {
+            "bin_start": 17.23,
+            "bin_end": 19.19,
+            "bin_center": 18.21,
+            "count": 0
+          },
+          {
+            "bin_start": 19.19,
+            "bin_end": 21.15,
+            "bin_center": 20.17,
+            "count": 0
+          },
+          {
+            "bin_start": 21.15,
+            "bin_end": 23.11,
+            "bin_center": 22.13,
+            "count": 0
+          },
+          {
+            "bin_start": 23.11,
+            "bin_end": 25.07,
+            "bin_center": 24.09,
+            "count": 0
+          },
+          {
+            "bin_start": 25.07,
+            "bin_end": 27.03,
+            "bin_center": 26.05,
+            "count": 0
+          },
+          {
+            "bin_start": 27.03,
+            "bin_end": 28.98,
+            "bin_center": 28.0,
+            "count": 1
+          },
+          {
+            "bin_start": 28.98,
+            "bin_end": 30.94,
+            "bin_center": 29.96,
+            "count": 0
+          },
+          {
+            "bin_start": 30.94,
+            "bin_end": 32.9,
+            "bin_center": 31.92,
+            "count": 0
+          },
+          {
+            "bin_start": 32.9,
+            "bin_end": 34.86,
+            "bin_center": 33.88,
+            "count": 0
+          },
+          {
+            "bin_start": 34.86,
+            "bin_end": 36.82,
+            "bin_center": 35.84,
+            "count": 0
+          },
+          {
+            "bin_start": 36.82,
+            "bin_end": 38.78,
+            "bin_center": 37.8,
+            "count": 0
+          },
+          {
+            "bin_start": 38.78,
+            "bin_end": 40.74,
+            "bin_center": 39.76,
+            "count": 0
+          },
+          {
+            "bin_start": 40.74,
+            "bin_end": 42.7,
+            "bin_center": 41.72,
+            "count": 0
+          },
+          {
+            "bin_start": 42.7,
+            "bin_end": 44.65,
+            "bin_center": 43.68,
+            "count": 0
+          },
+          {
+            "bin_start": 44.65,
+            "bin_end": 46.61,
+            "bin_center": 45.63,
+            "count": 0
+          },
+          {
+            "bin_start": 46.61,
+            "bin_end": 48.57,
+            "bin_center": 47.59,
+            "count": 0
+          },
+          {
+            "bin_start": 48.57,
+            "bin_end": 50.53,
+            "bin_center": 49.55,
+            "count": 0
+          },
+          {
+            "bin_start": 50.53,
+            "bin_end": 52.49,
+            "bin_center": 51.51,
+            "count": 2
+          }
+        ],
+        "mean": 7.97,
+        "median": 7.19,
+        "std": 5.09,
+        "min": 3.52,
+        "max": 52.49,
+        "sample_count": 200
+      }
+    },
+    {
+      "experiment_id": "EXP-EVEN-CAM-U50-R2-6480",
+      "architecture": "event_driven",
+      "workload_type": "campus_navigation",
+      "concurrent_users": 50,
+      "total_requests": 750,
+      "avg_latency_ms": 16.59,
+      "p50_latency_ms": 16.59,
+      "p95_latency_ms": 21.77,
+      "p99_latency_ms": 26.1,
+      "throughput_rps": 213.1,
+      "cpu_utilization_pct": 27.6,
+      "ram_utilization_mb": 289.6,
+      "queue_depth": 8,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 9.36,
+            "bin_end": 10.29,
+            "bin_center": 9.82,
+            "count": 3
+          },
+          {
+            "bin_start": 10.29,
+            "bin_end": 11.22,
+            "bin_center": 10.75,
+            "count": 1
+          },
+          {
+            "bin_start": 11.22,
+            "bin_end": 12.14,
+            "bin_center": 11.68,
+            "count": 6
+          },
+          {
+            "bin_start": 12.14,
+            "bin_end": 13.07,
+            "bin_center": 12.61,
+            "count": 10
+          },
+          {
+            "bin_start": 13.07,
+            "bin_end": 14.0,
+            "bin_center": 13.53,
+            "count": 25
+          },
+          {
+            "bin_start": 14.0,
+            "bin_end": 14.93,
+            "bin_center": 14.46,
+            "count": 20
+          },
+          {
+            "bin_start": 14.93,
+            "bin_end": 15.85,
+            "bin_center": 15.39,
+            "count": 17
+          },
+          {
+            "bin_start": 15.85,
+            "bin_end": 16.78,
+            "bin_center": 16.32,
+            "count": 27
+          },
+          {
+            "bin_start": 16.78,
+            "bin_end": 17.71,
+            "bin_center": 17.24,
+            "count": 26
+          },
+          {
+            "bin_start": 17.71,
+            "bin_end": 18.64,
+            "bin_center": 18.17,
+            "count": 25
+          },
+          {
+            "bin_start": 18.64,
+            "bin_end": 19.56,
+            "bin_center": 19.1,
+            "count": 13
+          },
+          {
+            "bin_start": 19.56,
+            "bin_end": 20.49,
+            "bin_center": 20.03,
+            "count": 9
+          },
+          {
+            "bin_start": 20.49,
+            "bin_end": 21.42,
+            "bin_center": 20.95,
+            "count": 6
+          },
+          {
+            "bin_start": 21.42,
+            "bin_end": 22.35,
+            "bin_center": 21.88,
+            "count": 4
+          },
+          {
+            "bin_start": 22.35,
+            "bin_end": 23.27,
+            "bin_center": 22.81,
+            "count": 0
+          },
+          {
+            "bin_start": 23.27,
+            "bin_end": 24.2,
+            "bin_center": 23.74,
+            "count": 5
+          },
+          {
+            "bin_start": 24.2,
+            "bin_end": 25.13,
+            "bin_center": 24.67,
+            "count": 0
+          },
+          {
+            "bin_start": 25.13,
+            "bin_end": 26.06,
+            "bin_center": 25.59,
+            "count": 0
+          },
+          {
+            "bin_start": 26.06,
+            "bin_end": 26.98,
+            "bin_center": 26.52,
+            "count": 1
+          },
+          {
+            "bin_start": 26.98,
+            "bin_end": 27.91,
+            "bin_center": 27.45,
+            "count": 0
+          },
+          {
+            "bin_start": 27.91,
+            "bin_end": 28.84,
+            "bin_center": 28.38,
+            "count": 1
+          },
+          {
+            "bin_start": 28.84,
+            "bin_end": 29.77,
+            "bin_center": 29.3,
+            "count": 0
+          },
+          {
+            "bin_start": 29.77,
+            "bin_end": 30.69,
+            "bin_center": 30.23,
+            "count": 0
+          },
+          {
+            "bin_start": 30.69,
+            "bin_end": 31.62,
+            "bin_center": 31.16,
+            "count": 0
+          },
+          {
+            "bin_start": 31.62,
+            "bin_end": 32.55,
+            "bin_center": 32.09,
+            "count": 1
+          }
+        ],
+        "mean": 16.59,
+        "median": 16.59,
+        "std": 3.21,
+        "min": 9.36,
+        "max": 32.55,
+        "sample_count": 200
+      }
+    },
+    {
+      "experiment_id": "EXP-MODU-CAM-U100-R1-6480",
+      "architecture": "modular_monolith",
+      "workload_type": "campus_navigation",
+      "concurrent_users": 100,
+      "total_requests": 1500,
+      "avg_latency_ms": 13.58,
+      "p50_latency_ms": 11.98,
+      "p95_latency_ms": 23.56,
+      "p99_latency_ms": 43.59,
+      "throughput_rps": 375.2,
+      "cpu_utilization_pct": 31.7,
+      "ram_utilization_mb": 187.1,
+      "queue_depth": 0,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 4.46,
+            "bin_end": 7.29,
+            "bin_center": 5.88,
+            "count": 22
+          },
+          {
+            "bin_start": 7.29,
+            "bin_end": 10.12,
+            "bin_center": 8.71,
+            "count": 102
+          },
+          {
+            "bin_start": 10.12,
+            "bin_end": 12.96,
+            "bin_center": 11.54,
+            "count": 116
+          },
+          {
+            "bin_start": 12.96,
+            "bin_end": 15.79,
+            "bin_center": 14.37,
+            "count": 70
+          },
+          {
+            "bin_start": 15.79,
+            "bin_end": 18.62,
+            "bin_center": 17.2,
+            "count": 35
+          },
+          {
+            "bin_start": 18.62,
+            "bin_end": 21.45,
+            "bin_center": 20.04,
+            "count": 23
+          },
+          {
+            "bin_start": 21.45,
+            "bin_end": 24.28,
+            "bin_center": 22.87,
+            "count": 14
+          },
+          {
+            "bin_start": 24.28,
+            "bin_end": 27.12,
+            "bin_center": 25.7,
+            "count": 7
+          },
+          {
+            "bin_start": 27.12,
+            "bin_end": 29.95,
+            "bin_center": 28.53,
+            "count": 2
+          },
+          {
+            "bin_start": 29.95,
+            "bin_end": 32.78,
+            "bin_center": 31.36,
+            "count": 0
+          },
+          {
+            "bin_start": 32.78,
+            "bin_end": 35.61,
+            "bin_center": 34.2,
+            "count": 2
+          },
+          {
+            "bin_start": 35.61,
+            "bin_end": 38.44,
+            "bin_center": 37.03,
+            "count": 1
+          },
+          {
+            "bin_start": 38.44,
+            "bin_end": 41.28,
+            "bin_center": 39.86,
+            "count": 0
+          },
+          {
+            "bin_start": 41.28,
+            "bin_end": 44.11,
+            "bin_center": 42.69,
+            "count": 2
+          },
+          {
+            "bin_start": 44.11,
+            "bin_end": 46.94,
+            "bin_center": 45.52,
+            "count": 0
+          },
+          {
+            "bin_start": 46.94,
+            "bin_end": 49.77,
+            "bin_center": 48.36,
+            "count": 0
+          },
+          {
+            "bin_start": 49.77,
+            "bin_end": 52.6,
+            "bin_center": 51.19,
+            "count": 0
+          },
+          {
+            "bin_start": 52.6,
+            "bin_end": 55.44,
+            "bin_center": 54.02,
+            "count": 1
+          },
+          {
+            "bin_start": 55.44,
+            "bin_end": 58.27,
+            "bin_center": 56.85,
+            "count": 1
+          },
+          {
+            "bin_start": 58.27,
+            "bin_end": 61.1,
+            "bin_center": 59.68,
+            "count": 0
+          },
+          {
+            "bin_start": 61.1,
+            "bin_end": 63.93,
+            "bin_center": 62.52,
+            "count": 0
+          },
+          {
+            "bin_start": 63.93,
+            "bin_end": 66.76,
+            "bin_center": 65.35,
+            "count": 1
+          },
+          {
+            "bin_start": 66.76,
+            "bin_end": 69.6,
+            "bin_center": 68.18,
+            "count": 0
+          },
+          {
+            "bin_start": 69.6,
+            "bin_end": 72.43,
+            "bin_center": 71.01,
+            "count": 0
+          },
+          {
+            "bin_start": 72.43,
+            "bin_end": 75.26,
+            "bin_center": 73.84,
+            "count": 1
+          }
+        ],
+        "mean": 13.58,
+        "median": 11.98,
+        "std": 7.29,
+        "min": 4.46,
+        "max": 75.26,
+        "sample_count": 400
+      }
+    },
+    {
+      "experiment_id": "EXP-EVEN-CAM-U100-R2-6480",
+      "architecture": "event_driven",
+      "workload_type": "campus_navigation",
+      "concurrent_users": 100,
+      "total_requests": 1500,
+      "avg_latency_ms": 17.93,
+      "p50_latency_ms": 17.54,
+      "p95_latency_ms": 24.43,
+      "p99_latency_ms": 28.63,
+      "throughput_rps": 394.4,
+      "cpu_utilization_pct": 31.6,
+      "ram_utilization_mb": 305.0,
+      "queue_depth": 21,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 9.17,
+            "bin_end": 10.21,
+            "bin_center": 9.69,
+            "count": 4
+          },
+          {
+            "bin_start": 10.21,
+            "bin_end": 11.24,
+            "bin_center": 10.72,
+            "count": 10
+          },
+          {
+            "bin_start": 11.24,
+            "bin_end": 12.28,
+            "bin_center": 11.76,
+            "count": 5
+          },
+          {
+            "bin_start": 12.28,
+            "bin_end": 13.31,
+            "bin_center": 12.79,
+            "count": 15
+          },
+          {
+            "bin_start": 13.31,
+            "bin_end": 14.35,
+            "bin_center": 13.83,
+            "count": 23
+          },
+          {
+            "bin_start": 14.35,
+            "bin_end": 15.38,
+            "bin_center": 14.87,
+            "count": 47
+          },
+          {
+            "bin_start": 15.38,
+            "bin_end": 16.42,
+            "bin_center": 15.9,
+            "count": 37
+          },
+          {
+            "bin_start": 16.42,
+            "bin_end": 17.45,
+            "bin_center": 16.94,
+            "count": 55
+          },
+          {
+            "bin_start": 17.45,
+            "bin_end": 18.49,
+            "bin_center": 17.97,
+            "count": 47
+          },
+          {
+            "bin_start": 18.49,
+            "bin_end": 19.53,
+            "bin_center": 19.01,
+            "count": 37
+          },
+          {
+            "bin_start": 19.53,
+            "bin_end": 20.56,
+            "bin_center": 20.04,
+            "count": 36
+          },
+          {
+            "bin_start": 20.56,
+            "bin_end": 21.6,
+            "bin_center": 21.08,
+            "count": 24
+          },
+          {
+            "bin_start": 21.6,
+            "bin_end": 22.63,
+            "bin_center": 22.12,
+            "count": 18
+          },
+          {
+            "bin_start": 22.63,
+            "bin_end": 23.67,
+            "bin_center": 23.15,
+            "count": 14
+          },
+          {
+            "bin_start": 23.67,
+            "bin_end": 24.7,
+            "bin_center": 24.19,
+            "count": 8
+          },
+          {
+            "bin_start": 24.7,
+            "bin_end": 25.74,
+            "bin_center": 25.22,
+            "count": 10
+          },
+          {
+            "bin_start": 25.74,
+            "bin_end": 26.78,
+            "bin_center": 26.26,
+            "count": 3
+          },
+          {
+            "bin_start": 26.78,
+            "bin_end": 27.81,
+            "bin_center": 27.29,
+            "count": 1
+          },
+          {
+            "bin_start": 27.81,
+            "bin_end": 28.85,
+            "bin_center": 28.33,
+            "count": 2
+          },
+          {
+            "bin_start": 28.85,
+            "bin_end": 29.88,
+            "bin_center": 29.36,
+            "count": 0
+          },
+          {
+            "bin_start": 29.88,
+            "bin_end": 30.92,
+            "bin_center": 30.4,
+            "count": 1
+          },
+          {
+            "bin_start": 30.92,
+            "bin_end": 31.95,
+            "bin_center": 31.44,
+            "count": 2
+          },
+          {
+            "bin_start": 31.95,
+            "bin_end": 32.99,
+            "bin_center": 32.47,
+            "count": 0
+          },
+          {
+            "bin_start": 32.99,
+            "bin_end": 34.02,
+            "bin_center": 33.51,
+            "count": 0
+          },
+          {
+            "bin_start": 34.02,
+            "bin_end": 35.06,
+            "bin_center": 34.54,
+            "count": 1
+          }
+        ],
+        "mean": 17.93,
+        "median": 17.54,
+        "std": 3.76,
+        "min": 9.17,
+        "max": 35.06,
+        "sample_count": 400
+      }
+    },
+    {
+      "experiment_id": "EXP-MODU-CAM-U200-R1-6480",
+      "architecture": "modular_monolith",
+      "workload_type": "campus_navigation",
+      "concurrent_users": 200,
+      "total_requests": 3000,
+      "avg_latency_ms": 28.83,
+      "p50_latency_ms": 25.14,
+      "p95_latency_ms": 59.01,
+      "p99_latency_ms": 78.52,
+      "throughput_rps": 222.6,
+      "cpu_utilization_pct": 50.2,
+      "ram_utilization_mb": 214.7,
+      "queue_depth": 0,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 6.7,
+            "bin_end": 11.32,
+            "bin_center": 9.01,
+            "count": 17
+          },
+          {
+            "bin_start": 11.32,
+            "bin_end": 15.94,
+            "bin_center": 13.63,
+            "count": 80
+          },
+          {
+            "bin_start": 15.94,
+            "bin_end": 20.56,
+            "bin_center": 18.25,
+            "count": 99
+          },
+          {
+            "bin_start": 20.56,
+            "bin_end": 25.19,
+            "bin_center": 22.88,
+            "count": 106
+          },
+          {
+            "bin_start": 25.19,
+            "bin_end": 29.81,
+            "bin_center": 27.5,
+            "count": 88
+          },
+          {
+            "bin_start": 29.81,
+            "bin_end": 34.43,
+            "bin_center": 32.12,
+            "count": 53
+          },
+          {
+            "bin_start": 34.43,
+            "bin_end": 39.05,
+            "bin_center": 36.74,
+            "count": 45
+          },
+          {
+            "bin_start": 39.05,
+            "bin_end": 43.67,
+            "bin_center": 41.36,
+            "count": 29
+          },
+          {
+            "bin_start": 43.67,
+            "bin_end": 48.29,
+            "bin_center": 45.98,
+            "count": 26
+          },
+          {
+            "bin_start": 48.29,
+            "bin_end": 52.92,
+            "bin_center": 50.61,
+            "count": 15
+          },
+          {
+            "bin_start": 52.92,
+            "bin_end": 57.54,
+            "bin_center": 55.23,
+            "count": 8
+          },
+          {
+            "bin_start": 57.54,
+            "bin_end": 62.16,
+            "bin_center": 59.85,
+            "count": 8
+          },
+          {
+            "bin_start": 62.16,
+            "bin_end": 66.78,
+            "bin_center": 64.47,
+            "count": 7
+          },
+          {
+            "bin_start": 66.78,
+            "bin_end": 71.4,
+            "bin_center": 69.09,
+            "count": 4
+          },
+          {
+            "bin_start": 71.4,
+            "bin_end": 76.02,
+            "bin_center": 73.71,
+            "count": 6
+          },
+          {
+            "bin_start": 76.02,
+            "bin_end": 80.65,
+            "bin_center": 78.33,
+            "count": 4
+          },
+          {
+            "bin_start": 80.65,
+            "bin_end": 85.27,
+            "bin_center": 82.96,
+            "count": 2
+          },
+          {
+            "bin_start": 85.27,
+            "bin_end": 89.89,
+            "bin_center": 87.58,
+            "count": 0
+          },
+          {
+            "bin_start": 89.89,
+            "bin_end": 94.51,
+            "bin_center": 92.2,
+            "count": 1
+          },
+          {
+            "bin_start": 94.51,
+            "bin_end": 99.13,
+            "bin_center": 96.82,
+            "count": 0
+          },
+          {
+            "bin_start": 99.13,
+            "bin_end": 103.75,
+            "bin_center": 101.44,
+            "count": 1
+          },
+          {
+            "bin_start": 103.75,
+            "bin_end": 108.38,
+            "bin_center": 106.06,
+            "count": 0
+          },
+          {
+            "bin_start": 108.38,
+            "bin_end": 113.0,
+            "bin_center": 110.69,
+            "count": 0
+          },
+          {
+            "bin_start": 113.0,
+            "bin_end": 117.62,
+            "bin_center": 115.31,
+            "count": 0
+          },
+          {
+            "bin_start": 117.62,
+            "bin_end": 122.24,
+            "bin_center": 119.93,
+            "count": 1
+          }
+        ],
+        "mean": 28.83,
+        "median": 25.14,
+        "std": 15.11,
+        "min": 6.7,
+        "max": 122.24,
+        "sample_count": 600
+      }
+    },
+    {
+      "experiment_id": "EXP-EVEN-CAM-U200-R2-6480",
+      "architecture": "event_driven",
+      "workload_type": "campus_navigation",
+      "concurrent_users": 200,
+      "total_requests": 3000,
+      "avg_latency_ms": 19.79,
+      "p50_latency_ms": 19.02,
+      "p95_latency_ms": 28.53,
+      "p99_latency_ms": 35.47,
+      "throughput_rps": 755.8,
+      "cpu_utilization_pct": 42.8,
+      "ram_utilization_mb": 331.4,
+      "queue_depth": 40,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 10.21,
+            "bin_end": 11.7,
+            "bin_center": 10.96,
+            "count": 8
+          },
+          {
+            "bin_start": 11.7,
+            "bin_end": 13.19,
+            "bin_center": 12.45,
+            "count": 23
+          },
+          {
+            "bin_start": 13.19,
+            "bin_end": 14.68,
+            "bin_center": 13.94,
+            "count": 44
+          },
+          {
+            "bin_start": 14.68,
+            "bin_end": 16.18,
+            "bin_center": 15.43,
+            "count": 66
+          },
+          {
+            "bin_start": 16.18,
+            "bin_end": 17.67,
+            "bin_center": 16.92,
+            "count": 87
+          },
+          {
+            "bin_start": 17.67,
+            "bin_end": 19.16,
+            "bin_center": 18.41,
+            "count": 77
+          },
+          {
+            "bin_start": 19.16,
+            "bin_end": 20.65,
+            "bin_center": 19.91,
+            "count": 84
+          },
+          {
+            "bin_start": 20.65,
+            "bin_end": 22.14,
+            "bin_center": 21.4,
+            "count": 50
+          },
+          {
+            "bin_start": 22.14,
+            "bin_end": 23.63,
+            "bin_center": 22.89,
+            "count": 45
+          },
+          {
+            "bin_start": 23.63,
+            "bin_end": 25.13,
+            "bin_center": 24.38,
+            "count": 36
+          },
+          {
+            "bin_start": 25.13,
+            "bin_end": 26.62,
+            "bin_center": 25.87,
+            "count": 26
+          },
+          {
+            "bin_start": 26.62,
+            "bin_end": 28.11,
+            "bin_center": 27.36,
+            "count": 21
+          },
+          {
+            "bin_start": 28.11,
+            "bin_end": 29.6,
+            "bin_center": 28.86,
+            "count": 5
+          },
+          {
+            "bin_start": 29.6,
+            "bin_end": 31.09,
+            "bin_center": 30.35,
+            "count": 10
+          },
+          {
+            "bin_start": 31.09,
+            "bin_end": 32.58,
+            "bin_center": 31.84,
+            "count": 6
+          },
+          {
+            "bin_start": 32.58,
+            "bin_end": 34.08,
+            "bin_center": 33.33,
+            "count": 4
+          },
+          {
+            "bin_start": 34.08,
+            "bin_end": 35.57,
+            "bin_center": 34.82,
+            "count": 2
+          },
+          {
+            "bin_start": 35.57,
+            "bin_end": 37.06,
+            "bin_center": 36.31,
+            "count": 1
+          },
+          {
+            "bin_start": 37.06,
+            "bin_end": 38.55,
+            "bin_center": 37.8,
+            "count": 2
+          },
+          {
+            "bin_start": 38.55,
+            "bin_end": 40.04,
+            "bin_center": 39.3,
+            "count": 1
+          },
+          {
+            "bin_start": 40.04,
+            "bin_end": 41.53,
+            "bin_center": 40.79,
+            "count": 0
+          },
+          {
+            "bin_start": 41.53,
+            "bin_end": 43.03,
+            "bin_center": 42.28,
+            "count": 0
+          },
+          {
+            "bin_start": 43.03,
+            "bin_end": 44.52,
+            "bin_center": 43.77,
+            "count": 0
+          },
+          {
+            "bin_start": 44.52,
+            "bin_end": 46.01,
+            "bin_center": 45.26,
+            "count": 0
+          },
+          {
+            "bin_start": 46.01,
+            "bin_end": 47.5,
+            "bin_center": 46.75,
+            "count": 2
+          }
+        ],
+        "mean": 19.79,
+        "median": 19.02,
+        "std": 5.04,
+        "min": 10.21,
+        "max": 47.5,
+        "sample_count": 600
+      }
+    },
+    {
+      "experiment_id": "EXP-MODU-CAM-U400-R1-6480",
+      "architecture": "modular_monolith",
+      "workload_type": "campus_navigation",
+      "concurrent_users": 400,
+      "total_requests": 6000,
+      "avg_latency_ms": 73.65,
+      "p50_latency_ms": 58.47,
+      "p95_latency_ms": 180.52,
+      "p99_latency_ms": 260.13,
+      "throughput_rps": 93.8,
+      "cpu_utilization_pct": 90.3,
+      "ram_utilization_mb": 256.2,
+      "queue_depth": 0,
+      "error_rate_pct": 3.58,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 6.1,
+            "bin_end": 31.31,
+            "bin_center": 18.71,
+            "count": 113
+          },
+          {
+            "bin_start": 31.31,
+            "bin_end": 56.53,
+            "bin_center": 43.92,
+            "count": 177
+          },
+          {
+            "bin_start": 56.53,
+            "bin_end": 81.74,
+            "bin_center": 69.14,
+            "count": 102
+          },
+          {
+            "bin_start": 81.74,
+            "bin_end": 106.96,
+            "bin_center": 94.35,
+            "count": 89
+          },
+          {
+            "bin_start": 106.96,
+            "bin_end": 132.17,
+            "bin_center": 119.56,
+            "count": 52
+          },
+          {
+            "bin_start": 132.17,
+            "bin_end": 157.38,
+            "bin_center": 144.78,
+            "count": 25
+          },
+          {
+            "bin_start": 157.38,
+            "bin_end": 182.6,
+            "bin_center": 169.99,
+            "count": 13
+          },
+          {
+            "bin_start": 182.6,
+            "bin_end": 207.81,
+            "bin_center": 195.21,
+            "count": 11
+          },
+          {
+            "bin_start": 207.81,
+            "bin_end": 233.03,
+            "bin_center": 220.42,
+            "count": 8
+          },
+          {
+            "bin_start": 233.03,
+            "bin_end": 258.24,
+            "bin_center": 245.63,
+            "count": 3
+          },
+          {
+            "bin_start": 258.24,
+            "bin_end": 283.45,
+            "bin_center": 270.85,
+            "count": 6
+          },
+          {
+            "bin_start": 283.45,
+            "bin_end": 308.67,
+            "bin_center": 296.06,
+            "count": 0
+          },
+          {
+            "bin_start": 308.67,
+            "bin_end": 333.88,
+            "bin_center": 321.28,
+            "count": 0
+          },
+          {
+            "bin_start": 333.88,
+            "bin_end": 359.1,
+            "bin_center": 346.49,
+            "count": 0
+          },
+          {
+            "bin_start": 359.1,
+            "bin_end": 384.31,
+            "bin_center": 371.7,
+            "count": 0
+          },
+          {
+            "bin_start": 384.31,
+            "bin_end": 409.52,
+            "bin_center": 396.92,
+            "count": 0
+          },
+          {
+            "bin_start": 409.52,
+            "bin_end": 434.74,
+            "bin_center": 422.13,
+            "count": 0
+          },
+          {
+            "bin_start": 434.74,
+            "bin_end": 459.95,
+            "bin_center": 447.35,
+            "count": 0
+          },
+          {
+            "bin_start": 459.95,
+            "bin_end": 485.17,
+            "bin_center": 472.56,
+            "count": 0
+          },
+          {
+            "bin_start": 485.17,
+            "bin_end": 510.38,
+            "bin_center": 497.77,
+            "count": 0
+          },
+          {
+            "bin_start": 510.38,
+            "bin_end": 535.59,
+            "bin_center": 522.99,
+            "count": 0
+          },
+          {
+            "bin_start": 535.59,
+            "bin_end": 560.81,
+            "bin_center": 548.2,
+            "count": 0
+          },
+          {
+            "bin_start": 560.81,
+            "bin_end": 586.02,
+            "bin_center": 573.42,
+            "count": 0
+          },
+          {
+            "bin_start": 586.02,
+            "bin_end": 611.24,
+            "bin_center": 598.63,
+            "count": 0
+          },
+          {
+            "bin_start": 611.24,
+            "bin_end": 636.45,
+            "bin_center": 623.84,
+            "count": 1
+          }
+        ],
+        "mean": 73.65,
+        "median": 58.47,
+        "std": 55.31,
+        "min": 6.1,
+        "max": 636.45,
+        "sample_count": 600
+      }
+    },
+    {
+      "experiment_id": "EXP-EVEN-CAM-U400-R3-6480",
+      "architecture": "event_driven",
+      "workload_type": "campus_navigation",
+      "concurrent_users": 400,
+      "total_requests": 6000,
+      "avg_latency_ms": 23.75,
+      "p50_latency_ms": 22.53,
+      "p95_latency_ms": 37.29,
+      "p99_latency_ms": 44.55,
+      "throughput_rps": 1480.0,
+      "cpu_utilization_pct": 64.5,
+      "ram_utilization_mb": 389.0,
+      "queue_depth": 70,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 9.75,
+            "bin_end": 12.07,
+            "bin_center": 10.91,
+            "count": 15
+          },
+          {
+            "bin_start": 12.07,
+            "bin_end": 14.39,
+            "bin_center": 13.23,
+            "count": 27
+          },
+          {
+            "bin_start": 14.39,
+            "bin_end": 16.71,
+            "bin_center": 15.55,
+            "count": 59
+          },
+          {
+            "bin_start": 16.71,
+            "bin_end": 19.02,
+            "bin_center": 17.86,
+            "count": 77
+          },
+          {
+            "bin_start": 19.02,
+            "bin_end": 21.34,
+            "bin_center": 20.18,
+            "count": 73
+          },
+          {
+            "bin_start": 21.34,
+            "bin_end": 23.66,
+            "bin_center": 22.5,
+            "count": 84
+          },
+          {
+            "bin_start": 23.66,
+            "bin_end": 25.98,
+            "bin_center": 24.82,
+            "count": 62
+          },
+          {
+            "bin_start": 25.98,
+            "bin_end": 28.3,
+            "bin_center": 27.14,
+            "count": 64
+          },
+          {
+            "bin_start": 28.3,
+            "bin_end": 30.62,
+            "bin_center": 29.46,
+            "count": 41
+          },
+          {
+            "bin_start": 30.62,
+            "bin_end": 32.93,
+            "bin_center": 31.77,
+            "count": 35
+          },
+          {
+            "bin_start": 32.93,
+            "bin_end": 35.25,
+            "bin_center": 34.09,
+            "count": 17
+          },
+          {
+            "bin_start": 35.25,
+            "bin_end": 37.57,
+            "bin_center": 36.41,
+            "count": 16
+          },
+          {
+            "bin_start": 37.57,
+            "bin_end": 39.89,
+            "bin_center": 38.73,
+            "count": 7
+          },
+          {
+            "bin_start": 39.89,
+            "bin_end": 42.21,
+            "bin_center": 41.05,
+            "count": 9
+          },
+          {
+            "bin_start": 42.21,
+            "bin_end": 44.53,
+            "bin_center": 43.37,
+            "count": 7
+          },
+          {
+            "bin_start": 44.53,
+            "bin_end": 46.84,
+            "bin_center": 45.69,
+            "count": 1
+          },
+          {
+            "bin_start": 46.84,
+            "bin_end": 49.16,
+            "bin_center": 48.0,
+            "count": 1
+          },
+          {
+            "bin_start": 49.16,
+            "bin_end": 51.48,
+            "bin_center": 50.32,
+            "count": 2
+          },
+          {
+            "bin_start": 51.48,
+            "bin_end": 53.8,
+            "bin_center": 52.64,
+            "count": 0
+          },
+          {
+            "bin_start": 53.8,
+            "bin_end": 56.12,
+            "bin_center": 54.96,
+            "count": 1
+          },
+          {
+            "bin_start": 56.12,
+            "bin_end": 58.44,
+            "bin_center": 57.28,
+            "count": 1
+          },
+          {
+            "bin_start": 58.44,
+            "bin_end": 60.75,
+            "bin_center": 59.6,
+            "count": 0
+          },
+          {
+            "bin_start": 60.75,
+            "bin_end": 63.07,
+            "bin_center": 61.91,
+            "count": 0
+          },
+          {
+            "bin_start": 63.07,
+            "bin_end": 65.39,
+            "bin_center": 64.23,
+            "count": 0
+          },
+          {
+            "bin_start": 65.39,
+            "bin_end": 67.71,
+            "bin_center": 66.55,
+            "count": 1
+          }
+        ],
+        "mean": 23.75,
+        "median": 22.53,
+        "std": 7.66,
+        "min": 9.75,
+        "max": 67.71,
+        "sample_count": 600
+      }
+    },
+    {
+      "experiment_id": "EXP-MODU-MIX-U10-R1-6480",
+      "architecture": "modular_monolith",
+      "workload_type": "mixed_campus",
+      "concurrent_users": 10,
+      "total_requests": 150,
+      "avg_latency_ms": 5.29,
+      "p50_latency_ms": 5.04,
+      "p95_latency_ms": 7.29,
+      "p99_latency_ms": 8.32,
+      "throughput_rps": 86.7,
+      "cpu_utilization_pct": 15.3,
+      "ram_utilization_mb": 167.1,
+      "queue_depth": 0,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 2.84,
+            "bin_end": 3.79,
+            "bin_center": 3.32,
+            "count": 14
+          },
+          {
+            "bin_start": 3.79,
+            "bin_end": 4.74,
+            "bin_center": 4.27,
+            "count": 41
+          },
+          {
+            "bin_start": 4.74,
+            "bin_end": 5.7,
+            "bin_center": 5.22,
+            "count": 55
+          },
+          {
+            "bin_start": 5.7,
+            "bin_end": 6.65,
+            "bin_center": 6.17,
+            "count": 23
+          },
+          {
+            "bin_start": 6.65,
+            "bin_end": 7.6,
+            "bin_center": 7.12,
+            "count": 12
+          },
+          {
+            "bin_start": 7.6,
+            "bin_end": 8.55,
+            "bin_center": 8.08,
+            "count": 3
+          },
+          {
+            "bin_start": 8.55,
+            "bin_end": 9.5,
+            "bin_center": 9.03,
+            "count": 1
+          },
+          {
+            "bin_start": 9.5,
+            "bin_end": 10.46,
+            "bin_center": 9.98,
+            "count": 0
+          },
+          {
+            "bin_start": 10.46,
+            "bin_end": 11.41,
+            "bin_center": 10.93,
+            "count": 0
+          },
+          {
+            "bin_start": 11.41,
+            "bin_end": 12.36,
+            "bin_center": 11.88,
+            "count": 0
+          },
+          {
+            "bin_start": 12.36,
+            "bin_end": 13.31,
+            "bin_center": 12.84,
+            "count": 0
+          },
+          {
+            "bin_start": 13.31,
+            "bin_end": 14.26,
+            "bin_center": 13.79,
+            "count": 0
+          },
+          {
+            "bin_start": 14.26,
+            "bin_end": 15.22,
+            "bin_center": 14.74,
+            "count": 0
+          },
+          {
+            "bin_start": 15.22,
+            "bin_end": 16.17,
+            "bin_center": 15.69,
+            "count": 0
+          },
+          {
+            "bin_start": 16.17,
+            "bin_end": 17.12,
+            "bin_center": 16.64,
+            "count": 0
+          },
+          {
+            "bin_start": 17.12,
+            "bin_end": 18.07,
+            "bin_center": 17.6,
+            "count": 0
+          },
+          {
+            "bin_start": 18.07,
+            "bin_end": 19.02,
+            "bin_center": 18.55,
+            "count": 0
+          },
+          {
+            "bin_start": 19.02,
+            "bin_end": 19.98,
+            "bin_center": 19.5,
+            "count": 0
+          },
+          {
+            "bin_start": 19.98,
+            "bin_end": 20.93,
+            "bin_center": 20.45,
+            "count": 0
+          },
+          {
+            "bin_start": 20.93,
+            "bin_end": 21.88,
+            "bin_center": 21.4,
+            "count": 0
+          },
+          {
+            "bin_start": 21.88,
+            "bin_end": 22.83,
+            "bin_center": 22.36,
+            "count": 0
+          },
+          {
+            "bin_start": 22.83,
+            "bin_end": 23.78,
+            "bin_center": 23.31,
+            "count": 0
+          },
+          {
+            "bin_start": 23.78,
+            "bin_end": 24.74,
+            "bin_center": 24.26,
+            "count": 0
+          },
+          {
+            "bin_start": 24.74,
+            "bin_end": 25.69,
+            "bin_center": 25.21,
+            "count": 0
+          },
+          {
+            "bin_start": 25.69,
+            "bin_end": 26.64,
+            "bin_center": 26.16,
+            "count": 1
+          }
+        ],
+        "mean": 5.29,
+        "median": 5.04,
+        "std": 2.06,
+        "min": 2.84,
+        "max": 26.64,
+        "sample_count": 150
+      }
+    },
+    {
+      "experiment_id": "EXP-EVEN-MIX-U10-R1-6480",
+      "architecture": "event_driven",
+      "workload_type": "mixed_campus",
+      "concurrent_users": 10,
+      "total_requests": 150,
+      "avg_latency_ms": 16.7,
+      "p50_latency_ms": 16.54,
+      "p95_latency_ms": 22.17,
+      "p99_latency_ms": 23.4,
+      "throughput_rps": 68.7,
+      "cpu_utilization_pct": 23.7,
+      "ram_utilization_mb": 281.0,
+      "queue_depth": 5,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 11.39,
+            "bin_end": 11.98,
+            "bin_center": 11.68,
+            "count": 3
+          },
+          {
+            "bin_start": 11.98,
+            "bin_end": 12.57,
+            "bin_center": 12.27,
+            "count": 2
+          },
+          {
+            "bin_start": 12.57,
+            "bin_end": 13.16,
+            "bin_center": 12.86,
+            "count": 7
+          },
+          {
+            "bin_start": 13.16,
+            "bin_end": 13.75,
+            "bin_center": 13.45,
+            "count": 8
+          },
+          {
+            "bin_start": 13.75,
+            "bin_end": 14.34,
+            "bin_center": 14.04,
+            "count": 10
+          },
+          {
+            "bin_start": 14.34,
+            "bin_end": 14.93,
+            "bin_center": 14.63,
+            "count": 12
+          },
+          {
+            "bin_start": 14.93,
+            "bin_end": 15.51,
+            "bin_center": 15.22,
+            "count": 12
+          },
+          {
+            "bin_start": 15.51,
+            "bin_end": 16.1,
+            "bin_center": 15.81,
+            "count": 12
+          },
+          {
+            "bin_start": 16.1,
+            "bin_end": 16.69,
+            "bin_center": 16.4,
+            "count": 13
+          },
+          {
+            "bin_start": 16.69,
+            "bin_end": 17.28,
+            "bin_center": 16.99,
+            "count": 9
+          },
+          {
+            "bin_start": 17.28,
+            "bin_end": 17.87,
+            "bin_center": 17.58,
+            "count": 15
+          },
+          {
+            "bin_start": 17.87,
+            "bin_end": 18.46,
+            "bin_center": 18.17,
+            "count": 15
+          },
+          {
+            "bin_start": 18.46,
+            "bin_end": 19.05,
+            "bin_center": 18.76,
+            "count": 6
+          },
+          {
+            "bin_start": 19.05,
+            "bin_end": 19.64,
+            "bin_center": 19.34,
+            "count": 5
+          },
+          {
+            "bin_start": 19.64,
+            "bin_end": 20.23,
+            "bin_center": 19.93,
+            "count": 9
+          },
+          {
+            "bin_start": 20.23,
+            "bin_end": 20.82,
+            "bin_center": 20.52,
+            "count": 2
+          },
+          {
+            "bin_start": 20.82,
+            "bin_end": 21.41,
+            "bin_center": 21.11,
+            "count": 0
+          },
+          {
+            "bin_start": 21.41,
+            "bin_end": 22.0,
+            "bin_center": 21.7,
+            "count": 1
+          },
+          {
+            "bin_start": 22.0,
+            "bin_end": 22.58,
+            "bin_center": 22.29,
+            "count": 5
+          },
+          {
+            "bin_start": 22.58,
+            "bin_end": 23.17,
+            "bin_center": 22.88,
+            "count": 2
+          },
+          {
+            "bin_start": 23.17,
+            "bin_end": 23.76,
+            "bin_center": 23.47,
+            "count": 0
+          },
+          {
+            "bin_start": 23.76,
+            "bin_end": 24.35,
+            "bin_center": 24.06,
+            "count": 1
+          },
+          {
+            "bin_start": 24.35,
+            "bin_end": 24.94,
+            "bin_center": 24.65,
+            "count": 0
+          },
+          {
+            "bin_start": 24.94,
+            "bin_end": 25.53,
+            "bin_center": 25.24,
+            "count": 0
+          },
+          {
+            "bin_start": 25.53,
+            "bin_end": 26.12,
+            "bin_center": 25.83,
+            "count": 1
+          }
+        ],
+        "mean": 16.7,
+        "median": 16.54,
+        "std": 2.7,
+        "min": 11.39,
+        "max": 26.12,
+        "sample_count": 150
+      }
+    },
+    {
+      "experiment_id": "EXP-MODU-MIX-U50-R1-6480",
+      "architecture": "modular_monolith",
+      "workload_type": "mixed_campus",
+      "concurrent_users": 50,
+      "total_requests": 750,
+      "avg_latency_ms": 8.71,
+      "p50_latency_ms": 8.25,
+      "p95_latency_ms": 12.29,
+      "p99_latency_ms": 24.03,
+      "throughput_rps": 366.4,
+      "cpu_utilization_pct": 21.6,
+      "ram_utilization_mb": 175.3,
+      "queue_depth": 0,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 4.01,
+            "bin_end": 5.93,
+            "bin_center": 4.97,
+            "count": 27
+          },
+          {
+            "bin_start": 5.93,
+            "bin_end": 7.84,
+            "bin_center": 6.88,
+            "count": 59
+          },
+          {
+            "bin_start": 7.84,
+            "bin_end": 9.76,
+            "bin_center": 8.8,
+            "count": 67
+          },
+          {
+            "bin_start": 9.76,
+            "bin_end": 11.67,
+            "bin_center": 10.72,
+            "count": 32
+          },
+          {
+            "bin_start": 11.67,
+            "bin_end": 13.59,
+            "bin_center": 12.63,
+            "count": 10
+          },
+          {
+            "bin_start": 13.59,
+            "bin_end": 15.51,
+            "bin_center": 14.55,
+            "count": 1
+          },
+          {
+            "bin_start": 15.51,
+            "bin_end": 17.42,
+            "bin_center": 16.46,
+            "count": 0
+          },
+          {
+            "bin_start": 17.42,
+            "bin_end": 19.34,
+            "bin_center": 18.38,
+            "count": 1
+          },
+          {
+            "bin_start": 19.34,
+            "bin_end": 21.25,
+            "bin_center": 20.3,
+            "count": 0
+          },
+          {
+            "bin_start": 21.25,
+            "bin_end": 23.17,
+            "bin_center": 22.21,
+            "count": 0
+          },
+          {
+            "bin_start": 23.17,
+            "bin_end": 25.09,
+            "bin_center": 24.13,
+            "count": 1
+          },
+          {
+            "bin_start": 25.09,
+            "bin_end": 27.0,
+            "bin_center": 26.04,
+            "count": 0
+          },
+          {
+            "bin_start": 27.0,
+            "bin_end": 28.92,
+            "bin_center": 27.96,
+            "count": 0
+          },
+          {
+            "bin_start": 28.92,
+            "bin_end": 30.83,
+            "bin_center": 29.88,
+            "count": 0
+          },
+          {
+            "bin_start": 30.83,
+            "bin_end": 32.75,
+            "bin_center": 31.79,
+            "count": 0
+          },
+          {
+            "bin_start": 32.75,
+            "bin_end": 34.67,
+            "bin_center": 33.71,
+            "count": 0
+          },
+          {
+            "bin_start": 34.67,
+            "bin_end": 36.58,
+            "bin_center": 35.62,
+            "count": 1
+          },
+          {
+            "bin_start": 36.58,
+            "bin_end": 38.5,
+            "bin_center": 37.54,
+            "count": 0
+          },
+          {
+            "bin_start": 38.5,
+            "bin_end": 40.41,
+            "bin_center": 39.46,
+            "count": 0
+          },
+          {
+            "bin_start": 40.41,
+            "bin_end": 42.33,
+            "bin_center": 41.37,
+            "count": 0
+          },
+          {
+            "bin_start": 42.33,
+            "bin_end": 44.25,
+            "bin_center": 43.29,
+            "count": 0
+          },
+          {
+            "bin_start": 44.25,
+            "bin_end": 46.16,
+            "bin_center": 45.2,
+            "count": 0
+          },
+          {
+            "bin_start": 46.16,
+            "bin_end": 48.08,
+            "bin_center": 47.12,
+            "count": 0
+          },
+          {
+            "bin_start": 48.08,
+            "bin_end": 49.99,
+            "bin_center": 49.04,
+            "count": 0
+          },
+          {
+            "bin_start": 49.99,
+            "bin_end": 51.91,
+            "bin_center": 50.95,
+            "count": 1
+          }
+        ],
+        "mean": 8.71,
+        "median": 8.25,
+        "std": 4.36,
+        "min": 4.01,
+        "max": 51.91,
+        "sample_count": 200
+      }
+    },
+    {
+      "experiment_id": "EXP-EVEN-MIX-U50-R2-6480",
+      "architecture": "event_driven",
+      "workload_type": "mixed_campus",
+      "concurrent_users": 50,
+      "total_requests": 750,
+      "avg_latency_ms": 19.0,
+      "p50_latency_ms": 18.66,
+      "p95_latency_ms": 24.87,
+      "p99_latency_ms": 27.84,
+      "throughput_rps": 218.5,
+      "cpu_utilization_pct": 27.3,
+      "ram_utilization_mb": 289.7,
+      "queue_depth": 9,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 11.28,
+            "bin_end": 12.07,
+            "bin_center": 11.67,
+            "count": 2
+          },
+          {
+            "bin_start": 12.07,
+            "bin_end": 12.86,
+            "bin_center": 12.46,
+            "count": 3
+          },
+          {
+            "bin_start": 12.86,
+            "bin_end": 13.65,
+            "bin_center": 13.25,
+            "count": 6
+          },
+          {
+            "bin_start": 13.65,
+            "bin_end": 14.43,
+            "bin_center": 14.04,
+            "count": 5
+          },
+          {
+            "bin_start": 14.43,
+            "bin_end": 15.22,
+            "bin_center": 14.83,
+            "count": 7
+          },
+          {
+            "bin_start": 15.22,
+            "bin_end": 16.01,
+            "bin_center": 15.62,
+            "count": 16
+          },
+          {
+            "bin_start": 16.01,
+            "bin_end": 16.8,
+            "bin_center": 16.4,
+            "count": 13
+          },
+          {
+            "bin_start": 16.8,
+            "bin_end": 17.59,
+            "bin_center": 17.19,
+            "count": 20
+          },
+          {
+            "bin_start": 17.59,
+            "bin_end": 18.38,
+            "bin_center": 17.98,
+            "count": 22
+          },
+          {
+            "bin_start": 18.38,
+            "bin_end": 19.16,
+            "bin_center": 18.77,
+            "count": 18
+          },
+          {
+            "bin_start": 19.16,
+            "bin_end": 19.95,
+            "bin_center": 19.56,
+            "count": 18
+          },
+          {
+            "bin_start": 19.95,
+            "bin_end": 20.74,
+            "bin_center": 20.35,
+            "count": 11
+          },
+          {
+            "bin_start": 20.74,
+            "bin_end": 21.53,
+            "bin_center": 21.13,
+            "count": 13
+          },
+          {
+            "bin_start": 21.53,
+            "bin_end": 22.32,
+            "bin_center": 21.92,
+            "count": 12
+          },
+          {
+            "bin_start": 22.32,
+            "bin_end": 23.11,
+            "bin_center": 22.71,
+            "count": 10
+          },
+          {
+            "bin_start": 23.11,
+            "bin_end": 23.89,
+            "bin_center": 23.5,
+            "count": 7
+          },
+          {
+            "bin_start": 23.89,
+            "bin_end": 24.68,
+            "bin_center": 24.29,
+            "count": 4
+          },
+          {
+            "bin_start": 24.68,
+            "bin_end": 25.47,
+            "bin_center": 25.08,
+            "count": 7
+          },
+          {
+            "bin_start": 25.47,
+            "bin_end": 26.26,
+            "bin_center": 25.87,
+            "count": 1
+          },
+          {
+            "bin_start": 26.26,
+            "bin_end": 27.05,
+            "bin_center": 26.65,
+            "count": 2
+          },
+          {
+            "bin_start": 27.05,
+            "bin_end": 27.84,
+            "bin_center": 27.44,
+            "count": 1
+          },
+          {
+            "bin_start": 27.84,
+            "bin_end": 28.62,
+            "bin_center": 28.23,
+            "count": 1
+          },
+          {
+            "bin_start": 28.62,
+            "bin_end": 29.41,
+            "bin_center": 29.02,
+            "count": 0
+          },
+          {
+            "bin_start": 29.41,
+            "bin_end": 30.2,
+            "bin_center": 29.81,
+            "count": 0
+          },
+          {
+            "bin_start": 30.2,
+            "bin_end": 30.99,
+            "bin_center": 30.6,
+            "count": 1
+          }
+        ],
+        "mean": 19.0,
+        "median": 18.66,
+        "std": 3.41,
+        "min": 11.28,
+        "max": 30.99,
+        "sample_count": 200
+      }
+    },
+    {
+      "experiment_id": "EXP-MODU-MIX-U100-R1-6480",
+      "architecture": "modular_monolith",
+      "workload_type": "mixed_campus",
+      "concurrent_users": 100,
+      "total_requests": 1500,
+      "avg_latency_ms": 14.85,
+      "p50_latency_ms": 13.63,
+      "p95_latency_ms": 24.87,
+      "p99_latency_ms": 44.21,
+      "throughput_rps": 350.0,
+      "cpu_utilization_pct": 32.1,
+      "ram_utilization_mb": 185.4,
+      "queue_depth": 0,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 4.71,
+            "bin_end": 7.01,
+            "bin_center": 5.86,
+            "count": 7
+          },
+          {
+            "bin_start": 7.01,
+            "bin_end": 9.31,
+            "bin_center": 8.16,
+            "count": 49
+          },
+          {
+            "bin_start": 9.31,
+            "bin_end": 11.61,
+            "bin_center": 10.46,
+            "count": 78
+          },
+          {
+            "bin_start": 11.61,
+            "bin_end": 13.91,
+            "bin_center": 12.76,
+            "count": 80
+          },
+          {
+            "bin_start": 13.91,
+            "bin_end": 16.21,
+            "bin_center": 15.06,
+            "count": 72
+          },
+          {
+            "bin_start": 16.21,
+            "bin_end": 18.51,
+            "bin_center": 17.36,
+            "count": 35
+          },
+          {
+            "bin_start": 18.51,
+            "bin_end": 20.81,
+            "bin_center": 19.66,
+            "count": 25
+          },
+          {
+            "bin_start": 20.81,
+            "bin_end": 23.11,
+            "bin_center": 21.96,
+            "count": 21
+          },
+          {
+            "bin_start": 23.11,
+            "bin_end": 25.41,
+            "bin_center": 24.26,
+            "count": 15
+          },
+          {
+            "bin_start": 25.41,
+            "bin_end": 27.71,
+            "bin_center": 26.56,
+            "count": 3
+          },
+          {
+            "bin_start": 27.71,
+            "bin_end": 30.01,
+            "bin_center": 28.86,
+            "count": 3
+          },
+          {
+            "bin_start": 30.01,
+            "bin_end": 32.31,
+            "bin_center": 31.16,
+            "count": 3
+          },
+          {
+            "bin_start": 32.31,
+            "bin_end": 34.6,
+            "bin_center": 33.45,
+            "count": 0
+          },
+          {
+            "bin_start": 34.6,
+            "bin_end": 36.9,
+            "bin_center": 35.75,
+            "count": 3
+          },
+          {
+            "bin_start": 36.9,
+            "bin_end": 39.2,
+            "bin_center": 38.05,
+            "count": 1
+          },
+          {
+            "bin_start": 39.2,
+            "bin_end": 41.5,
+            "bin_center": 40.35,
+            "count": 0
+          },
+          {
+            "bin_start": 41.5,
+            "bin_end": 43.8,
+            "bin_center": 42.65,
+            "count": 0
+          },
+          {
+            "bin_start": 43.8,
+            "bin_end": 46.1,
+            "bin_center": 44.95,
+            "count": 1
+          },
+          {
+            "bin_start": 46.1,
+            "bin_end": 48.4,
+            "bin_center": 47.25,
+            "count": 0
+          },
+          {
+            "bin_start": 48.4,
+            "bin_end": 50.7,
+            "bin_center": 49.55,
+            "count": 0
+          },
+          {
+            "bin_start": 50.7,
+            "bin_end": 53.0,
+            "bin_center": 51.85,
+            "count": 1
+          },
+          {
+            "bin_start": 53.0,
+            "bin_end": 55.3,
+            "bin_center": 54.15,
+            "count": 1
+          },
+          {
+            "bin_start": 55.3,
+            "bin_end": 57.6,
+            "bin_center": 56.45,
+            "count": 0
+          },
+          {
+            "bin_start": 57.6,
+            "bin_end": 59.9,
+            "bin_center": 58.75,
+            "count": 1
+          },
+          {
+            "bin_start": 59.9,
+            "bin_end": 62.2,
+            "bin_center": 61.05,
+            "count": 1
+          }
+        ],
+        "mean": 14.85,
+        "median": 13.63,
+        "std": 6.89,
+        "min": 4.71,
+        "max": 62.2,
+        "sample_count": 400
+      }
+    },
+    {
+      "experiment_id": "EXP-EVEN-MIX-U100-R2-6480",
+      "architecture": "event_driven",
+      "workload_type": "mixed_campus",
+      "concurrent_users": 100,
+      "total_requests": 1500,
+      "avg_latency_ms": 19.7,
+      "p50_latency_ms": 19.23,
+      "p95_latency_ms": 27.02,
+      "p99_latency_ms": 32.28,
+      "throughput_rps": 394.0,
+      "cpu_utilization_pct": 32.8,
+      "ram_utilization_mb": 312.0,
+      "queue_depth": 20,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 10.97,
+            "bin_end": 12.54,
+            "bin_center": 11.75,
+            "count": 7
+          },
+          {
+            "bin_start": 12.54,
+            "bin_end": 14.1,
+            "bin_center": 13.32,
+            "count": 20
+          },
+          {
+            "bin_start": 14.1,
+            "bin_end": 15.67,
+            "bin_center": 14.89,
+            "count": 33
+          },
+          {
+            "bin_start": 15.67,
+            "bin_end": 17.24,
+            "bin_center": 16.46,
+            "count": 57
+          },
+          {
+            "bin_start": 17.24,
+            "bin_end": 18.81,
+            "bin_center": 18.02,
+            "count": 68
+          },
+          {
+            "bin_start": 18.81,
+            "bin_end": 20.37,
+            "bin_center": 19.59,
+            "count": 60
+          },
+          {
+            "bin_start": 20.37,
+            "bin_end": 21.94,
+            "bin_center": 21.16,
+            "count": 45
+          },
+          {
+            "bin_start": 21.94,
+            "bin_end": 23.51,
+            "bin_center": 22.72,
+            "count": 45
+          },
+          {
+            "bin_start": 23.51,
+            "bin_end": 25.07,
+            "bin_center": 24.29,
+            "count": 27
+          },
+          {
+            "bin_start": 25.07,
+            "bin_end": 26.64,
+            "bin_center": 25.86,
+            "count": 16
+          },
+          {
+            "bin_start": 26.64,
+            "bin_end": 28.21,
+            "bin_center": 27.43,
+            "count": 9
+          },
+          {
+            "bin_start": 28.21,
+            "bin_end": 29.78,
+            "bin_center": 28.99,
+            "count": 6
+          },
+          {
+            "bin_start": 29.78,
+            "bin_end": 31.34,
+            "bin_center": 30.56,
+            "count": 1
+          },
+          {
+            "bin_start": 31.34,
+            "bin_end": 32.91,
+            "bin_center": 32.13,
+            "count": 2
+          },
+          {
+            "bin_start": 32.91,
+            "bin_end": 34.48,
+            "bin_center": 33.69,
+            "count": 1
+          },
+          {
+            "bin_start": 34.48,
+            "bin_end": 36.05,
+            "bin_center": 35.26,
+            "count": 1
+          },
+          {
+            "bin_start": 36.05,
+            "bin_end": 37.61,
+            "bin_center": 36.83,
+            "count": 0
+          },
+          {
+            "bin_start": 37.61,
+            "bin_end": 39.18,
+            "bin_center": 38.4,
+            "count": 1
+          },
+          {
+            "bin_start": 39.18,
+            "bin_end": 40.75,
+            "bin_center": 39.96,
+            "count": 0
+          },
+          {
+            "bin_start": 40.75,
+            "bin_end": 42.31,
+            "bin_center": 41.53,
+            "count": 0
+          },
+          {
+            "bin_start": 42.31,
+            "bin_end": 43.88,
+            "bin_center": 43.1,
+            "count": 0
+          },
+          {
+            "bin_start": 43.88,
+            "bin_end": 45.45,
+            "bin_center": 44.66,
+            "count": 0
+          },
+          {
+            "bin_start": 45.45,
+            "bin_end": 47.02,
+            "bin_center": 46.23,
+            "count": 0
+          },
+          {
+            "bin_start": 47.02,
+            "bin_end": 48.58,
+            "bin_center": 47.8,
+            "count": 0
+          },
+          {
+            "bin_start": 48.58,
+            "bin_end": 50.15,
+            "bin_center": 49.37,
+            "count": 1
+          }
+        ],
+        "mean": 19.7,
+        "median": 19.23,
+        "std": 4.37,
+        "min": 10.97,
+        "max": 50.15,
+        "sample_count": 400
+      }
+    },
+    {
+      "experiment_id": "EXP-MODU-MIX-U200-R2-6480",
+      "architecture": "modular_monolith",
+      "workload_type": "mixed_campus",
+      "concurrent_users": 200,
+      "total_requests": 3000,
+      "avg_latency_ms": 29.31,
+      "p50_latency_ms": 25.86,
+      "p95_latency_ms": 57.42,
+      "p99_latency_ms": 89.59,
+      "throughput_rps": 219.2,
+      "cpu_utilization_pct": 51.6,
+      "ram_utilization_mb": 216.3,
+      "queue_depth": 0,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 5.71,
+            "bin_end": 10.97,
+            "bin_center": 8.34,
+            "count": 12
+          },
+          {
+            "bin_start": 10.97,
+            "bin_end": 16.23,
+            "bin_center": 13.6,
+            "count": 79
+          },
+          {
+            "bin_start": 16.23,
+            "bin_end": 21.49,
+            "bin_center": 18.86,
+            "count": 110
+          },
+          {
+            "bin_start": 21.49,
+            "bin_end": 26.75,
+            "bin_center": 24.12,
+            "count": 114
+          },
+          {
+            "bin_start": 26.75,
+            "bin_end": 32.0,
+            "bin_center": 29.37,
+            "count": 92
+          },
+          {
+            "bin_start": 32.0,
+            "bin_end": 37.26,
+            "bin_center": 34.63,
+            "count": 67
+          },
+          {
+            "bin_start": 37.26,
+            "bin_end": 42.52,
+            "bin_center": 39.89,
+            "count": 45
+          },
+          {
+            "bin_start": 42.52,
+            "bin_end": 47.78,
+            "bin_center": 45.15,
+            "count": 27
+          },
+          {
+            "bin_start": 47.78,
+            "bin_end": 53.04,
+            "bin_center": 50.41,
+            "count": 10
+          },
+          {
+            "bin_start": 53.04,
+            "bin_end": 58.3,
+            "bin_center": 55.67,
+            "count": 15
+          },
+          {
+            "bin_start": 58.3,
+            "bin_end": 63.56,
+            "bin_center": 60.93,
+            "count": 9
+          },
+          {
+            "bin_start": 63.56,
+            "bin_end": 68.82,
+            "bin_center": 66.19,
+            "count": 5
+          },
+          {
+            "bin_start": 68.82,
+            "bin_end": 74.07,
+            "bin_center": 71.44,
+            "count": 2
+          },
+          {
+            "bin_start": 74.07,
+            "bin_end": 79.33,
+            "bin_center": 76.7,
+            "count": 5
+          },
+          {
+            "bin_start": 79.33,
+            "bin_end": 84.59,
+            "bin_center": 81.96,
+            "count": 1
+          },
+          {
+            "bin_start": 84.59,
+            "bin_end": 89.85,
+            "bin_center": 87.22,
+            "count": 1
+          },
+          {
+            "bin_start": 89.85,
+            "bin_end": 95.11,
+            "bin_center": 92.48,
+            "count": 2
+          },
+          {
+            "bin_start": 95.11,
+            "bin_end": 100.37,
+            "bin_center": 97.74,
+            "count": 1
+          },
+          {
+            "bin_start": 100.37,
+            "bin_end": 105.63,
+            "bin_center": 103.0,
+            "count": 1
+          },
+          {
+            "bin_start": 105.63,
+            "bin_end": 110.89,
+            "bin_center": 108.26,
+            "count": 0
+          },
+          {
+            "bin_start": 110.89,
+            "bin_end": 116.14,
+            "bin_center": 113.52,
+            "count": 0
+          },
+          {
+            "bin_start": 116.14,
+            "bin_end": 121.4,
+            "bin_center": 118.77,
+            "count": 1
+          },
+          {
+            "bin_start": 121.4,
+            "bin_end": 126.66,
+            "bin_center": 124.03,
+            "count": 0
+          },
+          {
+            "bin_start": 126.66,
+            "bin_end": 131.92,
+            "bin_center": 129.29,
+            "count": 0
+          },
+          {
+            "bin_start": 131.92,
+            "bin_end": 137.18,
+            "bin_center": 134.55,
+            "count": 1
+          }
+        ],
+        "mean": 29.31,
+        "median": 25.86,
+        "std": 15.35,
+        "min": 5.71,
+        "max": 137.18,
+        "sample_count": 600
+      }
+    },
+    {
+      "experiment_id": "EXP-EVEN-MIX-U200-R3-6480",
+      "architecture": "event_driven",
+      "workload_type": "mixed_campus",
+      "concurrent_users": 200,
+      "total_requests": 3000,
+      "avg_latency_ms": 22.62,
+      "p50_latency_ms": 21.68,
+      "p95_latency_ms": 32.55,
+      "p99_latency_ms": 38.51,
+      "throughput_rps": 751.3,
+      "cpu_utilization_pct": 42.0,
+      "ram_utilization_mb": 331.1,
+      "queue_depth": 39,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 10.43,
+            "bin_end": 12.06,
+            "bin_center": 11.24,
+            "count": 1
+          },
+          {
+            "bin_start": 12.06,
+            "bin_end": 13.69,
+            "bin_center": 12.87,
+            "count": 7
+          },
+          {
+            "bin_start": 13.69,
+            "bin_end": 15.31,
+            "bin_center": 14.5,
+            "count": 26
+          },
+          {
+            "bin_start": 15.31,
+            "bin_end": 16.94,
+            "bin_center": 16.13,
+            "count": 52
+          },
+          {
+            "bin_start": 16.94,
+            "bin_end": 18.57,
+            "bin_center": 17.75,
+            "count": 59
+          },
+          {
+            "bin_start": 18.57,
+            "bin_end": 20.2,
+            "bin_center": 19.38,
+            "count": 75
+          },
+          {
+            "bin_start": 20.2,
+            "bin_end": 21.82,
+            "bin_center": 21.01,
+            "count": 87
+          },
+          {
+            "bin_start": 21.82,
+            "bin_end": 23.45,
+            "bin_center": 22.64,
+            "count": 60
+          },
+          {
+            "bin_start": 23.45,
+            "bin_end": 25.08,
+            "bin_center": 24.26,
+            "count": 58
+          },
+          {
+            "bin_start": 25.08,
+            "bin_end": 26.71,
+            "bin_center": 25.89,
+            "count": 54
+          },
+          {
+            "bin_start": 26.71,
+            "bin_end": 28.33,
+            "bin_center": 27.52,
+            "count": 33
+          },
+          {
+            "bin_start": 28.33,
+            "bin_end": 29.96,
+            "bin_center": 29.15,
+            "count": 30
+          },
+          {
+            "bin_start": 29.96,
+            "bin_end": 31.59,
+            "bin_center": 30.77,
+            "count": 20
+          },
+          {
+            "bin_start": 31.59,
+            "bin_end": 33.22,
+            "bin_center": 32.4,
+            "count": 12
+          },
+          {
+            "bin_start": 33.22,
+            "bin_end": 34.84,
+            "bin_center": 34.03,
+            "count": 7
+          },
+          {
+            "bin_start": 34.84,
+            "bin_end": 36.47,
+            "bin_center": 35.66,
+            "count": 9
+          },
+          {
+            "bin_start": 36.47,
+            "bin_end": 38.1,
+            "bin_center": 37.29,
+            "count": 3
+          },
+          {
+            "bin_start": 38.1,
+            "bin_end": 39.73,
+            "bin_center": 38.91,
+            "count": 2
+          },
+          {
+            "bin_start": 39.73,
+            "bin_end": 41.35,
+            "bin_center": 40.54,
+            "count": 1
+          },
+          {
+            "bin_start": 41.35,
+            "bin_end": 42.98,
+            "bin_center": 42.17,
+            "count": 2
+          },
+          {
+            "bin_start": 42.98,
+            "bin_end": 44.61,
+            "bin_center": 43.8,
+            "count": 0
+          },
+          {
+            "bin_start": 44.61,
+            "bin_end": 46.24,
+            "bin_center": 45.42,
+            "count": 0
+          },
+          {
+            "bin_start": 46.24,
+            "bin_end": 47.86,
+            "bin_center": 47.05,
+            "count": 1
+          },
+          {
+            "bin_start": 47.86,
+            "bin_end": 49.49,
+            "bin_center": 48.68,
+            "count": 0
+          },
+          {
+            "bin_start": 49.49,
+            "bin_end": 51.12,
+            "bin_center": 50.31,
+            "count": 1
+          }
+        ],
+        "mean": 22.62,
+        "median": 21.68,
+        "std": 5.55,
+        "min": 10.43,
+        "max": 51.12,
+        "sample_count": 600
+      }
+    },
+    {
+      "experiment_id": "EXP-MODU-MIX-U400-R2-6480",
+      "architecture": "modular_monolith",
+      "workload_type": "mixed_campus",
+      "concurrent_users": 400,
+      "total_requests": 6000,
+      "avg_latency_ms": 76.42,
+      "p50_latency_ms": 59.59,
+      "p95_latency_ms": 181.89,
+      "p99_latency_ms": 402.34,
+      "throughput_rps": 90.4,
+      "cpu_utilization_pct": 90.0,
+      "ram_utilization_mb": 260.1,
+      "queue_depth": 0,
+      "error_rate_pct": 3.58,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 2.94,
+            "bin_end": 23.7,
+            "bin_center": 13.32,
+            "count": 55
+          },
+          {
+            "bin_start": 23.7,
+            "bin_end": 44.45,
+            "bin_center": 34.07,
+            "count": 158
+          },
+          {
+            "bin_start": 44.45,
+            "bin_end": 65.21,
+            "bin_center": 54.83,
+            "count": 121
+          },
+          {
+            "bin_start": 65.21,
+            "bin_end": 85.97,
+            "bin_center": 75.59,
+            "count": 85
+          },
+          {
+            "bin_start": 85.97,
+            "bin_end": 106.72,
+            "bin_center": 96.34,
+            "count": 55
+          },
+          {
+            "bin_start": 106.72,
+            "bin_end": 127.48,
+            "bin_center": 117.1,
+            "count": 44
+          },
+          {
+            "bin_start": 127.48,
+            "bin_end": 148.23,
+            "bin_center": 137.86,
+            "count": 29
+          },
+          {
+            "bin_start": 148.23,
+            "bin_end": 168.99,
+            "bin_center": 158.61,
+            "count": 14
+          },
+          {
+            "bin_start": 168.99,
+            "bin_end": 189.75,
+            "bin_center": 179.37,
+            "count": 12
+          },
+          {
+            "bin_start": 189.75,
+            "bin_end": 210.5,
+            "bin_center": 200.13,
+            "count": 5
+          },
+          {
+            "bin_start": 210.5,
+            "bin_end": 231.26,
+            "bin_center": 220.88,
+            "count": 4
+          },
+          {
+            "bin_start": 231.26,
+            "bin_end": 252.02,
+            "bin_center": 241.64,
+            "count": 4
+          },
+          {
+            "bin_start": 252.02,
+            "bin_end": 272.77,
+            "bin_center": 262.39,
+            "count": 2
+          },
+          {
+            "bin_start": 272.77,
+            "bin_end": 293.53,
+            "bin_center": 283.15,
+            "count": 2
+          },
+          {
+            "bin_start": 293.53,
+            "bin_end": 314.29,
+            "bin_center": 303.91,
+            "count": 1
+          },
+          {
+            "bin_start": 314.29,
+            "bin_end": 335.04,
+            "bin_center": 324.66,
+            "count": 1
+          },
+          {
+            "bin_start": 335.04,
+            "bin_end": 355.8,
+            "bin_center": 345.42,
+            "count": 1
+          },
+          {
+            "bin_start": 355.8,
+            "bin_end": 376.56,
+            "bin_center": 366.18,
+            "count": 0
+          },
+          {
+            "bin_start": 376.56,
+            "bin_end": 397.31,
+            "bin_center": 386.93,
+            "count": 0
+          },
+          {
+            "bin_start": 397.31,
+            "bin_end": 418.07,
+            "bin_center": 407.69,
+            "count": 4
+          },
+          {
+            "bin_start": 418.07,
+            "bin_end": 438.82,
+            "bin_center": 428.45,
+            "count": 1
+          },
+          {
+            "bin_start": 438.82,
+            "bin_end": 459.58,
+            "bin_center": 449.2,
+            "count": 1
+          },
+          {
+            "bin_start": 459.58,
+            "bin_end": 480.34,
+            "bin_center": 469.96,
+            "count": 0
+          },
+          {
+            "bin_start": 480.34,
+            "bin_end": 501.09,
+            "bin_center": 490.72,
+            "count": 0
+          },
+          {
+            "bin_start": 501.09,
+            "bin_end": 521.85,
+            "bin_center": 511.47,
+            "count": 1
+          }
+        ],
+        "mean": 76.42,
+        "median": 59.59,
+        "std": 63.94,
+        "min": 2.94,
+        "max": 521.85,
+        "sample_count": 600
+      }
+    },
+    {
+      "experiment_id": "EXP-EVEN-MIX-U400-R1-6480",
+      "architecture": "event_driven",
+      "workload_type": "mixed_campus",
+      "concurrent_users": 400,
+      "total_requests": 6000,
+      "avg_latency_ms": 24.79,
+      "p50_latency_ms": 23.44,
+      "p95_latency_ms": 40.27,
+      "p99_latency_ms": 48.47,
+      "throughput_rps": 1480.0,
+      "cpu_utilization_pct": 63.1,
+      "ram_utilization_mb": 384.2,
+      "queue_depth": 72,
+      "error_rate_pct": 0.0,
+      "histogram": {
+        "bins": [
+          {
+            "bin_start": 8.36,
+            "bin_end": 10.89,
+            "bin_center": 9.63,
+            "count": 5
+          },
+          {
+            "bin_start": 10.89,
+            "bin_end": 13.42,
+            "bin_center": 12.16,
+            "count": 19
+          },
+          {
+            "bin_start": 13.42,
+            "bin_end": 15.96,
+            "bin_center": 14.69,
+            "count": 39
+          },
+          {
+            "bin_start": 15.96,
+            "bin_end": 18.49,
+            "bin_center": 17.22,
+            "count": 77
+          },
+          {
+            "bin_start": 18.49,
+            "bin_end": 21.02,
+            "bin_center": 19.76,
+            "count": 90
+          },
+          {
+            "bin_start": 21.02,
+            "bin_end": 23.55,
+            "bin_center": 22.29,
+            "count": 72
+          },
+          {
+            "bin_start": 23.55,
+            "bin_end": 26.09,
+            "bin_center": 24.82,
+            "count": 70
+          },
+          {
+            "bin_start": 26.09,
+            "bin_end": 28.62,
+            "bin_center": 27.35,
+            "count": 66
+          },
+          {
+            "bin_start": 28.62,
+            "bin_end": 31.15,
+            "bin_center": 29.89,
+            "count": 46
+          },
+          {
+            "bin_start": 31.15,
+            "bin_end": 33.68,
+            "bin_center": 32.42,
+            "count": 33
+          },
+          {
+            "bin_start": 33.68,
+            "bin_end": 36.22,
+            "bin_center": 34.95,
+            "count": 23
+          },
+          {
+            "bin_start": 36.22,
+            "bin_end": 38.75,
+            "bin_center": 37.48,
+            "count": 24
+          },
+          {
+            "bin_start": 38.75,
+            "bin_end": 41.28,
+            "bin_center": 40.02,
+            "count": 11
+          },
+          {
+            "bin_start": 41.28,
+            "bin_end": 43.81,
+            "bin_center": 42.55,
+            "count": 8
+          },
+          {
+            "bin_start": 43.81,
+            "bin_end": 46.35,
+            "bin_center": 45.08,
+            "count": 5
+          },
+          {
+            "bin_start": 46.35,
+            "bin_end": 48.88,
+            "bin_center": 47.61,
+            "count": 7
+          },
+          {
+            "bin_start": 48.88,
+            "bin_end": 51.41,
+            "bin_center": 50.14,
+            "count": 4
+          },
+          {
+            "bin_start": 51.41,
+            "bin_end": 53.94,
+            "bin_center": 52.68,
+            "count": 0
+          },
+          {
+            "bin_start": 53.94,
+            "bin_end": 56.48,
+            "bin_center": 55.21,
+            "count": 0
+          },
+          {
+            "bin_start": 56.48,
+            "bin_end": 59.01,
+            "bin_center": 57.74,
+            "count": 0
+          },
+          {
+            "bin_start": 59.01,
+            "bin_end": 61.54,
+            "bin_center": 60.27,
+            "count": 0
+          },
+          {
+            "bin_start": 61.54,
+            "bin_end": 64.07,
+            "bin_center": 62.81,
+            "count": 0
+          },
+          {
+            "bin_start": 64.07,
+            "bin_end": 66.61,
+            "bin_center": 65.34,
+            "count": 0
+          },
+          {
+            "bin_start": 66.61,
+            "bin_end": 69.14,
+            "bin_center": 67.87,
+            "count": 0
+          },
+          {
+            "bin_start": 69.14,
+            "bin_end": 71.67,
+            "bin_center": 70.4,
+            "count": 1
+          }
+        ],
+        "mean": 24.79,
+        "median": 23.44,
+        "std": 8.22,
+        "min": 8.36,
+        "max": 71.67,
+        "sample_count": 600
+      }
+    }
+  ]
+}

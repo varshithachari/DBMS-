@@ -9,3 +9,6 @@ __pycache__/
 hist.db
 step_914_data.txt
 step_914_full.sql
+*.pdf
+*.pptx
+harshitha.jpeg

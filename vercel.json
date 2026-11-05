@@ -1,16 +1,10 @@
 {
   "version": 2,
   "name": "chanakya-campus-navigator",
-  "builds": [
-    {
-      "src": "server.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "server.js"
-    }
+  "outputDirectory": "docs",
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/", "destination": "/dashboard.html?tab=architecture" },
+    { "source": "/dashboard", "destination": "/dashboard.html" }
   ]
 }
