@@ -1,0 +1,16 @@
+From: GitHub <noreply@github.com>
+To: student@example.com
+Subject: [GitHub] Your account security settings
+Reply-To: noreply@github.com
+Return-Path: <noreply@github.com>
+Authentication-Results: mx.example.com; spf=pass; dkim=pass; dmarc=pass
+Received: from mail.github.com (mail.github.com [192.0.2.40])
+
+Hello,
+
+This is a notification about your GitHub account security settings.
+
+You can review your settings by visiting GitHub directly and navigating to your account settings.
+
+Regards,
+GitHub

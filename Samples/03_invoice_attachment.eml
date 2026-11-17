@@ -1,0 +1,30 @@
+From: Accounts Department <accounts@vendor-payment.example>
+To: student@example.com
+Subject: URGENT: Invoice 2026-0098 Overdue
+Reply-To: accounts-payment@gmail.com
+Return-Path: <accounts@vendor-payment.example>
+Authentication-Results: mx.example.com; spf=softfail; dkim=none; dmarc=none
+Received: from mail.vendor-payment.example (unknown [192.0.2.30])
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="invoiceboundary"
+
+--invoiceboundary
+Content-Type: text/plain; charset="utf-8"
+
+Dear Student,
+
+Our records indicate that invoice 2026-0098 is overdue.
+
+Please review the attached invoice immediately to avoid a late payment penalty.
+
+Regards,
+Accounts Department
+
+--invoiceboundary
+Content-Type: application/octet-stream; name="Invoice_2026_0098.pdf.exe"
+Content-Disposition: attachment; filename="Invoice_2026_0098.pdf.exe"
+Content-Transfer-Encoding: base64
+
+VGhpcyBpcyBhIGZha2UgdHJhaW5pbmcgYXR0YWNobWVudC4=
+
+--invoiceboundary--

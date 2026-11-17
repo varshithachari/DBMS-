@@ -1,0 +1,19 @@
+From: Chanakya University IT <student-notice@outlook.com>
+To: student@example.com
+Subject: Your University Mailbox Is Almost Full
+Reply-To: university.support.help@gmail.com
+Return-Path: <student-notice@outlook.com>
+Authentication-Results: mx.example.com; spf=pass; dkim=pass; dmarc=pass
+Received: from mail.outlook.com (mail.outlook.com [192.0.2.20])
+
+Dear Student,
+
+Your university mailbox is almost full.
+
+Please review your mailbox quota today to avoid interruption.
+
+Review your mailbox:
+hxxps://bit[.]ly/3xRvAlD
+
+Regards,
+Chanakya University IT Department
