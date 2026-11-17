@@ -10,5 +10,9 @@ hist.db
 step_914_data.txt
 step_914_full.sql
 *.pdf
+!*Status_Report.pdf
+!*Presentation_Script.pdf
+!reports/*.pdf
 *.pptx
 harshitha.jpeg
+.vercel

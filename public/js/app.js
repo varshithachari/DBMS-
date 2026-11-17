@@ -385,6 +385,12 @@ function switchRole(roleKey) {
     initAuthSession();
     return;
   }
+  // Enforce RBAC: Non-admin cannot switch to admin
+  if (roleKey === 'admin' && appState.currentUser && appState.currentUser.role !== 'admin') {
+    showToast("Access Denied", "Administrator privilege requires verified credentials.", "error");
+    if (typeof sfx !== 'undefined') sfx.play('error');
+    return;
+  }
   if (!DEMO_USERS[roleKey]) return;
   sfx.play('click');
   appState.currentRole = roleKey;
@@ -1671,14 +1677,24 @@ function formatAIMarkdown(text) {
 // ============================================================================
 // 17. AUTHENTICATION & SESSION MANAGEMENT (LOGIN / LOGOUT)
 // ============================================================================
-function handleLogout() {
+async function handleLogout() {
   sfx.play('click');
+  showToast("Logging out...", "Terminating authenticated session...", "info");
+  try {
+    await fetch('/api/auth/logout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include'
+    });
+  } catch (err) {
+    console.warn("Logout error:", err);
+  }
   localStorage.removeItem('chanakya_user');
   localStorage.removeItem('chanakya_role');
-  showToast("Logging out...", "Returning to Login Portal", "info");
+  localStorage.removeItem('chanakya_session_token');
   setTimeout(() => {
     window.location.href = '/login?logged_out=1';
-  }, 400);
+  }, 350);
 }
 
 function updateUserUI() {
@@ -1695,7 +1711,9 @@ function updateUserUI() {
   if (cardName && user.name) cardName.textContent = user.name;
 
   const cardId = document.querySelector('#student-id-card span.font-mono');
-  if (cardId && user.roll_number) cardId.textContent = `ID: ${user.roll_number}`;
+  if (cardId && (user.roll_number || user.student_or_employee_id)) {
+    cardId.textContent = `ID: ${user.roll_number || user.student_or_employee_id}`;
+  }
 
   const cardDept = document.querySelectorAll('#student-id-card span.text-slate-300')[0];
   if (cardDept && (user.dept || user.department_name)) cardDept.textContent = user.dept || user.department_name;
@@ -1707,46 +1725,82 @@ function updateUserUI() {
   }
 }
 
-function initAuthSession() {
+async function initAuthSession() {
   try {
-    const raw = localStorage.getItem('chanakya_user');
-    if (raw) {
-      const user = JSON.parse(raw);
-      if (user && user.name) {
-        appState.currentUser = {
-          id: user.profile_id || user.id || 1,
-          name: user.name,
-          email: user.email,
-          role: user.role || 'student',
-          roleLabel: (user.role || 'student').toUpperCase(),
-          dept: user.department_name || user.dept || 'School of Engineering & Tech',
-          school: user.school_name || 'Engineering',
-          roll_number: user.roll_number || 'CU-2026-001',
-          avatar: user.avatar || (user.role === 'admin' ? '👑' : (user.role === 'faculty' ? '👨‍🏫' : '🎓')),
-          points: user.points || 100
+    const res = await fetch('/api/auth/me', { credentials: 'include' });
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.user) {
+        const u = data.user;
+        const role = (u.role || 'student').toLowerCase();
+        const avatarMap = {
+          admin: '👑',
+          faculty: '👨‍🏫',
+          staff: '🛠️',
+          student: '🎓',
+          fresher: '🧭',
+          new_student: '🧭',
+          visitor: '🚶'
         };
-        appState.currentRole = user.role || 'student';
+        const roleLabelMap = {
+          admin: 'Administrator / Dean',
+          faculty: 'Faculty Member',
+          staff: 'Campus Staff & Operations',
+          student: 'Student',
+          fresher: 'Fresher / New Student',
+          visitor: 'Campus Visitor'
+        };
 
-        // Update top-right role selector with the user's authentic name
+        appState.currentUser = {
+          id: u.user_id,
+          name: u.full_name,
+          email: u.email,
+          role: role,
+          roleLabel: roleLabelMap[role] || role.toUpperCase(),
+          dept: u.department || 'School of Engineering & Tech',
+          school: u.department || 'Engineering',
+          roll_number: u.student_or_employee_id || 'CU-2026-001',
+          student_or_employee_id: u.student_or_employee_id,
+          academic_year: u.academic_year || 'Year 1',
+          avatar: avatarMap[role] || '🎓',
+          points: 120
+        };
+        appState.currentRole = role;
+
+        localStorage.setItem('chanakya_user', JSON.stringify(appState.currentUser));
+        localStorage.setItem('chanakya_role', role);
+
+        // Update top-right role display and lock it
         const roleSel = document.getElementById('role-selector');
         if (roleSel) {
-          let opt = roleSel.querySelector('option[value="authenticated_user"]');
-          if (!opt) {
-            opt = document.createElement('option');
-            opt.value = "authenticated_user";
-            roleSel.insertBefore(opt, roleSel.firstChild);
-          }
-          opt.textContent = `${appState.currentUser.avatar} ${appState.currentUser.name} (${appState.currentUser.roleLabel})`;
-          roleSel.value = "authenticated_user";
+          roleSel.innerHTML = `<option value="${role}" selected>${appState.currentUser.avatar} ${appState.currentUser.name} (${appState.currentUser.roleLabel})</option>`;
+          roleSel.disabled = true;
+          roleSel.title = `Authenticated as ${appState.currentUser.name} (${appState.currentUser.roleLabel})`;
         }
+
+        // Hide admin simulation elements for non-admin users
+        document.querySelectorAll('.admin-only-feature').forEach(el => {
+          el.style.display = (role === 'admin') ? '' : 'none';
+        });
 
         updateUserUI();
         adaptRoleViews();
         return;
       }
+    } else if (res.status === 401) {
+      localStorage.removeItem('chanakya_user');
+      localStorage.removeItem('chanakya_role');
+      const pathname = window.location.pathname;
+      const isProtected = pathname.includes('dashboard') ||
+                          pathname.includes('admin') ||
+                          pathname === '/' ||
+                          pathname.endsWith('index.html');
+      if (isProtected) {
+        window.location.href = '/login?reason=auth_required';
+      }
     }
   } catch (e) {
-    console.warn("Could not parse saved auth session:", e);
+    console.warn("Backend auth check error:", e);
   }
 }
 

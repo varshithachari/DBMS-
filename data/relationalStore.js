@@ -6,6 +6,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
+const authStore = require('./authStore');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'chanakya_campus_connect_jwt_secret_2026_xyz';
 
@@ -34,9 +35,42 @@ class RelationalCampusStore {
     this.isInitialized = false;
   }
 
+  
+  syncWithAuthStore() {
+    for (const u of authStore.users) {
+      const existing = this.userProfiles.find(p => p.profile_id === u.user_id || p.email.toLowerCase() === u.email.toLowerCase());
+      if (!existing) {
+        this.userProfiles.push({
+          profile_id: u.user_id,
+          auth_user_id: u.user_id,
+          email: u.email,
+          password_hash: u.password_hash,
+          name: u.full_name || u.name,
+          roll_number: u.student_or_employee_id || u.roll_number,
+          role: u.role,
+          school_id: u.school_id || 1,
+          department_id: u.department_id || 1,
+          avatar: u.avatar || '🎓',
+          points: u.points || 50,
+          created_at: u.created_at
+        });
+      } else {
+        existing.password_hash = u.password_hash;
+        existing.name = u.full_name || u.name;
+        existing.roll_number = u.student_or_employee_id || u.roll_number;
+        existing.role = u.role;
+      }
+    }
+    this.indexUserProfileEmail.clear();
+    for (const p of this.userProfiles) {
+      this.indexUserProfileEmail.set(p.email.toLowerCase(), p);
+    }
+  }
+
   init() {
     if (this.isInitialized) return;
     this.seedBaseUtsavHubData();
+    this.syncWithAuthStore();
     this.generateScalabilityDataset(100);
     this.isInitialized = true;
   }
@@ -711,58 +745,35 @@ class RelationalCampusStore {
   // ==========================================
   // AUTHENTICATION & SESSIONS
   // ==========================================
-  registerUser({ email, password, name, roll_number, role = 'student', school_id, department_id, participant_type = 'internal' }) {
-    if (!email || !password || !name) {
-      throw new Error("Email, password, and name are required.");
-    }
+  registerUser({ email, password, name, full_name, roll_number, student_or_employee_id, role = 'student', department, academic_year, school_id, department_id, participant_type = 'internal' }) {
+    const user = authStore.createUser({
+      full_name: full_name || name,
+      email,
+      student_or_employee_id: student_or_employee_id || roll_number,
+      password,
+      department,
+      academic_year,
+      role,
+      school_id,
+      department_id
+    });
 
-    const cleanEmail = email.trim().toLowerCase();
-    if (this.indexUserProfileEmail.has(cleanEmail)) {
-      throw new Error("An account with this email address already exists.");
-    }
+    this.syncWithAuthStore();
 
-    const salt = bcrypt.genSaltSync(10);
-    const password_hash = bcrypt.hashSync(password, salt);
-    const profile_id = this.nextProfileId++;
-    const auth_user_id = uuidv4();
-
-    const newProfile = {
-      profile_id,
-      auth_user_id,
-      email: cleanEmail,
-      password_hash,
-      name: name.trim(),
-      roll_number: roll_number ? roll_number.trim() : `CU-26-${profile_id}`,
-      role: role.toLowerCase(),
-      participant_type,
-      school_id: Number(school_id) || 1,
-      department_id: Number(department_id) || 1,
-      avatar: role === 'admin' ? '👑' : (role === 'faculty' ? '👨‍🏫' : '🎓'),
-      points: 50, // Welcome signup bonus points
-      created_at: new Date().toISOString()
-    };
-
-    this.userProfiles.push(newProfile);
-    this.indexUserProfileEmail.set(cleanEmail, newProfile);
-
-    // Generate JWT Token
     const token = jwt.sign(
-      { profile_id: newProfile.profile_id, email: newProfile.email, role: newProfile.role },
+      { profile_id: user.user_id, user_id: user.user_id, email: user.email, role: user.role },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
 
-    const safeUser = { ...newProfile };
-    delete safeUser.password_hash;
-
-    return { token, user: safeUser };
+    return { token, user };
   }
 
   verifyLogin(email, password) {
     if (!email || !password) throw new Error("Email and password are required.");
     const cleanEmail = email.trim().toLowerCase();
 
-    const user = this.indexUserProfileEmail.get(cleanEmail);
+    const user = authStore.findUserByIdentifier(cleanEmail);
     if (!user) {
       throw new Error("Invalid email or password. Please verify your credentials.");
     }
@@ -773,19 +784,16 @@ class RelationalCampusStore {
     }
 
     const token = jwt.sign(
-      { profile_id: user.profile_id, email: user.email, role: user.role },
+      { profile_id: user.user_id, user_id: user.user_id, email: user.email, role: user.role },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
 
-    const safeUser = { ...user };
-    delete safeUser.password_hash;
-
-    // Attach school and department names
+    const safeUser = authStore.sanitizeUser(user);
     const school = this.schools.find(s => s.school_id === user.school_id);
     const dept = this.departments.find(d => d.department_id === user.department_id);
     safeUser.school_name = school ? school.name : "Chanakya Campus";
-    safeUser.department_name = dept ? dept.name : "General";
+    safeUser.department_name = dept ? dept.name : (user.department || "General");
 
     return { token, user: safeUser };
   }

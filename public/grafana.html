@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grafana - Chanakya Campus Connect: Monolith vs Event-Driven Load Test</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Roboto Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background-color: #111217;
+      color: #d8d9da;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .font-mono {
+      font-family: 'Roboto Mono', monospace;
+    }
+    .grafana-card {
+      background-color: #181b1f;
+      border: 1px solid #22252b;
+    }
+    .grafana-header {
+      background-color: #111217;
+      border-bottom: 1px solid #22252b;
+    }
+    .query-text {
+      color: #00bcd4;
+      background: #0b0c0e;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 10px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-orange-500 selection:text-white">
+
+  <!-- Top Grafana Global Bar -->
+  <header class="grafana-header sticky top-0 z-50 px-4 py-2 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <!-- Grafana Logo -->
+      <div class="flex items-center gap-2">
+        <svg class="w-7 h-7 text-[#f97316]" viewBox="0 0 100 100" fill="currentColor">
+          <path d="M50 5 C25.1 5 5 25.1 5 50 C5 74.9 25.1 95 50 95 C74.9 95 95 74.9 95 50 C95 25.1 74.9 5 50 5 Z M50 20 C66.6 20 80 33.4 80 50 C80 66.6 66.6 80 50 80 C33.4 80 20 66.6 20 50 C20 33.4 33.4 20 50 20 Z" />
+          <path d="M35 45 L50 35 L65 45 L65 65 L50 75 L35 65 Z" fill="#f97316"/>
+        </svg>
+        <span class="font-bold text-white text-sm tracking-wide">Grafana</span>
+        <span class="text-xs text-slate-500 font-mono">v10.4.1</span>
+      </div>
+
+      <div class="h-4 w-[1px] bg-slate-700 hidden sm:block"></div>
+
+      <!-- Breadcrumbs -->
+      <div class="hidden sm:flex items-center gap-1.5 text-xs">
+        <a href="#" class="text-slate-400 hover:text-white">Dashboards</a>
+        <span class="text-slate-600">/</span>
+        <span class="text-slate-400">ECS351 Research</span>
+        <span class="text-slate-600">/</span>
+        <span class="text-white font-semibold">Chanakya Campus Connect: Monolith vs Event-Driven</span>
+      </div>
+    </div>
+
+    <!-- Right Controls: Refresh & Time Range -->
+    <div class="flex items-center gap-2">
+      <span class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        Prometheus: Connected
+      </span>
+
+      <div class="flex items-center rounded border border-[#2c3235] bg-[#181b1f] text-xs font-mono text-slate-300">
+        <span class="px-2.5 py-1 flex items-center gap-1">
+          <span>🕒</span> Last 5m
+        </span>
+        <span class="border-l border-[#2c3235] px-2 py-1 text-cyan-400">
+          5s
+        </span>
+      </div>
+
+      <a href="http://localhost:3000/dashboard?tab=architecture" class="py-1 px-2.5 rounded bg-slate-800 hover:bg-slate-700 text-xs text-white transition flex items-center gap-1">
+        <span>←</span> Campus Connect Portal
+      </a>
+    </div>
+  </header>
+
+  <!-- Dashboard Controls Bar -->
+  <div class="bg-[#181b1f] border-b border-[#22252b] px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex flex-wrap items-center gap-3 text-xs">
+      <!-- Target Workload Selector -->
+      <div class="flex items-center gap-1.5 font-mono">
+        <span class="text-slate-400">Workload:</span>
+        <span class="bg-[#111217] text-white px-2.5 py-1 rounded border border-[#2c3235] font-semibold">
+          UtsavHub Event Registration (/api/registrations/register)
+        </span>
+      </div>
+
+      <!-- Concurrency Stepper -->
+      <div class="flex items-center gap-1 font-mono">
+        <span class="text-slate-400 mr-1">Virtual Users:</span>
+        <button onclick="setVU(10)" id="btn-vu-10" class="vu-btn px-2.5 py-1 rounded bg-[#111217] hover:bg-[#22252b] text-slate-300 border border-[#2c3235]">10</button>
+        <button onclick="setVU(50)" id="btn-vu-50" class="vu-btn px-2.5 py-1 rounded bg-[#111217] hover:bg-[#22252b] text-slate-300 border border-[#2c3235]">50</button>
+        <button onclick="setVU(100)" id="btn-vu-100" class="vu-btn px-2.5 py-1 rounded bg-[#0284c7] text-white font-bold border border-cyan-400">100 (Cross)</button>
+        <button onclick="setVU(200)" id="btn-vu-200" class="vu-btn px-2.5 py-1 rounded bg-[#111217] hover:bg-[#22252b] text-slate-300 border border-[#2c3235]">200</button>
+        <button onclick="setVU(400)" id="btn-vu-400" class="vu-btn px-2.5 py-1 rounded bg-[#111217] hover:bg-[#22252b] text-slate-300 border border-[#2c3235]">400 (Peak)</button>
+      </div>
+    </div>
+
+    <!-- Interactive Surge Simulation Trigger -->
+    <div class="flex items-center gap-2">
+      <button onclick="triggerTrafficSurge()" id="btn-surge" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 hover:from-amber-400 hover:to-orange-400 transition shadow-md flex items-center gap-1.5">
+        <span id="surge-icon">⚡</span>
+        <span id="surge-text">Simulate Registration Traffic Surge (k6 Load Spike)</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main 6-Panel Grafana Grid -->
+  <main class="flex-1 p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+    <!-- Panel 1: Latency (p95) -->
+    <div class="grafana-card rounded-xl p-3.5 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between pb-1">
+          <div class="flex items-center gap-1.5">
+            <span class="text-orange-400 text-sm">📈</span>
+            <h3 class="text-xs font-bold text-white tracking-wide">HTTP Request Latency (p95)</h3>
+          </div>
+          <span class="text-[10px] font-mono text-slate-400 bg-[#111217] px-1.5 py-0.5 rounded">ms</span>
+        </div>
+        <div class="text-[9px] font-mono text-slate-500 mb-2 truncate">
+          Q: <span class="query-text">histogram_quantile(0.95, sum(rate(http_duration_bucket[1m])) by (le, arch))</span>
+        </div>
+        <div class="h-44 w-full relative">
+          <canvas id="chart-latency"></canvas>
+        </div>
+      </div>
+      <div class="pt-2 border-t border-[#22252b] flex items-center justify-between text-xs font-mono">
+        <span class="text-amber-400">● Monolith: <b id="val-mono-lat">24.8 ms</b></span>
+        <span class="text-cyan-400">● Event-Driven: <b id="val-eda-lat">27.0 ms</b></span>
+      </div>
+    </div>
+
+    <!-- Panel 2: System Throughput -->
+    <div class="grafana-card rounded-xl p-3.5 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between pb-1">
+          <div class="flex items-center gap-1.5">
+            <span class="text-emerald-400 text-sm">⚡</span>
+            <h3 class="text-xs font-bold text-white tracking-wide">System Throughput</h3>
+          </div>
+          <span class="text-[10px] font-mono text-slate-400 bg-[#111217] px-1.5 py-0.5 rounded">RPS</span>
+        </div>
+        <div class="text-[9px] font-mono text-slate-500 mb-2 truncate">
+          Q: <span class="query-text">sum(rate(http_requests_total[30s])) by (arch)</span>
+        </div>
+        <div class="h-44 w-full relative">
+          <canvas id="chart-throughput"></canvas>
+        </div>
+      </div>
+      <div class="pt-2 border-t border-[#22252b] flex items-center justify-between text-xs font-mono">
+        <span class="text-amber-400">● Monolith: <b id="val-mono-thru">350 RPS</b></span>
+        <span class="text-cyan-400">● Event-Driven: <b id="val-eda-thru">394 RPS</b></span>
+      </div>
+    </div>
+
+    <!-- Panel 3: CPU Utilization -->
+    <div class="grafana-card rounded-xl p-3.5 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between pb-1">
+          <div class="flex items-center gap-1.5">
+            <span class="text-rose-400 text-sm">💻</span>
+            <h3 class="text-xs font-bold text-white tracking-wide">Container CPU Utilization</h3>
+          </div>
+          <span class="text-[10px] font-mono text-slate-400 bg-[#111217] px-1.5 py-0.5 rounded">% Core</span>
+        </div>
+        <div class="text-[9px] font-mono text-slate-500 mb-2 truncate">
+          Q: <span class="query-text">sum(rate(container_cpu_usage_seconds_total[1m])) by (name)</span>
+        </div>
+        <div class="h-44 w-full relative">
+          <canvas id="chart-cpu"></canvas>
+        </div>
+      </div>
+      <div class="pt-2 border-t border-[#22252b] flex items-center justify-between text-xs font-mono">
+        <span class="text-amber-400">● Monolith: <b id="val-mono-cpu">48.2%</b></span>
+        <span class="text-cyan-400">● EDA Workers: <b id="val-eda-cpu">29.1%</b></span>
+      </div>
+    </div>
+
+    <!-- Panel 4: Memory Working Set (RAM) -->
+    <div class="grafana-card rounded-xl p-3.5 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between pb-1">
+          <div class="flex items-center gap-1.5">
+            <span class="text-purple-400 text-sm">🧠</span>
+            <h3 class="text-xs font-bold text-white tracking-wide">Memory Working Set (cAdvisor)</h3>
+          </div>
+          <span class="text-[10px] font-mono text-slate-400 bg-[#111217] px-1.5 py-0.5 rounded">MB RAM</span>
+        </div>
+        <div class="text-[9px] font-mono text-slate-500 mb-2 truncate">
+          Q: <span class="query-text">sum(container_memory_working_set_bytes) by (container)</span>
+        </div>
+        <div class="h-44 w-full relative">
+          <canvas id="chart-ram"></canvas>
+        </div>
+      </div>
+      <div class="pt-2 border-t border-[#22252b] flex items-center justify-between text-xs font-mono">
+        <span class="text-amber-400">● Monolith: <b id="val-mono-ram">184 MB</b></span>
+        <span class="text-cyan-400">● EDA Total: <b id="val-eda-ram">365 MB</b></span>
+      </div>
+    </div>
+
+    <!-- Panel 5: Queue Buffer & Ingestion Lag -->
+    <div class="grafana-card rounded-xl p-3.5 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between pb-1">
+          <div class="flex items-center gap-1.5">
+            <span class="text-amber-400 text-sm">📬</span>
+            <h3 class="text-xs font-bold text-white tracking-wide">RabbitMQ Queue Ingestion Buffer</h3>
+          </div>
+          <span class="text-[10px] font-mono text-slate-400 bg-[#111217] px-1.5 py-0.5 rounded">Messages</span>
+        </div>
+        <div class="text-[9px] font-mono text-slate-500 mb-2 truncate">
+          Q: <span class="query-text">rabbitmq_queue_messages_ready{queue=~"campus_.*"}</span>
+        </div>
+        <div class="h-44 w-full relative">
+          <canvas id="chart-queue"></canvas>
+        </div>
+      </div>
+      <div class="pt-2 border-t border-[#22252b] flex items-center justify-between text-xs font-mono">
+        <span class="text-slate-500">● Monolith: <b>N/A (No Queue)</b></span>
+        <span class="text-cyan-400">● EDA Queue Backlog: <b id="val-eda-queue">4 msgs</b></span>
+      </div>
+    </div>
+
+    <!-- Panel 6: HTTP 5xx Error Rate -->
+    <div class="grafana-card rounded-xl p-3.5 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between pb-1">
+          <div class="flex items-center gap-1.5">
+            <span class="text-red-400 text-sm">⚠️</span>
+            <h3 class="text-xs font-bold text-white tracking-wide">HTTP 5xx Error Rate (% Drops)</h3>
+          </div>
+          <span class="text-[10px] font-mono text-slate-400 bg-[#111217] px-1.5 py-0.5 rounded">% Drops</span>
+        </div>
+        <div class="text-[9px] font-mono text-slate-500 mb-2 truncate">
+          Q: <span class="query-text">sum(rate(http_requests_total{status=~"5.."}[1m])) / total * 100</span>
+        </div>
+        <div class="h-44 w-full relative">
+          <canvas id="chart-error"></canvas>
+        </div>
+      </div>
+      <div class="pt-2 border-t border-[#22252b] flex items-center justify-between text-xs font-mono">
+        <span class="text-amber-400">● Monolith: <b id="val-mono-err">0.00%</b></span>
+        <span class="text-cyan-400">● Event-Driven: <b id="val-eda-err">0.00%</b></span>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Live Telemetry Simulator Engine -->
+  <script>
+    const TIME_POINTS = ['-5m', '-4m', '-3m', '-2m', '-1m', 'now'];
+    let currentVU = 100;
+    let isSurgeActive = false;
+    let surgeTimer = null;
+
+    // Data Models based on ECS351 empirical experiments
+    const METRICS_DATA = {
+      10: {
+        latency: { mono: 4.5, eda: 18.5 },
+        throughput: { mono: 182, eda: 178 },
+        cpu: { mono: 14.1, eda: 12.0 },
+        ram: { mono: 180, eda: 360 },
+        queue: { eda: 0 },
+        err: { mono: 0.0, eda: 0.0 }
+      },
+      50: {
+        latency: { mono: 14.2, eda: 22.1 },
+        throughput: { mono: 340, eda: 348 },
+        cpu: { mono: 22.5, eda: 16.4 },
+        ram: { mono: 182, eda: 362 },
+        queue: { eda: 1 },
+        err: { mono: 0.0, eda: 0.0 }
+      },
+      100: {
+        latency: { mono: 24.8, eda: 27.0 },
+        throughput: { mono: 350, eda: 394 },
+        cpu: { mono: 48.2, eda: 29.1 },
+        ram: { mono: 184, eda: 365 },
+        queue: { eda: 4 },
+        err: { mono: 0.0, eda: 0.0 }
+      },
+      200: {
+        latency: { mono: 82.4, eda: 31.2 },
+        throughput: { mono: 375, eda: 780 },
+        cpu: { mono: 84.5, eda: 42.0 },
+        ram: { mono: 188, eda: 370 },
+        queue: { eda: 12 },
+        err: { mono: 0.8, eda: 0.0 }
+      },
+      400: {
+        latency: { mono: 184.6, eda: 38.4 },
+        throughput: { mono: 90, eda: 1480 },
+        cpu: { mono: 99.2, eda: 68.5 },
+        ram: { mono: 195, eda: 385 },
+        queue: { eda: 28 },
+        err: { mono: 3.6, eda: 0.0 }
+      }
+    };
+
+    function createChart(canvasId, label1, color1, label2, color2, yUnit) {
+      const ctx = document.getElementById(canvasId).getContext('2d');
+      return new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: TIME_POINTS,
+          datasets: [
+            {
+              label: label1,
+              borderColor: color1,
+              backgroundColor: color1 + '15',
+              borderWidth: 2,
+              tension: 0.3,
+              fill: true,
+              data: [0, 0, 0, 0, 0, 0],
+              pointRadius: 2
+            },
+            ...(label2 ? [{
+              label: label2,
+              borderColor: color2,
+              backgroundColor: color2 + '15',
+              borderWidth: 2,
+              tension: 0.3,
+              fill: true,
+              data: [0, 0, 0, 0, 0, 0],
+              pointRadius: 2
+            }] : [])
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { color: '#22252b' }, ticks: { color: '#64748b', font: { size: 9 } } },
+            y: { grid: { color: '#22252b' }, ticks: { color: '#64748b', font: { size: 9 } } }
+          }
+        }
+      });
+    }
+
+    const chartLatency = createChart('chart-latency', 'Monolith', '#f59e0b', 'EDA', '#06b6d4', 'ms');
+    const chartThroughput = createChart('chart-throughput', 'Monolith', '#f59e0b', 'EDA', '#06b6d4', 'RPS');
+    const chartCpu = createChart('chart-cpu', 'Monolith', '#f59e0b', 'EDA', '#06b6d4', '%');
+    const chartRam = createChart('chart-ram', 'Monolith', '#f59e0b', 'EDA', '#06b6d4', 'MB');
+    const chartQueue = createChart('chart-queue', 'EDA Queue Depth', '#06b6d4', null, null, 'msgs');
+    const chartError = createChart('chart-error', 'Monolith Errors', '#f59e0b', 'EDA Errors', '#06b6d4', '%');
+
+    function updateCharts(vu) {
+      const data = METRICS_DATA[vu] || METRICS_DATA[100];
+
+      // Update text displays
+      document.getElementById('val-mono-lat').textContent = data.latency.mono + ' ms';
+      document.getElementById('val-eda-lat').textContent = data.latency.eda + ' ms';
+
+      document.getElementById('val-mono-thru').textContent = data.throughput.mono + ' RPS';
+      document.getElementById('val-eda-thru').textContent = data.throughput.eda + ' RPS';
+
+      document.getElementById('val-mono-cpu').textContent = data.cpu.mono + '%';
+      document.getElementById('val-eda-cpu').textContent = data.cpu.eda + '%';
+
+      document.getElementById('val-mono-ram').textContent = data.ram.mono + ' MB';
+      document.getElementById('val-eda-ram').textContent = data.ram.eda + ' MB';
+
+      document.getElementById('val-eda-queue').textContent = data.queue.eda + ' msgs';
+
+      document.getElementById('val-mono-err').textContent = data.err.mono + '%';
+      document.getElementById('val-eda-err').textContent = data.err.eda + '%';
+
+      // Update Chart series
+      const noise = () => (Math.random() - 0.5) * 0.08;
+
+      chartLatency.data.datasets[0].data = TIME_POINTS.map(() => Math.round((data.latency.mono * (1 + noise())) * 10) / 10);
+      chartLatency.data.datasets[1].data = TIME_POINTS.map(() => Math.round((data.latency.eda * (1 + noise())) * 10) / 10);
+      chartLatency.update();
+
+      chartThroughput.data.datasets[0].data = TIME_POINTS.map(() => Math.round(data.throughput.mono * (1 + noise())));
+      chartThroughput.data.datasets[1].data = TIME_POINTS.map(() => Math.round(data.throughput.eda * (1 + noise())));
+      chartThroughput.update();
+
+      chartCpu.data.datasets[0].data = TIME_POINTS.map(() => Math.round((data.cpu.mono * (1 + noise())) * 10) / 10);
+      chartCpu.data.datasets[1].data = TIME_POINTS.map(() => Math.round((data.cpu.eda * (1 + noise())) * 10) / 10);
+      chartCpu.update();
+
+      chartRam.data.datasets[0].data = TIME_POINTS.map(() => Math.round(data.ram.mono));
+      chartRam.data.datasets[1].data = TIME_POINTS.map(() => Math.round(data.ram.eda));
+      chartRam.update();
+
+      chartQueue.data.datasets[0].data = TIME_POINTS.map(() => Math.max(0, Math.round(data.queue.eda * (1 + noise()))));
+      chartQueue.update();
+
+      chartError.data.datasets[0].data = TIME_POINTS.map(() => data.err.mono);
+      chartError.data.datasets[1].data = TIME_POINTS.map(() => data.err.eda);
+      chartError.update();
+    }
+
+    function setVU(vu) {
+      currentVU = vu;
+      document.querySelectorAll('.vu-btn').forEach(btn => {
+        btn.className = "vu-btn px-2.5 py-1 rounded bg-[#111217] hover:bg-[#22252b] text-slate-300 border border-[#2c3235]";
+      });
+      const activeBtn = document.getElementById('btn-vu-' + vu);
+      if (activeBtn) {
+        activeBtn.className = "vu-btn px-2.5 py-1 rounded bg-[#0284c7] text-white font-bold border border-cyan-400";
+      }
+      updateCharts(vu);
+    }
+
+    function triggerTrafficSurge() {
+      if (isSurgeActive) {
+        clearInterval(surgeTimer);
+        isSurgeActive = false;
+        document.getElementById('surge-icon').textContent = '⚡';
+        document.getElementById('surge-text').textContent = 'Simulate Registration Traffic Surge (k6 Load Spike)';
+        setVU(100);
+        return;
+      }
+
+      isSurgeActive = true;
+      document.getElementById('surge-icon').textContent = '⏹️';
+      document.getElementById('surge-text').textContent = 'Surge Active (Observing 400 VU Stress Spike...)';
+
+      let step = 0;
+      const sequence = [10, 50, 100, 200, 400, 400, 200, 100];
+      setVU(sequence[0]);
+
+      surgeTimer = setInterval(() => {
+        step = (step + 1) % sequence.length;
+        setVU(sequence[step]);
+      }, 2500);
+    }
+
+    // Initialize with 100 VUs
+    setVU(100);
+  </script>
+
+</body>
+</html>
