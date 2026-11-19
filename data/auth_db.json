@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-11-17T16:06:23.960Z",
-  "nextUserId": 111,
+  "updated_at": "2026-11-19T15:04:22.245Z",
+  "nextUserId": 113,
   "users": [
     {
       "user_id": 1,
@@ -412,6 +412,48 @@
       "points": 50,
       "created_at": "2026-11-17T16:06:23.150Z",
       "updated_at": "2026-11-17T16:06:23.150Z"
+    },
+    {
+      "user_id": 111,
+      "profile_id": 111,
+      "full_name": "Test Student Varsh",
+      "name": "Test Student Varsh",
+      "email": "test_student_1795100660956@chanakya.edu",
+      "student_or_employee_id": "26UG5556",
+      "roll_number": "26UG5556",
+      "password_hash": "$2b$10$zcrRgnHCW8Iabgn6s1aPSuQZBwLUhKPpqeMzrKZdnnUIW8xma/V/a",
+      "department": "School of Computer Science & AI",
+      "academic_year": "Year 2",
+      "role": "student",
+      "account_status": "active",
+      "email_verified": true,
+      "school_id": 1,
+      "department_id": 1,
+      "avatar": "🎓",
+      "points": 50,
+      "created_at": "2026-11-19T15:04:21.045Z",
+      "updated_at": "2026-11-19T15:04:21.981Z"
+    },
+    {
+      "user_id": 112,
+      "profile_id": 112,
+      "full_name": "Brute Target",
+      "name": "Brute Target",
+      "email": "brute_1795100661309@chanakya.edu",
+      "student_or_employee_id": "ID-1795100661309",
+      "roll_number": "ID-1795100661309",
+      "password_hash": "$2b$10$3JQZjnTZOh6w.r6AjAnE/.OFLKVs3SjSk4qnm6fltpLJj3vqdCIc.",
+      "department": "Engineering",
+      "academic_year": "1st Year",
+      "role": "student",
+      "account_status": "active",
+      "email_verified": true,
+      "school_id": 1,
+      "department_id": 1,
+      "avatar": "🎓",
+      "points": 50,
+      "created_at": "2026-11-19T15:04:21.397Z",
+      "updated_at": "2026-11-19T15:04:21.397Z"
     }
   ],
   "sessions": [
@@ -436,24 +478,24 @@
       "created_at": "2026-11-16T04:34:04.072Z"
     },
     {
-      "session_id": "9db76094-5007-4713-9895-273dec8196a3",
-      "user_id": 110,
+      "session_id": "a1d8b9bd-5eb1-4f61-89f5-ad1aeedf4d06",
+      "user_id": 112,
       "role": "student",
-      "session_expiry": "2026-11-18T16:06:23.152Z",
+      "session_expiry": "2026-11-20T15:04:21.398Z",
       "remember_me": false,
       "ip_address": "127.0.0.1",
       "user_agent": "",
-      "created_at": "2026-11-17T16:06:23.152Z"
+      "created_at": "2026-11-19T15:04:21.398Z"
     },
     {
-      "session_id": "c6f84652-8ba9-45e1-8076-894b733833ce",
-      "user_id": 109,
+      "session_id": "87585c71-07b6-4240-a963-c5cc27aa4d16",
+      "user_id": 111,
       "role": "student",
-      "session_expiry": "2026-11-18T16:06:23.777Z",
+      "session_expiry": "2026-11-20T15:04:22.074Z",
       "remember_me": false,
       "ip_address": "127.0.0.1",
       "user_agent": "",
-      "created_at": "2026-11-17T16:06:23.777Z"
+      "created_at": "2026-11-19T15:04:22.074Z"
     }
   ],
   "passwordResetTokens": [
@@ -500,6 +542,15 @@
       "used_status": true,
       "created_at": "2026-11-17T16:06:23.596Z",
       "used_at": "2026-11-17T16:06:23.684Z"
+    },
+    {
+      "token_id": "7b25b651-2282-412e-a4cd-52d858e370b7",
+      "user_id": 111,
+      "token_hash": "dae2b567cc9b2012c8ed6faaad966d37fd026373c151ea9519b95cfc7481c067",
+      "expiry": "2026-11-19T16:04:21.823Z",
+      "used_status": true,
+      "created_at": "2026-11-19T15:04:21.823Z",
+      "used_at": "2026-11-19T15:04:21.984Z"
     }
   ]
 }

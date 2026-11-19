@@ -784,6 +784,26 @@ router.post('/facilities/:id/book', (req, res) => {
 });
 
 // Food & Sports Service
+router.get('/food-sports/all', (req, res) => {
+  try {
+    res.json({
+      foodOutlets: foodSportsService.getFoodOutlets(),
+      sportsCourts: foodSportsService.getSportsCourts(),
+      canteenData: foodSportsService.getCanteenData()
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/food-sports/canteen', (req, res) => {
+  try {
+    res.json(foodSportsService.getCanteenData());
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.get('/food-sports/food', (req, res) => {
   try {
     res.json(foodSportsService.getFoodOutlets());

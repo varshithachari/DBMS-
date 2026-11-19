@@ -1188,64 +1188,1750 @@ function bookFacilityModal(facId, facName) {
 }
 
 // ============================================================================
-// 11. FOOD & SPORTS SERVICE
+
 // ============================================================================
+// 11. FOOD & SPORTS SERVICE (CAMPUS FOOD COURT, IYENGAR'S & NANDINI CAFE)
+// ============================================================================
+const EMBEDDED_CANTEEN_DATA = {
+  "activeMonth": "November 2026",
+  "cycleVersion": "Cycle 11/2026 (Monthly Rotating Schedule)",
+  "lastUpdated": "2026-11-18T10:00:00Z",
+  "availableMonths": [
+    {
+      "id": "2026-11",
+      "label": "November 2026 (Active Current)",
+      "active": true
+    },
+    {
+      "id": "2026-12",
+      "label": "December 2026 (Upcoming Cycle)",
+      "active": false
+    },
+    {
+      "id": "2026-10",
+      "label": "October 2026 (Archived Cycle)",
+      "active": false
+    }
+  ],
+  "foodCourt": {
+    "id": "food_court_central",
+    "name": "Chanakya Central Food Court & Mess Pavilion",
+    "building": "Annapurna Dining Complex - Ground Floor",
+    "timings": "07:30 AM - 10:30 PM Daily",
+    "status": "Open",
+    "currentCrowdWaitMins": 8,
+    "rushHour": "12:45 PM - 02:00 PM & 08:00 PM - 09:15 PM",
+    "hygieneRating": "5.0 ★ (FSSAI Tier-1 Institutional)",
+    "mealTimings": {
+      "breakfast": "07:30 AM - 10:00 AM",
+      "lunch": "12:15 PM - 02:45 PM",
+      "snacks": "05:00 PM - 06:30 PM",
+      "dinner": "07:30 PM - 10:00 PM"
+    },
+    "caterers": [
+      {
+        "id": "caterer_blue_dove",
+        "name": "Blue Dove Dining & Caterers",
+        "code": "BD-MESS",
+        "description": "Specialized in South & North Indian multi-grain delicacies with traditional Ragi Mudde and regional sambars.",
+        "type": "Food Court - Wing A",
+        "rating": "4.8 ★",
+        "weeklySchedule": {
+          "monday": {
+            "day": "Monday",
+            "date": "2026-11-16",
+            "breakfast": [
+              "Idly",
+              "Coriander Rice",
+              "Sambar",
+              "Coconut Chutney",
+              "Cornflakes",
+              "Cut Fresh Fruits",
+              "Boiled Egg (01 Limited)",
+              "Bread",
+              "Butter",
+              "Fruit Jam",
+              "Tea",
+              "Coffee",
+              "Hot Milk"
+            ],
+            "lunch": [
+              "Masala Buttermilk",
+              "Butter Roti & Ragi Ball",
+              "Soppu Kaalu Palya",
+              "White Kara Mani Masala",
+              "Jeera Rice",
+              "Steam Rice",
+              "Boiled Rice",
+              "Traditional Bassaru",
+              "Fresh Curd",
+              "Mango Pickle",
+              "Fried Green Chilli",
+              "Papad / Fryums",
+              "Broken Wheat Payasa (Limited)"
+            ],
+            "snacks": [
+              "Masala Puri (Limited)",
+              "Hot Masala Tea",
+              "Filter Coffee"
+            ],
+            "dinner": [
+              "Hot and Sour Soup",
+              "Phulka Roti",
+              "Aloo Palak",
+              "Steam Rice",
+              "Dal Fry",
+              "Pickle",
+              "Fresh Curd",
+              "Mint Rasam",
+              "Chettinad Egg Masala (Limited)"
+            ]
+          },
+          "tuesday": {
+            "day": "Tuesday",
+            "date": "2026-11-17",
+            "breakfast": [
+              "Aloo Paratha",
+              "Ven Pongal",
+              "Fresh Curd",
+              "Coconut Chutney",
+              "Rolled Oats",
+              "Fresh Banana",
+              "Boiled Egg (01 Limited)",
+              "Bread",
+              "Butter",
+              "Jam",
+              "Masala Tea",
+              "Coffee",
+              "Hot Milk"
+            ],
+            "lunch": [
+              "Ragi Ambli",
+              "Butter Roti & Ragi Ball",
+              "Beetroot Poriyal",
+              "Aloo Palak Masala",
+              "Fragrant Ghee Rice",
+              "Steam Rice",
+              "Boiled Rice",
+              "Molakekalu Sambar",
+              "Fresh Curd",
+              "Pickle",
+              "Fried Green Chilli",
+              "Garden Salad",
+              "Banana Sheera (Limited)"
+            ],
+            "snacks": [
+              "Veg Maggi (Limited)",
+              "Tea",
+              "Filter Coffee"
+            ],
+            "dinner": [
+              "Creamy Tomato Soup",
+              "Roti",
+              "Paneer Aloo Masala",
+              "Steam Rice",
+              "Dal Makhni",
+              "Pickle",
+              "Curd",
+              "Black Pepper Rasam",
+              "Curry Leaf Chicken (3 pcs Limited)"
+            ]
+          },
+          "wednesday": {
+            "day": "Wednesday",
+            "date": "2026-11-18",
+            "breakfast": [
+              "Kali Dosa",
+              "Lemon Rice",
+              "Udupi Sambar",
+              "Chutney",
+              "Cornflakes",
+              "Cut Fruits",
+              "Boiled Egg (01 Limited)",
+              "Bread",
+              "Butter",
+              "Jam",
+              "Tea",
+              "Coffee",
+              "Hot Milk"
+            ],
+            "lunch": [
+              "Pangam Herbal Cooler",
+              "Akki Roti",
+              "Snake Gourd Palya",
+              "Yennegayi Brinjal Masala",
+              "Corn Pulao",
+              "Steam Rice",
+              "Boiled Rice",
+              "Kadle Kaalu Huli",
+              "Curd",
+              "Pickle",
+              "Fried Green Chilli",
+              "Papad / Fryums",
+              "Semiya Kheer (Limited)"
+            ],
+            "snacks": [
+              "Veg Pasta in White Garlic Sauce (Limited)",
+              "Masala Tea",
+              "Coffee"
+            ],
+            "dinner": [
+              "Sweet Corn Soup",
+              "Roti",
+              "Methi Chole Masala",
+              "Steam Rice",
+              "Plain Dal",
+              "Pickle",
+              "Curd",
+              "Dal Rasam",
+              "Muttai Kuzhambu (Egg Curry Limited)"
+            ]
+          },
+          "thursday": {
+            "day": "Thursday",
+            "date": "2026-11-19",
+            "breakfast": [
+              "Poori with Aloo Sagu",
+              "Masala Poha",
+              "Chutney",
+              "Choco Flakes",
+              "Cut Seasonal Fruits",
+              "Boiled Egg (01 Limited)",
+              "Bread",
+              "Butter",
+              "Jam",
+              "Tea",
+              "Coffee",
+              "Hot Milk"
+            ],
+            "lunch": [
+              "Jaljeera Refresh",
+              "Butter Roti",
+              "Cabbage Poriyal",
+              "Veg Kadai Masala",
+              "White Vegetable Pulao",
+              "Steam Rice",
+              "Boiled Rice",
+              "Masoppu Sambar",
+              "Curd",
+              "Chow Chow Palya",
+              "Fried Green Chilli",
+              "Green Salad",
+              "Rava Ladoo (1 pc)"
+            ],
+            "snacks": [
+              "Bhel Puri (Limited)",
+              "Tea",
+              "Coffee"
+            ],
+            "dinner": [
+              "Cream of Mushroom Soup",
+              "Tawa Kulcha",
+              "Paneer Do Pyaza",
+              "Steam Rice",
+              "Palak Dal",
+              "Pickle",
+              "Curd",
+              "Spicy Chilli Rasam",
+              "Andhra Style Chicken Curry (Limited)"
+            ]
+          },
+          "friday": {
+            "day": "Friday",
+            "date": "2026-11-20",
+            "breakfast": [
+              "Veg Stuffed Paratha",
+              "Curry Leaf Spiced Rice",
+              "Curd",
+              "Chutney",
+              "Cornflakes",
+              "Banana",
+              "Boiled Egg (01 Limited)",
+              "Bread",
+              "Butter",
+              "Jam",
+              "Masala Tea",
+              "Coffee",
+              "Hot Milk"
+            ],
+            "lunch": [
+              "Ragi Ambli",
+              "Butter Roti & Ragi Ball",
+              "Mixed Vegetable Palya",
+              "Aloo Black Channa Curry",
+              "Curry Leaf Rice",
+              "Steam Rice",
+              "Boiled Rice",
+              "Drumstick Sambar",
+              "Curd",
+              "Pickle",
+              "Fried Green Chilli",
+              "Papad / Fryums",
+              "Green Moongdal Payasam"
+            ],
+            "snacks": [
+              "Onion Bonda (2 pcs) with Mint Chutney",
+              "Masala Tea",
+              "Coffee"
+            ],
+            "dinner": [
+              "Hot and Sour Soup",
+              "Hyderabadi Veg Dum Biryani",
+              "Mirchi Ka Salan",
+              "Pickle",
+              "Onion Raitha",
+              "Jeera Rasam",
+              "Ambur Egg Biryani (Limited)"
+            ]
+          },
+          "saturday": {
+            "day": "Saturday",
+            "date": "2026-11-21",
+            "breakfast": [
+              "Batura with Chole Masala",
+              "Broken Wheat Upma",
+              "Chutney",
+              "Oats",
+              "Cut Fruits",
+              "Boiled Egg (01 Limited)",
+              "Bread",
+              "Butter",
+              "Jam",
+              "Tea",
+              "Coffee",
+              "Hot Milk"
+            ],
+            "lunch": [
+              "Mint Lemon Juice",
+              "Butter Roti",
+              "Aloo Capsicum Palya",
+              "Punjabi Rajma Masala",
+              "Green Peas Pulao",
+              "Steam Rice",
+              "Boiled Rice",
+              "Aloo Brinjal Sambar",
+              "Curd",
+              "Pickle",
+              "Fried Green Chilli",
+              "Fresh Salad",
+              "Besan Ladoo (1 pc)"
+            ],
+            "snacks": [
+              "Grilled Veg Sandwich (1 pc) with Tomato Dip",
+              "Tea",
+              "Coffee"
+            ],
+            "dinner": [
+              "Drumstick Clear Soup",
+              "Phulka Roti",
+              "Veg Mushroom Masala",
+              "Steam Rice",
+              "Masala Dal",
+              "Pickle",
+              "Curd",
+              "Mysore Rasam",
+              "Chicken Masala Curry (Limited)"
+            ]
+          },
+          "sunday": {
+            "day": "Sunday",
+            "date": "2026-11-22",
+            "breakfast": [
+              "Crispy Masala Dosa (03 pcs)",
+              "Tomato Bath",
+              "Sambar",
+              "Chutney",
+              "Cornflakes",
+              "Cut Fruits",
+              "Boiled Egg (01 Limited)",
+              "Bread",
+              "Butter",
+              "Jam",
+              "Tea",
+              "Coffee",
+              "Hot Milk"
+            ],
+            "lunch": [
+              "Jaljeera Digestive",
+              "Butter Roti",
+              "Pumpkin Palya",
+              "Mixed Vegetable Curry",
+              "Lemon Rice",
+              "Steam Rice",
+              "Boiled Rice",
+              "Radish Sambar",
+              "Curd",
+              "Pickle",
+              "Fried Green Chilli",
+              "Papad / Fryums",
+              "Chilled Fruit Custard (Limited)"
+            ],
+            "snacks": [
+              "Crispy Punjabi Samosa (1 pc) with Mint Chutney",
+              "Tea",
+              "Coffee"
+            ],
+            "dinner": [
+              "Vegetable Clear Soup",
+              "Paneer Dum Biryani",
+              "Steam Rice",
+              "Salan",
+              "Pickle",
+              "Onion Cucumber Raitha",
+              "Coriander Rasam",
+              "Special Royal Chicken Biryani (Limited)"
+            ]
+          }
+        }
+      },
+      {
+        "id": "caterer_sagar",
+        "name": "Sagar Caterers & Dining",
+        "code": "SAGAR-MESS",
+        "description": "Known for Karnataka traditional breakfast varieties, nutritious chapathis, and specialty weekend biryanis.",
+        "type": "Food Court - Wing B",
+        "rating": "4.7 ★",
+        "weeklySchedule": {
+          "monday": {
+            "day": "Monday",
+            "date": "2026-11-16",
+            "breakfast": [
+              "Puffy Bhatura with Chole Masala",
+              "Tomato Chitranna",
+              "Chutney",
+              "Cornflakes",
+              "Cut Fruits (Limited)",
+              "Boiled Egg (01 Limited)",
+              "Bread",
+              "Butter",
+              "Jam",
+              "Tea",
+              "Coffee",
+              "Hot Milk"
+            ],
+            "lunch": [
+              "Methi Chapathi",
+              "Steam Rice",
+              "Crispy Papad",
+              "Aloo Bhendi Dry",
+              "Jeera Rice",
+              "Plain Dal",
+              "Rajma Masala",
+              "Gulab Jamun (1 pc)",
+              "Ragi Malt",
+              "Pickle",
+              "Fresh Curd"
+            ],
+            "snacks": [
+              "Masala Puri (Limited)",
+              "Tea",
+              "Coffee"
+            ],
+            "dinner": [
+              "Wheat Chapathi",
+              "Mysore Rasam",
+              "Yellow Dal Tadka",
+              "Egg Masala (02 pcs)",
+              "Veg Hyderabadi Handi Masala",
+              "Steam Rice",
+              "Pickle",
+              "Curd"
+            ]
+          },
+          "tuesday": {
+            "day": "Tuesday",
+            "date": "2026-11-17",
+            "breakfast": [
+              "Steamed Rava Idli with Aloo Saagu",
+              "Ven Pongal",
+              "Chutney",
+              "Rolled Oats",
+              "Cut Fruits",
+              "Boiled Egg (01 Limited)",
+              "Bread",
+              "Butter",
+              "Jam",
+              "Tea",
+              "Coffee",
+              "Hot Milk"
+            ],
+            "lunch": [
+              "Wheat Chapathi",
+              "Steam Rice",
+              "Cucumber Salad",
+              "Soppu Kaalu Palya",
+              "Lemon Rice",
+              "Bassaru",
+              "Aloo Palak Gravy",
+              "Godhi Kadi Payasa (Limited)",
+              "Spiced Buttermilk",
+              "Pickle",
+              "Curd"
+            ],
+            "snacks": [
+              "Hot Samosa (1 pc)",
+              "Tea",
+              "Coffee"
+            ],
+            "dinner": [
+              "Carrot Chapathi",
+              "Black Pepper Rasam",
+              "Tomato Dal",
+              "Kundapura Chicken Curry (3 pcs)",
+              "Paneer Butter Masala",
+              "Steam Rice",
+              "Pickle",
+              "Curd"
+            ]
+          },
+          "wednesday": {
+            "day": "Wednesday",
+            "date": "2026-11-18",
+            "breakfast": [
+              "50-50 Stuffed Paratha",
+              "Fresh Curd",
+              "Vangi Bath (Brinjal Rice)",
+              "Chutney",
+              "Cornflakes",
+              "Cut Fruits",
+              "Boiled Egg (01 Limited)",
+              "Bread",
+              "Butter",
+              "Jam",
+              "Tea",
+              "Coffee",
+              "Hot Milk"
+            ],
+            "lunch": [
+              "Jeera Chapathi",
+              "Steam Rice",
+              "Papad",
+              "Carrot Beans Palya",
+              "Soya Pulao",
+              "Herekayi Sambar",
+              "Karamani Masala",
+              "Banana Sajjige (Limited)",
+              "Fresh Lemon Juice",
+              "Pickle",
+              "Curd"
+            ],
+            "snacks": [
+              "Crispy Bread Pakoda (1 pc)",
+              "Tea",
+              "Coffee"
+            ],
+            "dinner": [
+              "Wheat Chapathi",
+              "Huli Rasam",
+              "Mixed Dal Fry",
+              "Egg Paddu Masala (02 pcs)",
+              "Bhuna Mushroom Masala",
+              "Steam Rice",
+              "Pickle",
+              "Curd"
+            ]
+          },
+          "thursday": {
+            "day": "Thursday",
+            "date": "2026-11-19",
+            "breakfast": [
+              "Kali Dosa with Mix Veg Kurma",
+              "Karnataka Puliyogare",
+              "Chutney",
+              "Oats",
+              "Cut Fruits",
+              "Boiled Egg (01 Limited)",
+              "Bread",
+              "Butter",
+              "Jam",
+              "Tea",
+              "Coffee",
+              "Hot Milk"
+            ],
+            "lunch": [
+              "Wheat Chapathi",
+              "Steam Rice",
+              "Garden Salad",
+              "Aloo Methi Dry",
+              "Veg Biryani",
+              "Mangalore Cucumber Sambar",
+              "Soya Capsicum Masala",
+              "Shahi Tukda (1 pc)",
+              "Masala Buttermilk",
+              "Pickle",
+              "Curd"
+            ],
+            "snacks": [
+              "Pani Puri (5 pcs)",
+              "Tea",
+              "Coffee"
+            ],
+            "dinner": [
+              "Jeera Chapathi",
+              "Udupi Rasam",
+              "Dal Palak",
+              "Patiala Chicken Masala (3 pcs)",
+              "Mutter Paneer",
+              "Steam Rice",
+              "Pickle",
+              "Curd"
+            ]
+          },
+          "friday": {
+            "day": "Friday",
+            "date": "2026-11-20",
+            "breakfast": [
+              "Thatte Idli with Aloo Saagu",
+              "Masala Poha",
+              "Red Chutney",
+              "Cornflakes",
+              "Cut Fruits",
+              "Boiled Egg (01 Limited)",
+              "Bread",
+              "Butter",
+              "Jam",
+              "Tea",
+              "Coffee",
+              "Hot Milk"
+            ],
+            "lunch": [
+              "Beetroot Chapathi",
+              "Steam Rice",
+              "Papad",
+              "Yam Palya",
+              "Coriander Rice",
+              "Pumpkin Sambar",
+              "Veg Do Pyaza Curry",
+              "Fruit Custard (Limited)",
+              "Cool Shikanji",
+              "Pickle",
+              "Curd"
+            ],
+            "snacks": [
+              "Misal Pav (1 pc)",
+              "Tea",
+              "Coffee"
+            ],
+            "dinner": [
+              "Mirchi Salan",
+              "Methi Dal",
+              "Egg Biryani (02 pcs)",
+              "Veg Hyderabadi Biryani",
+              "Steam Rice",
+              "Pickle",
+              "Cucumber Raitha"
+            ]
+          },
+          "saturday": {
+            "day": "Saturday",
+            "date": "2026-11-21",
+            "breakfast": [
+              "Aloo Paneer Paratha with Curd",
+              "Veg Vegetable Pulao",
+              "Chutney",
+              "Oats",
+              "Cut Fruits",
+              "Boiled Egg (01 Limited)",
+              "Bread",
+              "Butter",
+              "Jam",
+              "Tea",
+              "Coffee",
+              "Hot Milk"
+            ],
+            "lunch": [
+              "Wheat Chapathi",
+              "Steam Rice",
+              "Salad",
+              "Beetroot Palya",
+              "Curd Rice",
+              "Mixed Vegetable Sambar",
+              "Bhendi Masala",
+              "Sabudana Payasa (Limited)",
+              "Fresh Buttermilk",
+              "Pickle"
+            ],
+            "snacks": [
+              "Crispy Dal Vada (2 pcs)",
+              "Tea",
+              "Coffee"
+            ],
+            "dinner": [
+              "Methi Chapathi",
+              "Jeera Rasam",
+              "Plain Dal",
+              "Punjabi Chole Masala",
+              "Steam Rice",
+              "Pickle",
+              "Curd"
+            ]
+          },
+          "sunday": {
+            "day": "Sunday",
+            "date": "2026-11-22",
+            "breakfast": [
+              "Masala Dosa (03 pcs)",
+              "Sambar",
+              "Bansi Rava Veg Upma",
+              "Chutney",
+              "Cornflakes",
+              "Cut Fruits",
+              "Boiled Egg (01 Limited)",
+              "Bread",
+              "Butter",
+              "Jam",
+              "Tea",
+              "Coffee",
+              "Hot Milk"
+            ],
+            "lunch": [
+              "Carrot Chapathi",
+              "Steam Rice",
+              "Papad",
+              "Raw Banana Palya",
+              "Tomato Bath",
+              "Soppu Sambar",
+              "Avarebele Masala",
+              "Rava Laddu (1 pc)",
+              "Jaljeera",
+              "Pickle",
+              "Curd"
+            ],
+            "snacks": [
+              "White Sauce Pasta (Limited)",
+              "Tea",
+              "Coffee"
+            ],
+            "dinner": [
+              "Salan",
+              "Andhra Rasam",
+              "Chicken Pulao (3 pcs)",
+              "Paneer Biryani",
+              "Steam Rice",
+              "Pickle",
+              "Raitha"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "iyengars": {
+    "id": "canteen_iyengars",
+    "name": "The Iyengar's Canteen & Cafe",
+    "building": "Academic Block 2 Courtyard",
+    "type": "Traditional Fast Casual, Bakery & Juices",
+    "timings": "08:00 AM - 09:30 PM Daily",
+    "status": "Open",
+    "currentCrowdWaitMins": 6,
+    "hygieneRating": "4.9 ★",
+    "verifiedBoardImage": "/images/iyengars_menu_board.jpg",
+    "parcelPolicy": "Parcel charges extra ₹5/- per item",
+    "categories": [
+      {
+        "name": "Fresh Fruit Juice",
+        "icon": "🥤",
+        "items": [
+          {
+            "name": "Water Melon Juice",
+            "price": 60,
+            "tag": "Fresh Press",
+            "prepTime": "3 mins"
+          },
+          {
+            "name": "Musk Melon Juice",
+            "price": 60,
+            "tag": "Fresh Press",
+            "prepTime": "3 mins"
+          },
+          {
+            "name": "Pine Apple Juice",
+            "price": 60,
+            "tag": "Fresh Press",
+            "prepTime": "4 mins"
+          },
+          {
+            "name": "Musambi Juice",
+            "price": 60,
+            "tag": "Citrus Rich",
+            "prepTime": "4 mins"
+          },
+          {
+            "name": "Mix Fruit Juice",
+            "price": 80,
+            "tag": "Chef Special",
+            "prepTime": "5 mins"
+          },
+          {
+            "name": "Lemon Juice",
+            "price": 40,
+            "tag": "Hydration",
+            "prepTime": "2 mins"
+          },
+          {
+            "name": "Pulpy Grapes Juice",
+            "price": 70,
+            "tag": "Seasonal",
+            "prepTime": "4 mins"
+          },
+          {
+            "name": "Cold Coffee",
+            "price": 100,
+            "tag": "Thick Blend",
+            "prepTime": "3 mins"
+          }
+        ]
+      },
+      {
+        "name": "Sandwich and Burger",
+        "icon": "🥪",
+        "items": [
+          {
+            "name": "Corn Cheese Sandwich",
+            "price": 80,
+            "tag": "Toasted",
+            "prepTime": "6 mins"
+          },
+          {
+            "name": "Tandoori Paneer Sandwich",
+            "price": 80,
+            "tag": "Spicy",
+            "prepTime": "7 mins"
+          },
+          {
+            "name": "Tandoori Cheese Paneer Sandwich",
+            "price": 90,
+            "tag": "Bestseller",
+            "prepTime": "7 mins"
+          },
+          {
+            "name": "Veg Cheese Sandwich",
+            "price": 80,
+            "tag": "Classic",
+            "prepTime": "5 mins"
+          },
+          {
+            "name": "Veg Sandwich",
+            "price": 70,
+            "tag": "Light",
+            "prepTime": "5 mins"
+          },
+          {
+            "name": "Veg Burger",
+            "price": 80,
+            "tag": "Crispy Patty",
+            "prepTime": "8 mins"
+          },
+          {
+            "name": "Veg Cheese Burger",
+            "price": 90,
+            "tag": "Double Melt",
+            "prepTime": "8 mins"
+          },
+          {
+            "name": "Paneer Burger",
+            "price": 90,
+            "tag": "Grilled Paneer",
+            "prepTime": "8 mins"
+          },
+          {
+            "name": "Paneer Cheese Burger",
+            "price": 100,
+            "tag": "Supreme",
+            "prepTime": "9 mins"
+          }
+        ]
+      },
+      {
+        "name": "Milk Shake and Lassi",
+        "icon": "🥛",
+        "items": [
+          {
+            "name": "Apple Milk Shake",
+            "price": 70,
+            "tag": "Rich Fruit",
+            "prepTime": "4 mins"
+          },
+          {
+            "name": "Banana Milk Shake",
+            "price": 70,
+            "tag": "Energy Boost",
+            "prepTime": "3 mins"
+          },
+          {
+            "name": "Oreo Milk Shake",
+            "price": 80,
+            "tag": "Popular",
+            "prepTime": "4 mins"
+          },
+          {
+            "name": "Banana Chocolate Milk Shake",
+            "price": 80,
+            "tag": "Indulgent",
+            "prepTime": "4 mins"
+          },
+          {
+            "name": "Papaya Milk Shake",
+            "price": 70,
+            "tag": "Nutritious",
+            "prepTime": "4 mins"
+          },
+          {
+            "name": "Butter Fruit Milk Shake (Avocado)",
+            "price": 90,
+            "tag": "Premium Creamy",
+            "prepTime": "5 mins"
+          },
+          {
+            "name": "Strawberry Milk Shake",
+            "price": 80,
+            "tag": "Berry Blend",
+            "prepTime": "4 mins"
+          },
+          {
+            "name": "Chocolate Milk Shake",
+            "price": 90,
+            "tag": "Thick Cocoa",
+            "prepTime": "4 mins"
+          },
+          {
+            "name": "Mango Milk Shake",
+            "price": 80,
+            "tag": "Alphonso Blend",
+            "prepTime": "4 mins"
+          },
+          {
+            "name": "Rose Milk",
+            "price": 60,
+            "tag": "Traditional Cold",
+            "prepTime": "2 mins"
+          },
+          {
+            "name": "Cold Badam Milk",
+            "price": 60,
+            "tag": "Kesar Badam",
+            "prepTime": "2 mins"
+          },
+          {
+            "name": "Rose Lassi",
+            "price": 60,
+            "tag": "Sweet Curd",
+            "prepTime": "3 mins"
+          },
+          {
+            "name": "Banana Lassi",
+            "price": 60,
+            "tag": "Thick Lassi",
+            "prepTime": "3 mins"
+          },
+          {
+            "name": "Mango Crush Lassi",
+            "price": 60,
+            "tag": "Fruity Curd",
+            "prepTime": "3 mins"
+          },
+          {
+            "name": "Mix Fruit Lassi",
+            "price": 70,
+            "tag": "Topped Fruit",
+            "prepTime": "4 mins"
+          },
+          {
+            "name": "Fruit Custard",
+            "price": 70,
+            "tag": "Chilled Dessert",
+            "prepTime": "2 mins"
+          },
+          {
+            "name": "Fresh Fruit Bowl",
+            "price": 60,
+            "tag": "Cut Fruit Mix",
+            "prepTime": "3 mins"
+          }
+        ]
+      },
+      {
+        "name": "Fries & Quick Bites",
+        "icon": "🍟",
+        "items": [
+          {
+            "name": "French Fries",
+            "price": 70,
+            "tag": "Crispy Salted",
+            "prepTime": "5 mins"
+          },
+          {
+            "name": "Peri Peri Fries",
+            "price": 80,
+            "tag": "Hot & Tangy",
+            "prepTime": "5 mins"
+          },
+          {
+            "name": "Potato Wedges",
+            "price": 80,
+            "tag": "Herbed",
+            "prepTime": "6 mins"
+          },
+          {
+            "name": "Potato Cheese Wedges",
+            "price": 90,
+            "tag": "Cheesy Melt",
+            "prepTime": "6 mins"
+          },
+          {
+            "name": "Crinkle Pepper Fries",
+            "price": 80,
+            "tag": "Crinkle Cut",
+            "prepTime": "5 mins"
+          },
+          {
+            "name": "Crinkle Cheese Fries",
+            "price": 90,
+            "tag": "Crinkle Melt",
+            "prepTime": "5 mins"
+          },
+          {
+            "name": "Cheese Fries",
+            "price": 80,
+            "tag": "Loaded Dip",
+            "prepTime": "5 mins"
+          },
+          {
+            "name": "Peri Peri Cheese Fries",
+            "price": 90,
+            "tag": "Signature Fries",
+            "prepTime": "6 mins"
+          },
+          {
+            "name": "Veg Nuggets",
+            "price": 70,
+            "tag": "6 pcs Crisp",
+            "prepTime": "5 mins"
+          },
+          {
+            "name": "Potato Cheese Shots",
+            "price": 70,
+            "tag": "Bite Sized",
+            "prepTime": "5 mins"
+          }
+        ]
+      },
+      {
+        "name": "Campus Chats",
+        "icon": "🥟",
+        "items": [
+          {
+            "name": "Masala Puri",
+            "price": 60,
+            "tag": "Bengaluru Special",
+            "prepTime": "4 mins"
+          },
+          {
+            "name": "Pani Puri",
+            "price": 60,
+            "tag": "Crispy Golgappa",
+            "prepTime": "3 mins"
+          },
+          {
+            "name": "Dahi Puri",
+            "price": 60,
+            "tag": "Sweet Curd & Sev",
+            "prepTime": "4 mins"
+          },
+          {
+            "name": "Bhel Puri",
+            "price": 60,
+            "tag": "Crunchy Spiced",
+            "prepTime": "3 mins"
+          },
+          {
+            "name": "Samosa Chat",
+            "price": 70,
+            "tag": "Crushed Samosa Gravy",
+            "prepTime": "4 mins"
+          },
+          {
+            "name": "Vada Pav",
+            "price": 70,
+            "tag": "2 pcs Chutney Pav",
+            "prepTime": "3 mins"
+          }
+        ]
+      },
+      {
+        "name": "Mojito and Soda",
+        "icon": "🍹",
+        "items": [
+          {
+            "name": "Lime & Mint Mojito",
+            "price": 80,
+            "tag": "Virgin Classic",
+            "prepTime": "3 mins"
+          },
+          {
+            "name": "Pineapple Mojito",
+            "price": 80,
+            "tag": "Tropical Fizz",
+            "prepTime": "3 mins"
+          },
+          {
+            "name": "Strawberry Mojito",
+            "price": 80,
+            "tag": "Berry Splash",
+            "prepTime": "3 mins"
+          },
+          {
+            "name": "Blueberry Mojito",
+            "price": 80,
+            "tag": "Electric Blue",
+            "prepTime": "3 mins"
+          },
+          {
+            "name": "Mango Mojito",
+            "price": 80,
+            "tag": "Summer Sparkle",
+            "prepTime": "3 mins"
+          },
+          {
+            "name": "Guava Chilli Mojito",
+            "price": 80,
+            "tag": "Spicy Tang",
+            "prepTime": "3 mins"
+          },
+          {
+            "name": "Litchi Mojito",
+            "price": 80,
+            "tag": "Sweet Fizz",
+            "prepTime": "3 mins"
+          },
+          {
+            "name": "Lime Masala Soda",
+            "price": 80,
+            "tag": "Zesty Soda",
+            "prepTime": "2 mins"
+          }
+        ]
+      }
+    ]
+  },
+  "nandiniCafe": {
+    "id": "canteen_nandini_cafe",
+    "name": "Nandini Milk Parlour & Campus Cafe",
+    "building": "Student Amphitheatre Walkway",
+    "type": "KMF Karnataka Dairy Outlet & Beverages",
+    "timings": "08:30 AM - 09:00 PM Daily",
+    "status": "Active (Awaiting Menu Feed)",
+    "currentCrowdWaitMins": 4,
+    "hygieneRating": "5.0 ★ (KMF Certified)",
+    "notice": "Official detailed price board sync scheduled for tomorrow. Core dairy essentials available at counter.",
+    "staplesPreview": [
+      {
+        "name": "Nandini Degree Filter Coffee",
+        "estimatedPrice": "₹15",
+        "tag": "Hot Beverage"
+      },
+      {
+        "name": "Hot Badam Milk (Glass)",
+        "estimatedPrice": "₹25",
+        "tag": "Hot Beverage"
+      },
+      {
+        "name": "Cold Flavoured Milk (Pista / Choco / Badam)",
+        "estimatedPrice": "₹30",
+        "tag": "Chilled Bottle"
+      },
+      {
+        "name": "Special Mysore Pak & Milk Peda (Box)",
+        "estimatedPrice": "₹45",
+        "tag": "Traditional Sweet"
+      },
+      {
+        "name": "Nandini Premium Ice Cream Scoops & Kulfi",
+        "estimatedPrice": "₹35",
+        "tag": "Dessert"
+      },
+      {
+        "name": "Fresh Curd Cup & Sweet Lassi",
+        "estimatedPrice": "₹20",
+        "tag": "Probiotic Dairy"
+      }
+    ]
+  }
+};
+
+let activeMessCaterer = 'caterer_blue_dove';
+let activeMessDay = 'wednesday'; // Default to Wednesday / today
+let activeIyengarCategory = 'all';
+let iyengarSearchQuery = '';
+
 function loadFoodAndSports() {
   fetch('/api/food-sports/all')
     .then(res => res.json())
     .then(data => {
       appState.foodOutlets = data.foodOutlets || [];
       appState.sportsCourts = data.sportsCourts || [];
+      appState.canteenData = data.canteenData || EMBEDDED_CANTEEN_DATA;
       renderFoodOutlets();
       renderSportsCourts();
     })
-    .catch(err => console.error("Error loading food & sports:", err));
+    .catch(err => {
+      console.warn("Using embedded canteen data fallback:", err);
+      appState.canteenData = EMBEDDED_CANTEEN_DATA;
+      renderFoodOutlets();
+    });
 }
 
 function renderFoodOutlets() {
   const container = document.getElementById('food-outlets-list');
   if (!container) return;
 
-  container.innerHTML = appState.foodOutlets.map(outlet => {
-    return `
-      <div class="glass-card rounded-2xl p-5 border border-slate-700/60 space-y-3">
-        <div class="flex items-start justify-between">
-          <div>
-            <h3 class="text-base font-extrabold text-white">${escapeHtml(outlet.name)}</h3>
-            <p class="text-xs text-amber-400">⏱️ Avg Wait: ${outlet.avgWaitTimeMinutes} mins • Queue: ${outlet.queueLength} orders</p>
+  const data = appState.canteenData || EMBEDDED_CANTEEN_DATA;
+  const fc = data.foodCourt;
+  const iy = data.iyengars;
+  const nd = data.nandiniCafe;
+
+  // Determine current day of week
+  const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  const todayIndex = new Date().getDay();
+  const currentDayKey = dayNames[todayIndex] || 'wednesday';
+
+  // Card 1: Central Food Court (Blue Dove & Sagar)
+  const fcHtml = `
+    <div class="glass-card rounded-2xl p-5 border border-amber-500/30 bg-gradient-to-br from-amber-500/10 via-slate-900/40 to-slate-950 space-y-4 shadow-xl hover:border-amber-400/50 transition">
+      <div class="flex items-start justify-between">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🍲</span>
+            <h3 class="text-base font-extrabold text-white">${escapeHtml(fc.name)}</h3>
           </div>
-          <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-            OPEN
-          </span>
+          <p class="text-xs text-amber-400 mt-1 font-mono">
+            🔄 ${escapeHtml(fc.building)} • ${escapeHtml(data.cycleVersion)}
+          </p>
+        </div>
+        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 animate-pulse">
+          OPEN
+        </span>
+      </div>
+
+      <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-700/60 space-y-2">
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Dual Caterers:</span>
+          <span class="text-amber-300 font-semibold text-[11px]">Blue Dove (Wing A) & Sagar (Wing B)</span>
+        </div>
+        <div class="text-xs text-slate-300">
+          <span class="text-cyan-400 font-semibold">Today's Schedule (${currentDayKey.toUpperCase()}):</span> 
+          Breakfast (Idly/Paratha/Dosa), Lunch (Special Thali & Ragi Mudde), Snacks & Royal Dinner.
+        </div>
+        <div class="flex items-center gap-3 text-[11px] text-slate-400 pt-1 border-t border-slate-800">
+          <span>⏱️ Avg Wait: <b>${fc.currentCrowdWaitMins} mins</b></span>
+          <span>⭐ Rating: <b>${fc.hygieneRating}</b></span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 pt-1">
+        <button onclick="openMonthlyMessMenuModal('caterer_blue_dove')" class="py-2.5 px-3 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-lg shadow-amber-500/20 flex items-center justify-center gap-1.5">
+          <span>📅</span> Monthly Menu
+        </button>
+        <button onclick="orderFoodModal('Central Food Court (Mess)')" class="py-2.5 px-3 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 transition flex items-center justify-center gap-1.5">
+          <span>🎫</span> Pre-Order
+        </button>
+      </div>
+    </div>
+  `;
+
+  // Card 2: The Iyengar's Canteen
+  const iyHtml = `
+    <div class="glass-card rounded-2xl p-5 border border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 via-slate-900/40 to-slate-950 space-y-4 shadow-xl hover:border-emerald-400/50 transition">
+      <div class="flex items-start justify-between">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🥪</span>
+            <h3 class="text-base font-extrabold text-white">${escapeHtml(iy.name)}</h3>
+          </div>
+          <p class="text-xs text-emerald-400 mt-1 font-mono">
+            🏛️ ${escapeHtml(iy.building)} • Verified On-Campus Board
+          </p>
+        </div>
+        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+          OPEN
+        </span>
+      </div>
+
+      <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-700/60 space-y-2">
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Whiteboard Specialties:</span>
+          <span class="text-amber-400 text-[10px] font-mono">${escapeHtml(iy.parcelPolicy)}</span>
+        </div>
+        <div class="flex flex-wrap gap-1.5 text-[11px]">
+          <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-200 border border-slate-700">Juices (₹40-80)</span>
+          <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-200 border border-slate-700">Sandwiches (₹70-100)</span>
+          <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-200 border border-slate-700">Chats (₹60-70)</span>
+          <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-200 border border-slate-700">Fries (₹70-90)</span>
+          <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-200 border border-slate-700">Mojitos (₹80)</span>
+        </div>
+        <div class="flex items-center gap-3 text-[11px] text-slate-400 pt-1 border-t border-slate-800">
+          <span>⏱️ Avg Wait: <b>${iy.currentCrowdWaitMins} mins</b></span>
+          <span>⭐ Rating: <b>${iy.hygieneRating}</b></span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 pt-1">
+        <button onclick="openIyengarsMenuModal()" class="py-2.5 px-3 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-1.5">
+          <span>📖</span> Full Menu
+        </button>
+        <button onclick="openWhiteboardPhotoModal()" class="py-2.5 px-3 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 transition flex items-center justify-center gap-1.5">
+          <span>📸</span> Board Photo
+        </button>
+      </div>
+    </div>
+  `;
+
+  // Card 3: Nandini Cafe
+  const ndHtml = `
+    <div class="glass-card rounded-2xl p-5 border border-blue-500/30 bg-gradient-to-br from-blue-500/10 via-slate-900/40 to-slate-950 space-y-4 shadow-xl hover:border-blue-400/50 transition">
+      <div class="flex items-start justify-between">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🥛</span>
+            <h3 class="text-base font-extrabold text-white">${escapeHtml(nd.name)}</h3>
+          </div>
+          <p class="text-xs text-blue-400 mt-1 font-mono">
+            🎪 ${escapeHtml(nd.building)} • Pure KMF Karnataka Dairy
+          </p>
+        </div>
+        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/40">
+          ACTIVE
+        </span>
+      </div>
+
+      <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-700/60 space-y-2">
+        <div class="p-2 rounded bg-amber-500/10 border border-amber-500/30 text-[11px] text-amber-300 flex items-center gap-1.5">
+          <span>📢</span>
+          <span>Official detailed menu sync scheduled for tomorrow.</span>
+        </div>
+        <div class="text-xs text-slate-300">
+          <span class="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Campus Staples Available:</span>
+          <div class="flex flex-wrap gap-1.5 mt-1 text-[11px]">
+            <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-200 border border-slate-700">Filter Coffee ₹15</span>
+            <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-200 border border-slate-700">Badam Milk ₹25</span>
+            <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-200 border border-slate-700">Mysore Pak ₹45</span>
+            <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-200 border border-slate-700">Ice Cream ₹35</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 text-[11px] text-slate-400 pt-1 border-t border-slate-800">
+          <span>⏱️ Avg Wait: <b>${nd.currentCrowdWaitMins} mins</b></span>
+          <span>⭐ Rating: <b>${nd.hygieneRating}</b></span>
+        </div>
+      </div>
+
+      <div class="pt-1">
+        <button onclick="orderFoodModal('Nandini Milk Parlour')" class="w-full py-2.5 rounded-xl text-xs font-bold bg-blue-500 hover:bg-blue-400 text-slate-950 transition shadow-lg shadow-blue-500/20 flex items-center justify-center gap-1.5">
+          <span>☕</span> Pre-Order KMF Staples Token
+        </button>
+      </div>
+    </div>
+  `;
+
+  container.innerHTML = fcHtml + iyHtml + ndHtml;
+}
+
+// ----------------------------------------------------------------------------
+// MODAL 1: MONTHLY MESS MENU (BLUE DOVE & SAGAR CATERERS)
+// ----------------------------------------------------------------------------
+function openMonthlyMessMenuModal(catererId) {
+  sfx.play('click');
+  activeMessCaterer = catererId || 'caterer_blue_dove';
+  
+  // Set day to current day of week
+  const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  activeMessDay = dayNames[new Date().getDay()] || 'wednesday';
+
+  let modal = document.getElementById('monthly-mess-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'monthly-mess-modal';
+    modal.className = 'fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 bg-slate-950/85 backdrop-blur-md overflow-y-auto';
+    document.body.appendChild(modal);
+  }
+
+  modal.innerHTML = getMessModalHtml();
+  modal.classList.remove('hidden');
+}
+
+function closeMonthlyMessModal() {
+  sfx.play('click');
+  const modal = document.getElementById('monthly-mess-modal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function switchMessCaterer(catererId) {
+  sfx.play('click');
+  activeMessCaterer = catererId;
+  const modal = document.getElementById('monthly-mess-modal');
+  if (modal) modal.innerHTML = getMessModalHtml();
+}
+
+function switchMessDay(dayKey) {
+  sfx.play('click');
+  activeMessDay = dayKey;
+  const modal = document.getElementById('monthly-mess-modal');
+  if (modal) modal.innerHTML = getMessModalHtml();
+}
+
+function getMessModalHtml() {
+  const data = appState.canteenData || EMBEDDED_CANTEEN_DATA;
+  const fc = data.foodCourt;
+  const caterer = fc.caterers.find(c => c.id === activeMessCaterer) || fc.caterers[0];
+  const dayData = caterer.weeklySchedule[activeMessDay] || caterer.weeklySchedule.wednesday;
+
+  const days = [
+    { key: 'monday', label: 'Mon' },
+    { key: 'tuesday', label: 'Tue' },
+    { key: 'wednesday', label: 'Wed (Today)' },
+    { key: 'thursday', label: 'Thu' },
+    { key: 'friday', label: 'Fri' },
+    { key: 'saturday', label: 'Sat' },
+    { key: 'sunday', label: 'Sun' }
+  ];
+
+  return `
+    <div class="relative w-full max-w-4xl bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <!-- Header -->
+      <div class="p-5 border-b border-slate-800 bg-gradient-to-r from-slate-950 via-slate-900 to-amber-950/40 flex items-start justify-between">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">🍲</span>
+            <div>
+              <h2 class="text-lg font-black text-white">Chanakya Food Court — Monthly Dining Schedule</h2>
+              <p class="text-xs text-amber-400 font-mono">${escapeHtml(data.cycleVersion)} • FSSAI Grade A+</p>
+            </div>
+          </div>
+        </div>
+        <button onclick="closeMonthlyMessModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 flex items-center justify-center transition">
+          ✕
+        </button>
+      </div>
+
+      <!-- Caterer Switcher Tabs -->
+      <div class="px-5 pt-4 bg-slate-950/60 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          ${fc.caterers.map(c => `
+            <button onclick="switchMessCaterer('${c.id}')" class="py-2 px-4 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${c.id === activeMessCaterer ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20' : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700'}">
+              <span>${c.id === 'caterer_blue_dove' ? '🕊️' : '🍛'}</span>
+              <span>${escapeHtml(c.name)}</span>
+            </button>
+          `).join('')}
+        </div>
+        <div class="flex items-center gap-2 text-xs text-slate-400 font-mono">
+          <span>📅 Month:</span>
+          <span class="px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 font-bold">${escapeHtml(data.activeMonth)}</span>
+        </div>
+      </div>
+
+      <!-- Day Selector Pills -->
+      <div class="px-5 py-3 bg-slate-900 border-b border-slate-800 flex items-center gap-2 overflow-x-auto">
+        ${days.map(d => `
+          <button onclick="switchMessDay('${d.key}')" class="py-1.5 px-3 rounded-lg text-xs font-bold whitespace-nowrap transition ${d.key === activeMessDay ? 'bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/20' : 'bg-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-700'}">
+            ${d.label}
+          </button>
+        `).join('')}
+      </div>
+
+      <!-- Meal Schedule Grid -->
+      <div class="p-5 overflow-y-auto space-y-4">
+        <div class="flex items-center justify-between text-xs text-slate-400">
+          <span class="font-bold text-white text-sm">Meals for ${escapeHtml(dayData.day)} (${dayData.date})</span>
+          <span class="text-cyan-400 font-mono">Caterer: ${escapeHtml(caterer.name)}</span>
         </div>
 
-        <div class="space-y-1.5">
-          <span class="text-xs text-slate-400 font-bold">Featured Menu:</span>
-          <div class="flex flex-wrap gap-1.5">
-            ${(outlet.menu || []).map(m => `
-              <span class="px-2.5 py-1 rounded-lg text-xs bg-slate-800 text-slate-300 border border-slate-700">
-                ${escapeHtml(m.item)} - <b class="text-amber-400">₹${m.price}</b>
-              </span>
-            `).join('')}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Breakfast -->
+          <div class="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-2.5 hover:border-amber-500/40 transition">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-lg">🍳</span>
+                <div>
+                  <h4 class="text-xs font-black uppercase text-amber-400 tracking-wider">Breakfast</h4>
+                  <span class="text-[10px] text-slate-400 font-mono">${fc.mealTimings.breakfast}</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              ${dayData.breakfast.map(item => `
+                <span class="px-2 py-1 rounded-lg text-xs bg-slate-900 text-slate-200 border border-slate-800 ${item.includes('Limited') || item.includes('Egg') ? 'border-amber-500/40 text-amber-300 font-semibold' : ''}">
+                  ${escapeHtml(item)}
+                </span>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Lunch -->
+          <div class="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-2.5 hover:border-emerald-500/40 transition">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-lg">🍛</span>
+                <div>
+                  <h4 class="text-xs font-black uppercase text-emerald-400 tracking-wider">Grand Lunch</h4>
+                  <span class="text-[10px] text-slate-400 font-mono">${fc.mealTimings.lunch}</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              ${dayData.lunch.map(item => `
+                <span class="px-2 py-1 rounded-lg text-xs bg-slate-900 text-slate-200 border border-slate-800 ${item.includes('Payasa') || item.includes('Jamun') || item.includes('Sheera') || item.includes('Ladoo') || item.includes('Kheer') ? 'border-pink-500/40 text-pink-300 font-bold' : ''}">
+                  ${escapeHtml(item)}
+                </span>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Snacks -->
+          <div class="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-2.5 hover:border-cyan-500/40 transition">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-lg">☕</span>
+                <div>
+                  <h4 class="text-xs font-black uppercase text-cyan-400 tracking-wider">Evening Snacks & High Tea</h4>
+                  <span class="text-[10px] text-slate-400 font-mono">${fc.mealTimings.snacks}</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              ${dayData.snacks.map(item => `
+                <span class="px-2.5 py-1 rounded-lg text-xs bg-slate-900 text-slate-200 border border-slate-800 text-cyan-200 font-semibold">
+                  ${escapeHtml(item)}
+                </span>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Dinner -->
+          <div class="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-2.5 hover:border-purple-500/40 transition">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-lg">🍲</span>
+                <div>
+                  <h4 class="text-xs font-black uppercase text-purple-400 tracking-wider">Dinner</h4>
+                  <span class="text-[10px] text-slate-400 font-mono">${fc.mealTimings.dinner}</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              ${dayData.dinner.map(item => `
+                <span class="px-2 py-1 rounded-lg text-xs bg-slate-900 text-slate-200 border border-slate-800 ${item.includes('Chicken') || item.includes('Egg') || item.includes('Biryani') ? 'border-amber-500/50 text-amber-300 font-bold' : ''}">
+                  ${escapeHtml(item)}
+                </span>
+              `).join('')}
+            </div>
           </div>
         </div>
 
-        <div class="pt-2">
-          <button onclick="orderFoodModal('${escapeHtml(outlet.name)}')" class="w-full py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition">
-            Generate Pre-Order Token
+        <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between text-xs text-slate-400">
+          <span>💡 Note: Food Court menu automatically updates on the 1st of every calendar month.</span>
+          <button onclick="orderFoodModal('${escapeHtml(caterer.name)}')" class="py-1.5 px-3 rounded-lg text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition">
+            Generate Meal Token
           </button>
         </div>
       </div>
-    `;
-  }).join('');
+    </div>
+  `;
+}
+
+// ----------------------------------------------------------------------------
+// MODAL 2: THE IYENGAR'S CANTEEN (WHITEBOARD MENU & REAL-TIME SEARCH)
+// ----------------------------------------------------------------------------
+function openIyengarsMenuModal() {
+  sfx.play('click');
+  activeIyengarCategory = 'all';
+  iyengarSearchQuery = '';
+
+  let modal = document.getElementById('iyengars-menu-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'iyengars-menu-modal';
+    modal.className = 'fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 bg-slate-950/85 backdrop-blur-md overflow-y-auto';
+    document.body.appendChild(modal);
+  }
+
+  modal.innerHTML = getIyengarsModalHtml();
+  modal.classList.remove('hidden');
+}
+
+function closeIyengarsModal() {
+  sfx.play('click');
+  const modal = document.getElementById('iyengars-menu-modal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function filterIyengarCat(cat) {
+  sfx.play('click');
+  activeIyengarCategory = cat;
+  const modal = document.getElementById('iyengars-menu-modal');
+  if (modal) modal.innerHTML = getIyengarsModalHtml();
+}
+
+function handleIyengarSearch(q) {
+  iyengarSearchQuery = (q || '').toLowerCase().trim();
+  const listEl = document.getElementById('iyengars-items-grid');
+  if (listEl) {
+    listEl.innerHTML = renderIyengarItemsGrid();
+  }
+}
+
+function renderIyengarItemsGrid() {
+  const data = appState.canteenData || EMBEDDED_CANTEEN_DATA;
+  const iy = data.iyengars;
+  let items = [];
+
+  iy.categories.forEach(cat => {
+    if (activeIyengarCategory === 'all' || activeIyengarCategory === cat.name) {
+      cat.items.forEach(it => {
+        items.push({ ...it, categoryName: cat.name, icon: cat.icon });
+      });
+    }
+  });
+
+  if (iyengarSearchQuery) {
+    items = items.filter(it => it.name.toLowerCase().includes(iyengarSearchQuery) || it.categoryName.toLowerCase().includes(iyengarSearchQuery));
+  }
+
+  if (items.length === 0) {
+    return `<div class="col-span-full py-12 text-center text-slate-500 text-sm">No items matching "${escapeHtml(iyengarSearchQuery)}"</div>`;
+  }
+
+  return items.map(it => `
+    <div class="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 hover:border-emerald-500/40 transition flex items-center justify-between group">
+      <div class="space-y-1">
+        <div class="flex items-center gap-1.5">
+          <span class="text-sm">${it.icon}</span>
+          <h4 class="text-xs font-bold text-white group-hover:text-emerald-300 transition">${escapeHtml(it.name)}</h4>
+        </div>
+        <div class="flex items-center gap-2 text-[10px] text-slate-400">
+          <span class="text-emerald-400 font-semibold">${escapeHtml(it.tag)}</span>
+          <span>•</span>
+          <span>⏱️ ${it.prepTime}</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2.5">
+        <span class="text-sm font-black text-amber-400">₹${it.price}</span>
+        <button onclick="orderFoodModal('The Iyengar\'s (${escapeHtml(it.name)})')" class="py-1 px-2.5 rounded-lg text-[11px] font-bold bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-300 border border-emerald-500/40 transition">
+          + Add
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function getIyengarsModalHtml() {
+  const data = appState.canteenData || EMBEDDED_CANTEEN_DATA;
+  const iy = data.iyengars;
+
+  return `
+    <div class="relative w-full max-w-4xl bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <!-- Header -->
+      <div class="p-5 border-b border-slate-800 bg-gradient-to-r from-slate-950 via-slate-900 to-emerald-950/40 flex items-start justify-between">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">🥪</span>
+            <div>
+              <h2 class="text-lg font-black text-white">The Iyengar's Canteen & Juice Bar</h2>
+              <p class="text-xs text-emerald-400 font-mono">${escapeHtml(iy.building)} • Verified Whiteboard Menu</p>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="openWhiteboardPhotoModal()" class="py-1.5 px-3 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 transition flex items-center gap-1.5">
+            <span>📸</span> View Board Photo
+          </button>
+          <button onclick="closeIyengarsModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 flex items-center justify-center transition">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- Search & Filters -->
+      <div class="p-4 bg-slate-950/60 border-b border-slate-800 space-y-3">
+        <div class="relative">
+          <input type="text" oninput="handleIyengarSearch(this.value)" placeholder="🔍 Search juices, burgers, sandwiches, chats, fries..." class="w-full py-2 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs placeholder-slate-500 focus:outline-none focus:border-emerald-500" />
+        </div>
+        <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+          <button onclick="filterIyengarCat('all')" class="py-1 px-3 rounded-lg font-bold whitespace-nowrap transition ${activeIyengarCategory === 'all' ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}">
+            All (50+)
+          </button>
+          ${iy.categories.map(c => `
+            <button onclick="filterIyengarCat('${c.name}')" class="py-1 px-3 rounded-lg font-bold whitespace-nowrap transition ${activeIyengarCategory === c.name ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}">
+              ${c.icon} ${c.name}
+            </button>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- Items Grid -->
+      <div class="p-5 overflow-y-auto">
+        <div id="iyengars-items-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          ${renderIyengarItemsGrid()}
+        </div>
+      </div>
+
+      <!-- Footer Policy -->
+      <div class="p-3 bg-slate-950 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+        <span class="text-amber-400 font-mono">📦 ${escapeHtml(iy.parcelPolicy)}</span>
+        <span class="text-slate-500 text-[11px]">Timings: ${escapeHtml(iy.timings)}</span>
+      </div>
+    </div>
+  `;
+}
+
+// ----------------------------------------------------------------------------
+// MODAL 3: WHITEBOARD PHOTO VIEWER
+// ----------------------------------------------------------------------------
+function openWhiteboardPhotoModal() {
+  sfx.play('click');
+  let modal = document.getElementById('whiteboard-photo-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'whiteboard-photo-modal';
+    modal.className = 'fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 bg-slate-950/90 backdrop-blur-lg';
+    document.body.appendChild(modal);
+  }
+
+  modal.innerHTML = `
+    <div class="relative w-full max-w-2xl bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+      <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-950">
+        <div>
+          <h3 class="text-sm font-black text-white flex items-center gap-2">
+            <span>📸</span> Campus Menu Board — The Iyengar's Canteen
+          </h3>
+          <p class="text-[11px] text-slate-400">Authentic whiteboard photograph captured from Academic Block 2</p>
+        </div>
+        <button onclick="closeWhiteboardPhotoModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+          ✕
+        </button>
+      </div>
+      <div class="p-2 overflow-auto flex items-center justify-center bg-slate-950">
+        <img src="/images/iyengars_menu_board.jpg" alt="The Iyengar's Canteen Menu Board" class="rounded-xl max-h-[75vh] w-auto object-contain shadow-2xl" onerror="this.src='/reports/images/iyengars_menu_board.jpg'" />
+      </div>
+      <div class="p-3 bg-slate-950 border-t border-slate-800 text-center text-xs text-amber-400 font-mono">
+        PARCEL CHARGES EXTRA 5/-RS FOR EACH
+      </div>
+    </div>
+  `;
+  modal.classList.remove('hidden');
+}
+
+function closeWhiteboardPhotoModal() {
+  sfx.play('click');
+  const modal = document.getElementById('whiteboard-photo-modal');
+  if (modal) modal.classList.add('hidden');
 }
 
 function orderFoodModal(outletName) {
   sfx.play('click');
   const token = Math.floor(100 + Math.random() * 900);
-  showToast("Order Token Generated", `Token #${token} at ${outletName} for ${appState.currentUser.name}. Ready for pick-up in 10 mins.`, 'success');
+  showToast("Pre-Order Token Generated", `Token #${token} generated for ${outletName}. Ready at pickup counter in 8-10 mins.`, 'success');
   sfx.play('success');
 }
+
 
 function renderSportsCourts() {
   const container = document.getElementById('sports-courts-list');
@@ -2042,6 +3728,9 @@ document.addEventListener('DOMContentLoaded', () => {
       closeDigitalPassModal();
       closeCustomMapModal();
       closeFeedDataModal();
+      closeMonthlyMessModal();
+      closeIyengarsModal();
+      closeWhiteboardPhotoModal();
     }
   });
 

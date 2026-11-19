@@ -241,7 +241,7 @@ class StudentPortalApp {
       } else if (query.includes('exam') || query.includes('end-sem') || query.includes('date')) {
         answer = "End-Semester Examinations for Semester 6 begin on November 18, 2026. Hall tickets will be issued digitally on this portal.";
       } else if (query.includes('food') || query.includes('canteen') || query.includes('dining')) {
-        answer = "Annapurna Dining Pavilion is serving breakfast (07:30 - 10:00), lunch (12:00 - 15:00), and dinner (19:30 - 22:00).";
+        answer = "Campus dining includes: 1) Central Food Court (Blue Dove & Sagar) serving 4 daily meals under the November monthly schedule, 2) The Iyengar's Canteen in Academic Block 2 (fresh juices, sandwiches, chats), and 3) Nandini Milk Parlour at the Amphitheatre Walkway.";
       }
 
       resp.innerHTML = `<strong>AI Guide:</strong> ${answer}`;

@@ -1,10 +1,8 @@
-name: Deploy Chanakya Portal to GitHub Pages
+name: Deploy Chanakya Portal to GitHub Pages (Manual Only)
 
 on:
-  push:
-    branches:
-      - main
-      - sdap-main
+  # Automated push trigger removed to prevent "failed to deploy" errors on git push.
+  # Deployment can only be triggered manually via workflow_dispatch when configured in GitHub Settings -> Pages.
   workflow_dispatch:
 
 permissions:
