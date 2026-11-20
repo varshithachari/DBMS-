@@ -1,9 +1,30 @@
 const store = require('../data/store');
 const canteenData = require('../data/canteenData');
+const cplData = require('../data/cplData');
 
 class FoodSportsService {
   getCanteenData() {
     return canteenData;
+  }
+
+  getCplData() {
+    return cplData;
+  }
+
+  getCplMatches() {
+    return cplData.matches;
+  }
+
+  getCplMatchById(id) {
+    return cplData.matches.find(m => m.id === id) || null;
+  }
+
+  addCplMatch(matchData) {
+    if (!matchData.id) {
+      matchData.id = "cpl-2026-m0" + (cplData.matches.length + 1);
+    }
+    cplData.matches.push(matchData);
+    return matchData;
   }
 
   getFoodOutlets() {
@@ -72,6 +93,22 @@ class FoodSportsService {
 
   getSportsCourts() {
     return [
+      {
+        id: "spt_cricket_ground",
+        name: "Global Campus Cricket Ground (CPL Arena)",
+        sport: "Cricket",
+        location: "Chanakya Sports Grounds - Main Cricket Arena",
+        available: true,
+        hourlyFee: 0,
+        cplFeatured: true,
+        description: "Official venue for Chanakya Premier League (Season-2) 2026. Floodlit turf with professional pavilion.",
+        slots: [
+          { time: "06:00 AM - 08:30 AM", status: "Available" },
+          { time: "09:00 AM - 01:00 PM", status: "CPL Match Slot (Reserved)" },
+          { time: "02:00 PM - 06:00 PM", status: "CPL Match Slot (Reserved)" },
+          { time: "06:30 PM - 09:00 PM", status: "Available (Net Session)" }
+        ]
+      },
       {
         id: "spt_badminton_1",
         name: "Badminton Court 1 (Indoor Wooden)",

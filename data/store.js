@@ -314,6 +314,11 @@ class CampusDataStore extends EventEmitter {
     return foodSportsService.getFoodOutlets();
   }
 
+  getCplData() {
+    const foodSportsService = require('../services/foodSportsService');
+    return foodSportsService.getCplData();
+  }
+
   getAllSportsCourts() {
     const foodSportsService = require('../services/foodSportsService');
     return foodSportsService.getSportsCourts();
