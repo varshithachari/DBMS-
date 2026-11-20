@@ -146,12 +146,6 @@
           <span>Grafana & Comparison</span>
         </button>
 
-        <!-- Direct Grafana & Architecture Comparison Header CTA -->
-        <button onclick="switchTab('architecture')" class="flex items-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-black bg-gradient-to-r from-amber-500 via-amber-400 to-cyan-400 hover:from-amber-400 hover:to-cyan-300 text-slate-950 shadow-md shadow-amber-500/20 transition btn-tactile animate-pulse" title="View Grafana Observability Dashboard & Architecture Comparison Matrix">
-          <span>📊</span>
-          <span>Grafana & Comparison</span>
-        </button>
-
         <!-- Feed AI Button -->
         <button onclick="openFeedDataModal()" class="hidden sm:flex items-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500/20 to-cyan-500/10 hover:from-cyan-500/30 hover:to-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition btn-tactile">
           <span>🧠</span>
@@ -217,7 +211,7 @@
         </div>
       </div>
 
-      <!-- Segmented Navigation Links (10 Core Campus Services) -->
+      <!-- Segmented Navigation Links -->
       <nav class="glass-panel rounded-2xl p-2.5 space-y-3">
         
         <!-- Section: Core Command -->
@@ -235,10 +229,6 @@
                 <span>📊</span> Grafana & Architecture
               </div>
               <span class="px-1.5 py-0.2 rounded text-[8px] font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ECS351</span>
-            </button>
-
-            <button data-tab="experiments" onclick="switchTab('experiments')" class="nav-tab-btn w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/60 border border-transparent transition btn-tactile">
-              <span>⚡</span> Experiment Control Center
             </button>
 
             <button data-tab="map" onclick="switchTab('map')" class="nav-tab-btn w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition btn-tactile">
@@ -278,50 +268,6 @@
 
             <button data-tab="issues" onclick="switchTab('issues')" class="nav-tab-btn w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition btn-tactile">
               <span>⚠️</span> Maintenance Tickets
-            </button>
-          </div>
-        </div>
-
-        <!-- Section: Intelligence & Operations -->
-        <div>
-          <div class="px-3 py-1 text-[9px] font-mono font-bold tracking-widest text-slate-500 uppercase">
-            INTELLIGENCE & OPS
-          </div>
-          <div class="space-y-1 mt-1">
-            <button data-tab="notifications" onclick="switchTab('notifications')" class="nav-tab-btn w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition btn-tactile">
-              <span>🔔</span> Live Broadcasts
-            </button>
-
-            <button data-tab="users" onclick="switchTab('users')" class="nav-tab-btn w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition btn-tactile">
-              <span>👥</span> Role Permissions
-            </button>
-
-            <button data-tab="analytics" onclick="switchTab('analytics')" class="nav-tab-btn w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition btn-tactile">
-              <span>📊</span> Crowd Analytics
-            </button>
-
-            <button data-tab="simulation" onclick="switchTab('simulation')" class="nav-tab-btn w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition btn-tactile">
-              <span>🧪</span> What-If Simulation
-            </button>
-          </div>
-        </div>
-
-        <!-- Section: ECS351 Research Lab & Architecture Comparison -->
-        <div>
-          <div class="px-3 py-1 text-[9px] font-mono font-bold tracking-widest text-amber-400 uppercase flex items-center justify-between">
-            <span>ECS351 RESEARCH LAB</span>
-            <span class="px-1.5 py-0.5 rounded text-[8px] bg-amber-500/20 text-amber-300 border border-amber-500/30">ACTIVE</span>
-          </div>
-          <div class="space-y-1 mt-1">
-            <button data-tab="architecture" onclick="switchTab('architecture')" class="nav-tab-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold text-amber-300 hover:bg-amber-500/10 border border-amber-500/40 transition btn-tactile">
-              <div class="flex items-center gap-3">
-                <span>🔬</span> Architecture Lab & Ratings
-              </div>
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-            </button>
-
-            <button data-tab="experiments" onclick="switchTab('experiments')" class="nav-tab-btn w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition btn-tactile">
-              <span>⚡</span> Experiment Control Center
             </button>
           </div>
         </div>
@@ -1604,7 +1550,7 @@
 
             <!-- Action CTAs: Live Grafana & Research Reports -->
             <div class="flex flex-wrap items-center gap-2 flex-shrink-0">
-              <a href="http://localhost:3001" target="_blank" class="py-2 px-3.5 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-cyan-400 hover:from-cyan-400 hover:to-cyan-300 text-slate-950 shadow-md shadow-cyan-500/20 transition flex items-center gap-1.5 btn-tactile animate-pulse" title="Open Grafana Dashboards on Port 3001">
+              <a href="./grafana.html" target="_blank" class="py-2 px-3.5 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-cyan-400 hover:from-cyan-400 hover:to-cyan-300 text-slate-950 shadow-md shadow-cyan-500/20 transition flex items-center gap-1.5 btn-tactile animate-pulse" title="Open Grafana Dashboards on Port 3001">
                 <span>📊</span> Open Live Grafana Dashboard
               </a>
               <a href="/api/reports/download/pdf" target="_blank" class="py-2 px-3 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-md transition flex items-center gap-1 btn-tactile">
@@ -1672,7 +1618,7 @@
                 <span id="grafana-surge-icon">▶</span>
                 <span id="grafana-surge-text">Simulate Traffic Surge (Watch Live Variations)</span>
               </button>
-              <a href="http://localhost:3001" target="_blank" class="py-2 px-3 rounded-xl text-xs font-bold bg-[#181b1f] hover:bg-[#22252b] text-cyan-300 border border-cyan-500/40 transition flex items-center gap-1.5 btn-tactile" title="Open Standalone Grafana on Port 3001">
+              <a href="./grafana.html" target="_blank" class="py-2 px-3 rounded-xl text-xs font-bold bg-[#181b1f] hover:bg-[#22252b] text-cyan-300 border border-cyan-500/40 transition flex items-center gap-1.5 btn-tactile" title="Open Standalone Grafana on Port 3001">
                 <span>↗</span> Port 3001
               </a>
             </div>
@@ -3175,6 +3121,22 @@
   </div>
 
   <!-- Digital Certificate Viewer Modal -->
+  
+  <!-- ================================================================== -->
+  <!-- MODAL: CPL FULL CRICHEROES DIGITAL SCORECARD -->
+  <!-- ================================================================== -->
+  <div id="cpl-scorecard-modal" class="fixed inset-0 z-[9999] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-3 md:p-6 hidden overflow-y-auto" onclick="if(event.target === this) closeCplScorecardModal()"></div>
+
+  <!-- ================================================================== -->
+  <!-- MODAL: CPL PLAYING SQUADS (12-MAN ROSTERS) -->
+  <!-- ================================================================== -->
+  <div id="cpl-squads-modal" class="fixed inset-0 z-[9999] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-3 md:p-6 hidden overflow-y-auto" onclick="if(event.target === this) closeCplSquadsModal()"></div>
+
+  <!-- ================================================================== -->
+  <!-- MODAL: CPL TOURNAMENT STANDINGS & NET RUN RATE -->
+  <!-- ================================================================== -->
+  <div id="cpl-standings-modal" class="fixed inset-0 z-[9999] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-3 md:p-6 hidden overflow-y-auto" onclick="if(event.target === this) closeCplStandingsModal()"></div>
+
   <div id="certificate-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
     <div class="relative w-full max-w-2xl bg-gradient-to-b from-slate-900 to-slate-950 rounded-2xl border-2 border-amber-500/40 shadow-2xl p-6 sm:p-8 space-y-6 overflow-hidden">
       

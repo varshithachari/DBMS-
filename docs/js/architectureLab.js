@@ -2082,3 +2082,9 @@ function renderCharacteristicShowcase() {
     </div>
   `;
 }
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('resize', () => {
+    if (typeof renderAllGrafanaPanels === 'function') renderAllGrafanaPanels();
+  });
+}

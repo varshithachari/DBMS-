@@ -547,13 +547,21 @@ function switchTab(tabId) {
   // Refresh Live Architecture Comparison Lab if opening architecture, experiments or grafana
   if (tabId === 'architecture' || tabId === 'experiments' || tabId === 'grafana') {
     setTimeout(() => {
-      if (typeof initArchitectureLab === 'function') {
-        initArchitectureLab();
-      }
-      if (typeof initGrafanaConsole === 'function') {
-        initGrafanaConsole();
-      }
-    }, 150);
+      if (typeof initArchitectureLab === 'function') initArchitectureLab();
+      if (typeof initGrafanaConsole === 'function') initGrafanaConsole();
+      if (typeof renderAllGrafanaPanels === 'function') renderAllGrafanaPanels();
+    }, 80);
+    setTimeout(() => {
+      if (typeof renderAllGrafanaPanels === 'function') renderAllGrafanaPanels();
+    }, 280);
+  }
+
+  // Refresh Food & Sports when opening foodsports tab
+  if (tabId === 'foodsports') {
+    setTimeout(() => {
+      if (typeof renderFoodOutlets === 'function') renderFoodOutlets();
+      if (typeof renderSportsCourts === 'function') renderSportsCourts();
+    }, 50);
   }
 
   // Refresh UtsavHub data when opening utsavhub tab
@@ -2371,13 +2379,16 @@ function loadFoodAndSports() {
       appState.foodOutlets = data.foodOutlets || [];
       appState.sportsCourts = data.sportsCourts || [];
       appState.canteenData = data.canteenData || EMBEDDED_CANTEEN_DATA;
+      if (data.cplData) appState.cplData = data.cplData;
       renderFoodOutlets();
       renderSportsCourts();
     })
     .catch(err => {
-      console.warn("Using embedded canteen data fallback:", err);
+      console.warn("Using embedded canteen and sports fallback:", err);
       appState.canteenData = EMBEDDED_CANTEEN_DATA;
+      appState.cplData = EMBEDDED_CPL_DATA;
       renderFoodOutlets();
+      renderSportsCourts();
     });
 }
 
@@ -4024,29 +4035,32 @@ function renderSportsCourts() {
 // CPL MODAL 1: FULL CRICHEROES DIGITAL SCORECARD
 // ----------------------------------------------------------------------------
 function openCplScorecardModal(matchId) {
-  sfx.play('click');
+  try { if (typeof sfx !== 'undefined' && sfx.play) sfx.play('click'); } catch(e) {}
   activeCplInnings = 'inn1';
 
   let modal = document.getElementById('cpl-scorecard-modal');
   if (!modal) {
     modal = document.createElement('div');
     modal.id = 'cpl-scorecard-modal';
-    modal.className = 'fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 bg-slate-950/90 backdrop-blur-md overflow-y-auto';
+    modal.className = 'fixed inset-0 z-[9999] flex items-center justify-center p-3 md:p-6 bg-slate-950/90 backdrop-blur-md overflow-y-auto';
+    modal.onclick = function(e) { if (e.target === modal) closeCplScorecardModal(); };
     document.body.appendChild(modal);
   }
 
   modal.innerHTML = getCplScorecardModalHtml(matchId);
   modal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
 }
 
 function closeCplScorecardModal() {
-  sfx.play('click');
+  try { if (typeof sfx !== 'undefined' && sfx.play) sfx.play('click'); } catch(e) {}
   const modal = document.getElementById('cpl-scorecard-modal');
   if (modal) modal.classList.add('hidden');
+  document.body.style.overflow = '';
 }
 
 function switchCplInningsTab(tabKey, matchId) {
-  sfx.play('click');
+  try { if (typeof sfx !== 'undefined' && sfx.play) sfx.play('click'); } catch(e) {}
   activeCplInnings = tabKey;
   const modal = document.getElementById('cpl-scorecard-modal');
   if (modal) modal.innerHTML = getCplScorecardModalHtml(matchId || 'cpl-2026-m01');
@@ -4147,7 +4161,7 @@ function renderInningsScorecard(inn, battingTeam, bowlers, bowlingTeam) {
                 <td class="py-2 px-2 text-right text-slate-400 font-mono">${b.balls}</td>
                 <td class="py-2 px-2 text-right text-slate-400 font-mono">${b.fours}</td>
                 <td class="py-2 px-2 text-right text-slate-400 font-mono">${b.sixes}</td>
-                <td class="py-2 px-3 text-right text-cyan-400 font-mono">${b.sr.toFixed(1)}</td>
+                <td class="py-2 px-3 text-right text-cyan-400 font-mono">${(Number(b.sr) || 0).toFixed(1)}</td>
               </tr>
             `).join('')}
           </tbody>
@@ -4204,7 +4218,7 @@ function renderInningsScorecard(inn, battingTeam, bowlers, bowlingTeam) {
                 <td class="py-2 px-2 text-right text-slate-400 font-mono">${b.fours}</td>
                 <td class="py-2 px-2 text-right text-slate-400 font-mono">${b.sixes}</td>
                 <td class="py-2 px-2 text-right text-slate-400 font-mono">${b.wides}</td>
-                <td class="py-2 px-3 text-right text-cyan-400 font-mono">${b.economy.toFixed(2)}</td>
+                <td class="py-2 px-3 text-right text-cyan-400 font-mono">${(Number(b.economy) || 0).toFixed(2)}</td>
               </tr>
             `).join('')}
           </tbody>
@@ -4218,12 +4232,13 @@ function renderInningsScorecard(inn, battingTeam, bowlers, bowlingTeam) {
 // CPL MODAL 2: PLAYING SQUADS (12-MAN ROSTERS)
 // ----------------------------------------------------------------------------
 function openCplSquadsModal() {
-  sfx.play('click');
+  try { if (typeof sfx !== 'undefined' && sfx.play) sfx.play('click'); } catch(e) {}
   let modal = document.getElementById('cpl-squads-modal');
   if (!modal) {
     modal = document.createElement('div');
     modal.id = 'cpl-squads-modal';
-    modal.className = 'fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 bg-slate-950/90 backdrop-blur-md overflow-y-auto';
+    modal.className = 'fixed inset-0 z-[9999] flex items-center justify-center p-3 md:p-6 bg-slate-950/90 backdrop-blur-md overflow-y-auto';
+    modal.onclick = function(e) { if (e.target === modal) closeCplSquadsModal(); };
     document.body.appendChild(modal);
   }
 
@@ -4284,21 +4299,23 @@ function openCplSquadsModal() {
 }
 
 function closeCplSquadsModal() {
-  sfx.play('click');
+  try { if (typeof sfx !== 'undefined' && sfx.play) sfx.play('click'); } catch(e) {}
   const modal = document.getElementById('cpl-squads-modal');
   if (modal) modal.classList.add('hidden');
+  document.body.style.overflow = '';
 }
 
 // ----------------------------------------------------------------------------
 // CPL MODAL 3: TOURNAMENT POINTS TABLE & STANDINGS
 // ----------------------------------------------------------------------------
 function openCplStandingsModal() {
-  sfx.play('click');
+  try { if (typeof sfx !== 'undefined' && sfx.play) sfx.play('click'); } catch(e) {}
   let modal = document.getElementById('cpl-standings-modal');
   if (!modal) {
     modal = document.createElement('div');
     modal.id = 'cpl-standings-modal';
-    modal.className = 'fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 bg-slate-950/90 backdrop-blur-md overflow-y-auto';
+    modal.className = 'fixed inset-0 z-[9999] flex items-center justify-center p-3 md:p-6 bg-slate-950/90 backdrop-blur-md overflow-y-auto';
+    modal.onclick = function(e) { if (e.target === modal) closeCplStandingsModal(); };
     document.body.appendChild(modal);
   }
 
@@ -4362,9 +4379,21 @@ function openCplStandingsModal() {
 }
 
 function closeCplStandingsModal() {
-  sfx.play('click');
+  try { if (typeof sfx !== 'undefined' && sfx.play) sfx.play('click'); } catch(e) {}
   const modal = document.getElementById('cpl-standings-modal');
   if (modal) modal.classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+// Expose CPL functions globally on window
+if (typeof window !== 'undefined') {
+  window.openCplScorecardModal = openCplScorecardModal;
+  window.closeCplScorecardModal = closeCplScorecardModal;
+  window.switchCplInningsTab = switchCplInningsTab;
+  window.openCplSquadsModal = openCplSquadsModal;
+  window.closeCplSquadsModal = closeCplSquadsModal;
+  window.openCplStandingsModal = openCplStandingsModal;
+  window.closeCplStandingsModal = closeCplStandingsModal;
 }
 
 function bookCourtModal(courtId, courtName) {
