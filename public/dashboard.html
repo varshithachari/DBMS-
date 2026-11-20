@@ -146,6 +146,14 @@
           <span>Grafana & Comparison</span>
         </button>
 
+        <!-- High-Privilege Direct Grafana Launcher -->
+        <a id="header-privileged-grafana-link" href="./grafana.html" target="_blank" class="flex items-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-black bg-gradient-to-r from-orange-500 via-amber-400 to-amber-500 hover:from-orange-400 hover:to-amber-300 text-slate-950 shadow-lg shadow-orange-500/25 border border-amber-300/40 transition btn-tactile" title="Direct Access: High-Privilege Standalone Grafana v10.4.1 Console">
+          <span>👑</span>
+          <span class="hidden lg:inline">Privileged Grafana</span>
+          <span class="inline lg:hidden">Grafana</span>
+          <span class="px-1.5 py-0.2 rounded text-[9px] font-mono bg-black/20 text-slate-900 font-extrabold uppercase">VIP</span>
+        </a>
+
         <!-- Feed AI Button -->
         <button onclick="openFeedDataModal()" class="hidden sm:flex items-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500/20 to-cyan-500/10 hover:from-cyan-500/30 hover:to-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition btn-tactile">
           <span>🧠</span>
@@ -224,11 +232,11 @@
               <span>🏠</span> Command Center
             </button>
 
-            <button data-tab="architecture" onclick="switchTab('architecture')" class="nav-tab-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 shadow-md shadow-amber-500/10 transition btn-tactile">
+                        <button data-tab="architecture" onclick="switchTab('architecture')" class="nav-tab-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 shadow-md shadow-amber-500/10 transition btn-tactile">
               <div class="flex items-center gap-3">
                 <span>📊</span> Grafana & Architecture
               </div>
-              <span class="px-1.5 py-0.2 rounded text-[8px] font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ECS351</span>
+              <span id="grafana-nav-badge" class="px-1.5 py-0.2 rounded text-[8px] font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ECS351</span>
             </button>
 
             <button data-tab="map" onclick="switchTab('map')" class="nav-tab-btn w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent transition btn-tactile">
@@ -1527,6 +1535,33 @@
         
         <!-- Header Banner with Live Telemetry & Quick CTAs -->
         <div class="bento-card p-6 border-amber-500/40 bg-gradient-to-r from-amber-950/40 via-slate-900 to-cyan-950/40 space-y-4 tilt-3d glow-amber">
+          
+          <!-- High-Privilege Observability Clearance Strip -->
+          <div id="arch-privilege-strip" class="p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-slate-950/90 to-cyan-500/15 border border-amber-500/40 flex flex-wrap items-center justify-between gap-3 text-xs shadow-xl">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-slate-950 text-xl font-black shadow-md shadow-amber-500/25">
+                👑
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <span id="arch-privilege-title" class="font-extrabold text-white text-sm font-outfit">ECS351 High-Privilege Telemetry Clearance</span>
+                  <span id="arch-privilege-badge" class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse">PRIVILEGED ACTIVE</span>
+                </div>
+                <p id="arch-privilege-subtitle" class="text-[11px] text-slate-300 font-mono mt-0.5">
+                  Authorized Operator: <span class="text-amber-400 font-bold" id="arch-privilege-user">Dr. S. Radhakrishnan (Faculty / Lead Architect)</span> • Unrestricted Grafana & Prometheus Root Scrape
+                </p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="openGrafanaPrivilegeModal()" class="py-2 px-3.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 transition flex items-center gap-1.5 btn-tactile font-mono">
+                <span>🔐</span> Clearance Settings
+              </button>
+              <a href="./grafana.html" target="_blank" class="py-2 px-4 rounded-xl text-xs font-black bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 transition shadow-xl shadow-amber-500/25 flex items-center gap-2 btn-tactile animate-pulse">
+                <span>⚡</span> Launch Full Grafana (VIP) ↗
+              </a>
+            </div>
+          </div>
+
           <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div class="space-y-1.5">
               <div class="flex flex-wrap items-center gap-2">
@@ -3120,6 +3155,26 @@
     </div>
   </div>
 
+  
+  <!-- High-Privilege Floating Grafana Dock Pill (Quick Launch) -->
+  <div id="floating-grafana-dock" class="fixed bottom-6 left-6 z-40 flex items-center gap-2 p-1.5 pr-3 rounded-2xl glass-panel border border-amber-500/40 bg-slate-950/90 shadow-2xl backdrop-blur-xl group hover:border-amber-400 transition">
+    <a href="./grafana.html" target="_blank" class="flex items-center gap-2 text-xs font-bold text-amber-300 hover:text-white transition">
+      <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-slate-950 font-black shadow-md shadow-amber-500/20">
+        👑
+      </div>
+      <div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-outfit font-extrabold text-white text-[12px]">Grafana Portal</span>
+          <span id="floating-grafana-badge" class="px-1.5 py-0.2 rounded text-[8px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold">VIP ACCESS</span>
+        </div>
+        <span class="text-[10px] text-slate-400 font-mono block">1-Click Privileged Launch ↗</span>
+      </div>
+    </a>
+    <button onclick="openGrafanaPrivilegeModal()" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-amber-300 flex items-center justify-center text-xs transition" title="Clearance Settings">
+      🔐
+    </button>
+  </div>
+
   <!-- Digital Certificate Viewer Modal -->
   
   <!-- ================================================================== -->
@@ -3136,6 +3191,91 @@
   <!-- MODAL: CPL TOURNAMENT STANDINGS & NET RUN RATE -->
   <!-- ================================================================== -->
   <div id="cpl-standings-modal" class="fixed inset-0 z-[9999] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-3 md:p-6 hidden overflow-y-auto" onclick="if(event.target === this) closeCplStandingsModal()"></div>
+
+  
+  <!-- ================================================================== -->
+  <!-- MODAL: HIGH-PRIVILEGE ARCHITECTURE & GRAFANA CLEARANCE -->
+  <!-- ================================================================== -->
+  <div id="grafana-privilege-modal" class="fixed inset-0 z-[9999] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-3 md:p-6 hidden overflow-y-auto" onclick="if(event.target === this) closeGrafanaPrivilegeModal()">
+    <div class="relative w-full max-w-lg bg-slate-900 border border-amber-500/40 rounded-3xl shadow-2xl overflow-hidden text-xs">
+      <!-- Modal Header -->
+      <div class="p-5 border-b border-slate-800 bg-gradient-to-r from-slate-950 via-slate-900 to-amber-950/40 flex items-start justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-xl shadow-lg shadow-amber-500/10">
+            👑
+          </div>
+          <div>
+            <h3 class="text-base font-black text-white font-outfit">Grafana Privileged Access Clearance</h3>
+            <p class="text-[11px] text-amber-400 font-mono">ECS351 Advanced Architecture & Observability Lab</p>
+          </div>
+        </div>
+        <button onclick="closeGrafanaPrivilegeModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+          ✕
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-5 space-y-4">
+        <!-- Current Status -->
+        <div class="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-2">
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="text-slate-400 uppercase font-mono">Active Persona:</span>
+            <span id="privilege-modal-role-pill" class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 font-mono">Faculty Member</span>
+          </div>
+          <div class="flex items-center justify-between text-white font-bold text-sm">
+            <span id="privilege-modal-user-name">Dr. S. Radhakrishnan</span>
+            <span id="privilege-modal-clearance-status" class="text-emerald-400 text-xs font-mono font-normal">● Tier-1 Authorized</span>
+          </div>
+          <p class="text-[11px] text-slate-400 pt-1 border-t border-slate-850">
+            Privileged operators have direct 1-click access to the standalone Grafana console, live Prometheus metrics scraping, and k6 stress-test load injection up to 10,000 virtual users.
+          </p>
+        </div>
+
+        <!-- Clearance Options -->
+        <div class="space-y-2">
+          <span class="text-[10px] font-mono uppercase font-bold text-slate-400">Select Instant Privilege Action:</span>
+
+          <button onclick="grantInstantArchitectPrivilege()" class="w-full p-3 rounded-2xl bg-gradient-to-r from-amber-500/20 to-orange-500/10 hover:from-amber-500/30 hover:to-orange-500/20 border border-amber-500/40 text-left transition flex items-center justify-between group">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">⚡</span>
+              <div>
+                <span class="font-bold text-white block group-hover:text-amber-300 transition">Grant 1-Click System Architect Clearance</span>
+                <span class="text-[10px] text-slate-400">Unlock full Grafana VIP privileges in current session (Demo Mode)</span>
+              </div>
+            </div>
+            <span class="px-2 py-1 rounded-xl bg-amber-500 text-slate-950 font-black text-[10px]">ELEVATE</span>
+          </button>
+
+          <button onclick="switchRole('faculty'); closeGrafanaPrivilegeModal();" class="w-full p-3 rounded-2xl bg-slate-950 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-left transition flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">👨‍🏫</span>
+              <div>
+                <span class="font-bold text-white block">Switch to Dr. Radhakrishnan (Faculty Lead)</span>
+                <span class="text-[10px] text-slate-400">School of AI, Robotics & Data Sciences (ECS351 Research Lead)</span>
+              </div>
+            </div>
+            <span class="text-slate-500 font-mono text-[10px]">Switch →</span>
+          </button>
+
+          <button onclick="switchRole('admin'); closeGrafanaPrivilegeModal();" class="w-full p-3 rounded-2xl bg-slate-950 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-left transition flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">👑</span>
+              <div>
+                <span class="font-bold text-white block">Switch to Prof. Chanakya (Dean / Admin)</span>
+                <span class="text-[10px] text-slate-400">Executive authority across all campus systems</span>
+              </div>
+            </div>
+            <span class="text-slate-500 font-mono text-[10px]">Switch →</span>
+          </button>
+        </div>
+
+        <!-- Launch Button -->
+        <a href="./grafana.html" target="_blank" onclick="closeGrafanaPrivilegeModal()" class="w-full py-3 px-4 rounded-2xl text-xs font-black bg-gradient-to-r from-amber-500 via-amber-400 to-orange-400 text-slate-950 hover:from-amber-400 hover:to-orange-300 transition shadow-xl shadow-amber-500/25 flex items-center justify-center gap-2">
+          <span>🚀</span> Launch Standalone Grafana Dashboard Directly
+        </a>
+      </div>
+    </div>
+  </div>
 
   <div id="certificate-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
     <div class="relative w-full max-w-2xl bg-gradient-to-b from-slate-900 to-slate-950 rounded-2xl border-2 border-amber-500/40 shadow-2xl p-6 sm:p-8 space-y-6 overflow-hidden">

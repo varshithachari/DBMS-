@@ -4845,6 +4845,39 @@ function updateUserUI() {
     const initials = user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
     cardInitials.textContent = initials;
   }
+
+  // Refresh High-Privilege Grafana & Architecture Badges
+  const isPrivileged = (user.role === 'admin' || user.role === 'faculty' || appState.hasArchitectPrivilege === true);
+  
+  const navBadge = document.getElementById('grafana-nav-badge');
+  if (navBadge) {
+    if (isPrivileged) {
+      navBadge.textContent = '👑 PRIVILEGED';
+      navBadge.className = 'px-1.5 py-0.2 rounded text-[8px] font-mono bg-amber-500/25 text-amber-300 border border-amber-500/50 font-black animate-pulse';
+    } else {
+      navBadge.textContent = 'ECS351';
+      navBadge.className = 'px-1.5 py-0.2 rounded text-[8px] font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30';
+    }
+  }
+
+  const archPrivUser = document.getElementById('arch-privilege-user');
+  if (archPrivUser) archPrivUser.textContent = `${user.name} (${user.roleLabel || user.role})`;
+
+  const archPrivBadge = document.getElementById('arch-privilege-badge');
+  if (archPrivBadge) {
+    if (isPrivileged) {
+      archPrivBadge.textContent = 'VIP CLEARANCE TIER-1';
+      archPrivBadge.className = 'px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse';
+    } else {
+      archPrivBadge.textContent = 'OBSERVER MODE';
+      archPrivBadge.className = 'px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-slate-800 text-slate-400 border border-slate-700';
+    }
+  }
+
+  const floatingBadge = document.getElementById('floating-grafana-badge');
+  if (floatingBadge) {
+    floatingBadge.textContent = isPrivileged ? 'VIP ACCESS' : 'OBSERVER';
+  }
 }
 
 async function initAuthSession() {
@@ -6427,4 +6460,61 @@ function toggle3DVisualizer() {
       setTimeout(initBlenderCampus, 100);
     }
   }
+}
+
+
+// ============================================================================
+// HIGH-PRIVILEGE ARCHITECTURE & GRAFANA CLEARANCE SYSTEM
+// ============================================================================
+function openGrafanaPrivilegeModal() {
+  try { if (typeof sfx !== 'undefined' && sfx.play) sfx.play('click'); } catch(e) {}
+  const modal = document.getElementById('grafana-privilege-modal');
+  if (!modal) return;
+
+  const user = appState.currentUser || { name: 'Rahul Sharma', role: 'student', roleLabel: 'Student' };
+  const isPrivileged = (user.role === 'admin' || user.role === 'faculty' || appState.hasArchitectPrivilege === true);
+
+  const rolePill = document.getElementById('privilege-modal-role-pill');
+  if (rolePill) rolePill.textContent = user.roleLabel || user.role;
+
+  const userName = document.getElementById('privilege-modal-user-name');
+  if (userName) userName.textContent = user.name;
+
+  const status = document.getElementById('privilege-modal-clearance-status');
+  if (status) {
+    if (isPrivileged) {
+      status.textContent = '● Tier-1 High-Privilege Authorized';
+      status.className = 'text-emerald-400 text-xs font-mono font-bold';
+    } else {
+      status.textContent = '○ Observer Clearance (Student)';
+      status.className = 'text-amber-400 text-xs font-mono font-bold';
+    }
+  }
+
+  modal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeGrafanaPrivilegeModal() {
+  try { if (typeof sfx !== 'undefined' && sfx.play) sfx.play('click'); } catch(e) {}
+  const modal = document.getElementById('grafana-privilege-modal');
+  if (modal) modal.classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+function grantInstantArchitectPrivilege() {
+  appState.hasArchitectPrivilege = true;
+  try { localStorage.setItem('chanakya_has_architect_privilege', 'true'); } catch(e) {}
+  updateUserUI();
+  try { if (typeof sfx !== 'undefined' && sfx.play) sfx.play('success'); } catch(e) {}
+  if (typeof showToast === 'function') {
+    showToast("Clearance Granted", "👑 System Architect Clearance Tier-1 Activated for current session!", "success");
+  }
+  closeGrafanaPrivilegeModal();
+}
+
+if (typeof window !== 'undefined') {
+  window.openGrafanaPrivilegeModal = openGrafanaPrivilegeModal;
+  window.closeGrafanaPrivilegeModal = closeGrafanaPrivilegeModal;
+  window.grantInstantArchitectPrivilege = grantInstantArchitectPrivilege;
 }
